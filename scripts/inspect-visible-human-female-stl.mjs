@@ -41,7 +41,7 @@ for(const file of files){
    }
   }else{
    const txt=buf.toString('utf8');
-   const re=/\\bvertex\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)/g;let m,verts=[],vertexCount=0;
+   const re=/\bvertex\s+([-+\d.eE]+)\s+([-+\d.eE]+)\s+([-+\d.eE]+)/g;let m,verts=[],vertexCount=0;
    while((m=re.exec(txt))){const v=m.slice(1,4).map(Number);add(v);verts.push(v);vertexCount++;if(verts.length===3){triangles++;if(Math.hypot(...cross(sub(verts[1],verts[0]),sub(verts[2],verts[0])))<1e-10)degenerate++;verts=[];}}
    if(!vertexCount)throw new Error('not recognized as binary or ASCII STL');
    if(vertexCount%3!==0)throw new Error(`ASCII STL has ${vertexCount} vertices; expected complete triangle groups of three`);
