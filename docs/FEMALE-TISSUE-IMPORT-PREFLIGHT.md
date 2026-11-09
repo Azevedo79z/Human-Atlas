@@ -1,6 +1,6 @@
 # Pré-validação de cartilagens e ligamentos — referência feminina
 
-Esta etapa é deliberadamente somente leitura. Ela prepara a importação de tecidos da mesma referência feminina usada para os músculos de membro inferior, sem modificar o manifesto nem publicar novas malhas.
+Esta etapa é deliberadamente somente leitura. Ela inventaria os tecidos da referência feminina usada para os músculos de membro inferior, mas **não autoriza importá-los automaticamente**. A atribuição anatômica já presente no projeto registra que os ossos, cartilagens e ligamentos dessa fonte doadora não são usados porque a referência feminina principal já modela os ossos dos membros inferiores e os ligamentos do joelho. A prioridade é preservar essa decisão e evitar duplicatas.
 
 ## Fonte e pacote exato
 
@@ -40,13 +40,17 @@ O script:
 
 Se a contagem não for exatamente 16 cartilagens e 8 ligamentos, confirmar se foi extraído o pacote **Final 3D STL Models** feminino, e não os pacotes original/smoothed ou o conjunto masculino.
 
-## Critérios antes de importar
+## Decisão de escopo
+
+O arquivo `public/ATTRIBUTION.md` da própria branch declara expressamente que as geometrias de ossos, cartilagens e ligamentos da referência doadora não são utilizadas: a referência feminina principal já contém os ossos dos membros inferiores e os ligamentos do joelho. Portanto, não vamos importar essas estruturas apenas porque existem no pacote. A eventual reconsideração exige demonstrar uma lacuna anatômica real, ausência de duplicata e ganho visual/educacional mensurável.
+
+## Critérios para qualquer reconsideração futura
 
 1. Conferir todos os arquivos e pares esquerda/direita.
 2. Revisar possíveis colisões com estruturas já existentes; comparar anatomia e geometria, não apenas texto.
-3. Ajustar as malhas ao corpo de referência usando marcos ósseos compartilhados e registrar erro de alinhamento por região.
-4. Manter as estruturas da segunda referência feminina identificadas separadamente da referência HRA principal.
-5. Só então gerar buffers, atualizar conceitos PT-BR, adicionar atribuição CC BY 4.0 e rodar validação/build.
+3. Demonstrar que a estrutura não está representada na referência principal.
+4. Se houver uma lacuna real, ajustar a malha ao corpo de referência usando marcos ósseos compartilhados e registrar erro de alinhamento por região.
+5. Manter estruturas da segunda referência feminina identificadas separadamente da referência HRA principal, com atribuição CC BY 4.0.
 6. Manter a branch de homologação isolada; nenhum merge ou deploy de produção nesta fase.
 
-**Estado:** pré-validação adicionada; integração geométrica ainda não executada. Nenhuma malha foi adicionada ao atlas por esta etapa.
+**Estado:** pré-validação read-only adicionada como ferramenta de auditoria; nenhuma malha foi adicionada ao atlas. O projeto agora prioriza a tradução PT-BR e as fichas das estruturas conjuntivas que já existem.
