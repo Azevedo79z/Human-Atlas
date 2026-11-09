@@ -94,11 +94,38 @@ export default function AnatomyScene({atlas,state,onSelect,onProgress,onError}:P
    if(found<0)found=findTarget(e.clientX-rect.left,e.clientY-rect.top,e.pointerType==='touch'?24:16);if(found>=0){hover.hidden=true;select.current(atlas.parts[found].id);}
   };
   renderer.domElement.addEventListener('pointerdown',down);renderer.domElement.addEventListener('pointermove',move);renderer.domElement.addEventListener('pointerup',up);renderer.domElement.addEventListener('pointercancel',cancel);
-  const clock=new T.Clock();let lastExtent=-1;
+  const clock=new T.Clock();let lastExtent=-1,lastFocusKey='',focusCenter:T.Vector3|null=null,focusDistance=0,focusActive=false;
   const animate=()=>{
    if(disposed)return;frame=requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05),s=latest.current;
    const changed=lastState?.visible!==s.visible||lastState?.selected!==s.selected||lastState?.related!==s.related||lastState?.isolate!==s.isolate;
    const moving=Math.abs(amount-s.explode)>.0001;
+   const focusKey=s.selected.join('|')+':'+s.isolate;
+   if(focusKey!==lastFocusKey){
+    lastFocusKey=focusKey;focusActive=false;focusCenter=null;
+    if(s.selected.length&&!s.isolate){
+     const box=new T.Box3();
+     atlas.parts.forEach((p,i)=>{if(s.selected.includes(p.id))box.union(bounds[i].clone().translate(new T.Vector3(data[i*4],data[i*4+1],data[i*4+2])));});
+     if(!box.isEmpty()){
+      focusCenter=box.getCenter(new T.Vector3());
+      const size=box.getSize(new T.Vector3());
+      const largest=Math.max(size.x,size.y,size.z,.035);
+      const vertical=largest/(2*Math.tan(T.MathUtils.degToRad(camera.fov/2)));
+      const horizontal=vertical/Math.max(.35,camera.aspect);
+      focusDistance=Math.max(.12,Math.max(vertical,horizontal)*1.9);
+      focusActive=true;
+     }
+    }
+   }
+   if(focusActive&&focusCenter&&!s.isolate){
+    const amountStep=1-Math.exp(-5.5*dt);
+    const direction=camera.position.clone().sub(controls.target).normalize();
+    if(direction.lengthSq()<.01)direction.set(.2,.1,1).normalize();
+    const nextTarget=controls.target.clone().lerp(focusCenter,amountStep);
+    const nextPosition=focusCenter.clone().addScaledVector(direction,focusDistance);
+    camera.position.lerp(nextPosition,amountStep);controls.target.copy(nextTarget);
+    if(controls.target.distanceTo(focusCenter)<.002&&camera.position.distanceTo(nextPosition)<.01)focusActive=false;
+    dirty=true;
+   }
    if(moving){amount=T.MathUtils.damp(amount,s.explode,8,dt);dirty=true;}
    if(changed||moving||lastExtent<0){
     const visible=new Set(s.visible),selection=new Set(s.selected),related=new Set(s.related??[]);
