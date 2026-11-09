@@ -90,3 +90,25 @@ A GitHub Actions workflow now runs the focused registration test file on pushes 
 this development branch and on relevant pull-request changes. The workflow is
 configured, but no run result has been observed yet; do not treat the tests as
 passing until GitHub reports a completed successful run.
+
+## First binary-geometry diagnostic (not an approved transform)
+
+A temporary GitHub Actions artifact successfully retrieved the pinned left femur
+and patella STL files plus atlas chunk `female-11.bin`. The artifact was kept
+outside the repository and has a three-day retention period.
+
+A surface-point-cloud diagnostic was run on the left femur. The candidate axis
+orientation was seeded from the source dataset's documented patient directions,
+then a constrained similarity ICP fit was estimated from the femur surface only.
+With that femur-derived transform, independent left-patella surface comparison
+produced a symmetric nearest-surface RMS of approximately 6.23 mm; the femur
+symmetric RMS was approximately 7.23 mm. These are exploratory surface distances,
+not anatomical landmark residuals, and no clinical or anatomical acceptance
+threshold has been established.
+
+This is encouraging enough to continue the investigation, but it is **not**
+approval to load the mesh. The transform remains diagnostic only: the candidate
+must also be checked against the tibia and additional landmarks, and the joint
+relationships and three-dimensional overlays must be reviewed before any scene
+integration. The transform has not been written into the application or applied
+to production assets.
