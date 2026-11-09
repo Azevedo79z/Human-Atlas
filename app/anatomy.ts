@@ -369,7 +369,7 @@ export const term = (name:string, language:Language) => {
   if(terms[key])return terms[key];
   // Many reference datasets suffix paired structures with (left)/(right).
   // Keep the source laterality explicit in neutral Brazilian Portuguese.
-  const side=key.match(/^(.*) \\(left\\)$/) ?? key.match(/^(.*) \\(right\\)$/);
+  const side=key.match(/^(.*) \(left\)$/) ?? key.match(/^(.*) \(right\)$/);
   if(side&&terms[side[1]])return `${terms[side[1]]} (lado ${key.endsWith('(left)')?'esquerdo':'direito'})`;
   return name;
  }
