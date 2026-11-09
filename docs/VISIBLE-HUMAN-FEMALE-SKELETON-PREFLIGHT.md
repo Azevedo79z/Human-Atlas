@@ -177,3 +177,25 @@ Isso revela uma cobertura nominal desigual: não há no inventário muscular atu
 A presença no manifesto não comprova que a malha exista, esteja carregada, tenha geometria válida ou seja selecionável na interface. A ausência de um nome não prova ausência anatômica: uma estrutura pode estar agrupada numa malha maior ou ter outro rótulo. O relatório não cria anatomia nem altera geometrias.
 
 O workflow verifica a sintaxe do auditor, executa a análise e anexa `visible-human-female-soft-tissue-coverage.json` ao artefato de pré-validação. Os números detalhados do relatório dependem da execução real do workflow.
+
+
+## Camadas musculares e metadados de estudo — 9 de novembro de 2026
+
+O manifesto atual contém metadados geométricos por parte (chunk, offsets, contagem de vértices/índices e bounding box), mas não campos estruturados para profundidade/camada, origem, inserção, ação, inervação ou vascularização. Portanto, o Atlas ainda não pode sustentar uma navegação didática superficial/intermediária/profunda com esses dados sem uma etapa de curadoria.
+
+Foi criado `scripts/audit-visible-human-female-muscle-layers.mjs`, auditoria somente de leitura que:
+- agrupa as estruturas musculares e tecidos explicitamente nomeados por região;
+- mantém a distinção entre `muscular`, `donor-muscle` e estruturas de outras fontes;
+- verifica a existência de campos de camada e de informação funcional;
+- registra a procedência declarada no manifesto;
+- não atribui camada, origem, inserção, ação ou inervação por suposição.
+
+### Procedência e limite anatômico
+
+O bloco `donorMuscle` declara fonte Visible Human Female para a extremidade inferior e descreve grupos de quadril, coxa e perna. Isso dá uma procedência feminina documentada para esse conjunto, mas não preenche tronco, membros superiores, mãos ou assoalho pélvico. O bloco `borrowed` declara outra fonte (BodyParts3D 4.0) e deve continuar distinguido dos tecidos doadores femininos nativos.
+
+### Próxima etapa de conteúdo
+
+Antes de habilitar camadas clicáveis, cada músculo deve receber dados revisados de camada, origem, inserção, ação e inervação, vinculados a uma referência anatômica confiável e à estrutura/segmento correto. A seleção por camada deve controlar a visibilidade das malhas reais, não gerar uma ilustração genérica nem duplicar/espelhar músculos para preencher lacunas.
+
+O workflow verifica a sintaxe, executa a auditoria e anexa `visible-human-female-muscle-layers.json`. O relatório efetivo depende da execução do workflow.
