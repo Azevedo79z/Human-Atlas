@@ -1,0 +1,36 @@
+# Female full-skeleton source integration
+
+## Status
+
+Source registry added for the Visible Human Female full-skeleton meshes. This is a data/provenance foundation only: the meshes are **not yet rendered in Human Atlas**, and no existing atlas geometry has been replaced.
+
+## Source and licence
+
+- Dataset: [BoneHub/visible-human-3d-models](https://huggingface.co/datasets/BoneHub/visible-human-3d-models)
+- Pinned dataset revision: `53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10`
+- Licence: [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/)
+- Dataset citation: Alavi, S. H., & Asseln, M. (2026). *Visible-Human-3d-Models*. [DOI 10.57967/hf/10464](https://doi.org/10.57967/hf/10464).
+- Original imaging/geometry reference: Andreassen et al. (2023), *Scientific Data*, 10, 34. [DOI 10.1038/s41597-022-01905-2](https://doi.org/10.1038/s41597-022-01905-2).
+
+## Coverage
+
+The pinned manifest lists 143 female STL labels. They cover the skull, spinal column, thorax, upper and lower extremities, hands and feet. A label is not always a single anatomical bone: the source combines some structures.
+
+Known source limitations are recorded in `public/data/female-skeleton-source.json`: incomplete elbow surfaces; grouped phalanges; combined cranium/maxilla, sacrum/coccyx and sternum; absent hyoid and most sesamoid bones; and no costal cartilage.
+
+## Integration rules
+
+1. Keep the current Human Reference Atlas female organ/surface model as its own source layer.
+2. Add these 3D bones as a separately attributed female skeletal reference; do not relabel male-derived geometry as female.
+3. Validate patient-coordinate axis conversion, scale, center and alignment against shared anatomical landmarks before enabling the layer by default.
+4. Keep the source mesh identity and attribution available in each selected bone's detail panel.
+5. Do not merge grouped source labels into individually named bones unless there is a validated segmentation to support that split.
+6. Preserve the existing male atlas and current female dataset as fallbacks until visual, picking, search, mobile and performance tests pass.
+
+## Next implementation stages
+
+- Add a lazy-loaded STL pipeline with bounded concurrency, caching and graceful failure handling.
+- Convert source patient coordinates (+Z superior, -Y anterior, +X left) into the atlas scene coordinate system and validate the transform.
+- Add selectable/searchable bone records and Portuguese labels while retaining the original source identifier.
+- Replace the provisional male-derived placeholder layer only after the female source skeleton is aligned and tested.
+- Expand muscle coverage separately; this full-skeleton dataset contains bone meshes, not whole-body muscle geometry.

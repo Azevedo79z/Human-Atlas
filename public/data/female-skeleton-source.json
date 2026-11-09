@@ -1,0 +1,1182 @@
+{
+  "schemaVersion": 1,
+  "title": "Visible Human Female — full skeletal mesh reference",
+  "source": {
+    "dataset": "BoneHub/visible-human-3d-models",
+    "repository": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models",
+    "revision": "53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "datasetCitation": "Alavi, S. H., & Asseln, M. (2026). Visible-Human-3d-Models. https://doi.org/10.57967/hf/10464",
+    "originalCitation": "Andreassen, T. E., Hume, D. R., Hamilton, L. D., Walker, K. E., Higinbotham, S. E., & Shelburne, K. B. (2023). Three Dimensional Lower Extremity Musculoskeletal Geometry of the Visible Human Female and Male. Scientific Data, 10, 34. https://doi.org/10.1038/s41597-022-01905-2",
+    "sourceSubject": {
+      "id": "02_Female",
+      "label": "Female",
+      "gender": "female",
+      "age": 59,
+      "height": 1.57,
+      "weight": 88,
+      "BMI": 35.7
+    }
+  },
+  "anatomy": {
+    "coordinateSystem": "Patient coordinates: +Z superior, -Y anterior, +X left.",
+    "count": 143,
+    "unit": "STL mesh coordinates are patient-space coordinates; transform and scale must be validated against the atlas before display.",
+    "knownLimitations": [
+      "Elbow region is incomplete; distal humerus and proximal radius/ulna are truncated.",
+      "Finger and toe phalanges are grouped by digit rather than segmented individually.",
+      "Cranium and maxilla are one mesh; mandible is separate.",
+      "Sacrum and coccyx are combined.",
+      "Manubrium, sternal body and xiphoid process are combined.",
+      "Hyoid and most sesamoid bones are not included.",
+      "Costal cartilages are not included; rib meshes do not connect geometrically to the sternum."
+    ]
+  },
+  "bones": [
+    {
+      "id": "SKULL_CRANIAL_MAXILLA",
+      "region": "SKULL",
+      "regionLabel": "Skull",
+      "file": "SKULL_CRANIAL_MAXILLA",
+      "bytes": 41478484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SKULL/SKULL_CRANIAL_MAXILLA.stl"
+    },
+    {
+      "id": "SKULL_MANDIBLE",
+      "region": "SKULL",
+      "regionLabel": "Skull",
+      "file": "SKULL_MANDIBLE",
+      "bytes": 3785484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SKULL/SKULL_MANDIBLE.stl"
+    },
+    {
+      "id": "VERTEBRA_C1",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_C1",
+      "bytes": 1585684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_C1.stl"
+    },
+    {
+      "id": "VERTEBRA_C2",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_C2",
+      "bytes": 1409284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_C2.stl"
+    },
+    {
+      "id": "VERTEBRA_C3",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_C3",
+      "bytes": 1047884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_C3.stl"
+    },
+    {
+      "id": "VERTEBRA_C4",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_C4",
+      "bytes": 1062484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_C4.stl"
+    },
+    {
+      "id": "VERTEBRA_C5",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_C5",
+      "bytes": 1215484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_C5.stl"
+    },
+    {
+      "id": "VERTEBRA_C6",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_C6",
+      "bytes": 1266884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_C6.stl"
+    },
+    {
+      "id": "VERTEBRA_C7",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_C7",
+      "bytes": 1459684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_C7.stl"
+    },
+    {
+      "id": "VERTEBRA_T1",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T1",
+      "bytes": 1607684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T1.stl"
+    },
+    {
+      "id": "VERTEBRA_T2",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T2",
+      "bytes": 1657884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T2.stl"
+    },
+    {
+      "id": "VERTEBRA_T3",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T3",
+      "bytes": 1684484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T3.stl"
+    },
+    {
+      "id": "VERTEBRA_T4",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T4",
+      "bytes": 1662084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T4.stl"
+    },
+    {
+      "id": "VERTEBRA_T5",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T5",
+      "bytes": 1659884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T5.stl"
+    },
+    {
+      "id": "VERTEBRA_T6",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T6",
+      "bytes": 1711284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T6.stl"
+    },
+    {
+      "id": "VERTEBRA_T7",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T7",
+      "bytes": 1784884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T7.stl"
+    },
+    {
+      "id": "VERTEBRA_T8",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T8",
+      "bytes": 1868484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T8.stl"
+    },
+    {
+      "id": "VERTEBRA_T9",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T9",
+      "bytes": 1879884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T9.stl"
+    },
+    {
+      "id": "VERTEBRA_T10",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T10",
+      "bytes": 2078684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T10.stl"
+    },
+    {
+      "id": "VERTEBRA_T11",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T11",
+      "bytes": 2146684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T11.stl"
+    },
+    {
+      "id": "VERTEBRA_T12",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_T12",
+      "bytes": 2285684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_T12.stl"
+    },
+    {
+      "id": "VERTEBRA_L1",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_L1",
+      "bytes": 2637884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_L1.stl"
+    },
+    {
+      "id": "VERTEBRA_L2",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_L2",
+      "bytes": 3041284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_L2.stl"
+    },
+    {
+      "id": "VERTEBRA_L3",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_L3",
+      "bytes": 3448284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_L3.stl"
+    },
+    {
+      "id": "VERTEBRA_L4",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_L4",
+      "bytes": 3515684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_L4.stl"
+    },
+    {
+      "id": "VERTEBRA_L5",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_L5",
+      "bytes": 3395884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_L5.stl"
+    },
+    {
+      "id": "VERTEBRA_L6",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "VERTEBRA_L6",
+      "bytes": 3560484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/VERTEBRA_L6.stl"
+    },
+    {
+      "id": "SACRUM",
+      "region": "SPINAL_COLUMN",
+      "regionLabel": "Spinal column",
+      "file": "SACRUM",
+      "bytes": 9572284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/SPINAL_COLUMN/SACRUM.stl"
+    },
+    {
+      "id": "RIB_1_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_1_LEFT",
+      "bytes": 1321884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_1_LEFT.stl"
+    },
+    {
+      "id": "RIB_1_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_1_RIGHT",
+      "bytes": 1438084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_1_RIGHT.stl"
+    },
+    {
+      "id": "RIB_2_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_2_LEFT",
+      "bytes": 1626884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_2_LEFT.stl"
+    },
+    {
+      "id": "RIB_2_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_2_RIGHT",
+      "bytes": 1532884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_2_RIGHT.stl"
+    },
+    {
+      "id": "RIB_3_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_3_LEFT",
+      "bytes": 1771084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_3_LEFT.stl"
+    },
+    {
+      "id": "RIB_3_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_3_RIGHT",
+      "bytes": 1699484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_3_RIGHT.stl"
+    },
+    {
+      "id": "RIB_4_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_4_LEFT",
+      "bytes": 1864084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_4_LEFT.stl"
+    },
+    {
+      "id": "RIB_4_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_4_RIGHT",
+      "bytes": 1818684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_4_RIGHT.stl"
+    },
+    {
+      "id": "RIB_5_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_5_LEFT",
+      "bytes": 1969684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_5_LEFT.stl"
+    },
+    {
+      "id": "RIB_5_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_5_RIGHT",
+      "bytes": 1937684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_5_RIGHT.stl"
+    },
+    {
+      "id": "RIB_6_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_6_LEFT",
+      "bytes": 1959884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_6_LEFT.stl"
+    },
+    {
+      "id": "RIB_6_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_6_RIGHT",
+      "bytes": 2003484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_6_RIGHT.stl"
+    },
+    {
+      "id": "RIB_7_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_7_LEFT",
+      "bytes": 2115084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_7_LEFT.stl"
+    },
+    {
+      "id": "RIB_7_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_7_RIGHT",
+      "bytes": 2141284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_7_RIGHT.stl"
+    },
+    {
+      "id": "RIB_8_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_8_LEFT",
+      "bytes": 2048884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_8_LEFT.stl"
+    },
+    {
+      "id": "RIB_8_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_8_RIGHT",
+      "bytes": 1997684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_8_RIGHT.stl"
+    },
+    {
+      "id": "RIB_9_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_9_LEFT",
+      "bytes": 1869284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_9_LEFT.stl"
+    },
+    {
+      "id": "RIB_9_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_9_RIGHT",
+      "bytes": 1884084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_9_RIGHT.stl"
+    },
+    {
+      "id": "RIB_10_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_10_LEFT",
+      "bytes": 1646684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_10_LEFT.stl"
+    },
+    {
+      "id": "RIB_10_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_10_RIGHT",
+      "bytes": 1469284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_10_RIGHT.stl"
+    },
+    {
+      "id": "RIB_11_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_11_LEFT",
+      "bytes": 1213884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_11_LEFT.stl"
+    },
+    {
+      "id": "RIB_11_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_11_RIGHT",
+      "bytes": 1272084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_11_RIGHT.stl"
+    },
+    {
+      "id": "RIB_12_LEFT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_12_LEFT",
+      "bytes": 724484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_12_LEFT.stl"
+    },
+    {
+      "id": "RIB_12_RIGHT",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "RIB_12_RIGHT",
+      "bytes": 912484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/RIB_12_RIGHT.stl"
+    },
+    {
+      "id": "STERNUM",
+      "region": "THORAX",
+      "regionLabel": "Thorax",
+      "file": "STERNUM",
+      "bytes": 3089284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/THORAX/STERNUM.stl"
+    },
+    {
+      "id": "CLAVICLE_LEFT",
+      "region": "UPPER_EXTREMITY_LEFT",
+      "regionLabel": "Upper extremity (left)",
+      "file": "CLAVICLE_LEFT",
+      "bytes": 1879284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_LEFT/CLAVICLE_LEFT.stl"
+    },
+    {
+      "id": "HUMERUS_LEFT",
+      "region": "UPPER_EXTREMITY_LEFT",
+      "regionLabel": "Upper extremity (left)",
+      "file": "HUMERUS_LEFT",
+      "bytes": 5721884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_LEFT/HUMERUS_LEFT.stl"
+    },
+    {
+      "id": "RADIUS_LEFT",
+      "region": "UPPER_EXTREMITY_LEFT",
+      "regionLabel": "Upper extremity (left)",
+      "file": "RADIUS_LEFT",
+      "bytes": 2573884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_LEFT/RADIUS_LEFT.stl"
+    },
+    {
+      "id": "SCAPULA_LEFT",
+      "region": "UPPER_EXTREMITY_LEFT",
+      "regionLabel": "Upper extremity (left)",
+      "file": "SCAPULA_LEFT",
+      "bytes": 7382684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_LEFT/SCAPULA_LEFT.stl"
+    },
+    {
+      "id": "ULNA_LEFT",
+      "region": "UPPER_EXTREMITY_LEFT",
+      "regionLabel": "Upper extremity (left)",
+      "file": "ULNA_LEFT",
+      "bytes": 2850084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_LEFT/ULNA_LEFT.stl"
+    },
+    {
+      "id": "CLAVICLE_RIGHT",
+      "region": "UPPER_EXTREMITY_RIGHT",
+      "regionLabel": "Upper extremity (right)",
+      "file": "CLAVICLE_RIGHT",
+      "bytes": 1988484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_RIGHT/CLAVICLE_RIGHT.stl"
+    },
+    {
+      "id": "HUMERUS_RIGHT",
+      "region": "UPPER_EXTREMITY_RIGHT",
+      "regionLabel": "Upper extremity (right)",
+      "file": "HUMERUS_RIGHT",
+      "bytes": 5154284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_RIGHT/HUMERUS_RIGHT.stl"
+    },
+    {
+      "id": "RADIUS_RIGHT",
+      "region": "UPPER_EXTREMITY_RIGHT",
+      "regionLabel": "Upper extremity (right)",
+      "file": "RADIUS_RIGHT",
+      "bytes": 2190084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_RIGHT/RADIUS_RIGHT.stl"
+    },
+    {
+      "id": "SCAPULA_RIGHT",
+      "region": "UPPER_EXTREMITY_RIGHT",
+      "regionLabel": "Upper extremity (right)",
+      "file": "SCAPULA_RIGHT",
+      "bytes": 7354684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_RIGHT/SCAPULA_RIGHT.stl"
+    },
+    {
+      "id": "ULNA_RIGHT",
+      "region": "UPPER_EXTREMITY_RIGHT",
+      "regionLabel": "Upper extremity (right)",
+      "file": "ULNA_RIGHT",
+      "bytes": 1431484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/UPPER_EXTREMITY_RIGHT/ULNA_RIGHT.stl"
+    },
+    {
+      "id": "CAPITATE_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "CAPITATE_LEFT",
+      "bytes": 294084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/CAPITATE_LEFT.stl"
+    },
+    {
+      "id": "HAMATE_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "HAMATE_LEFT",
+      "bytes": 234284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/HAMATE_LEFT.stl"
+    },
+    {
+      "id": "LUNATE_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "LUNATE_LEFT",
+      "bytes": 201684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/LUNATE_LEFT.stl"
+    },
+    {
+      "id": "METACARPAL_1_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "METACARPAL_1_LEFT",
+      "bytes": 478284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/METACARPAL_1_LEFT.stl"
+    },
+    {
+      "id": "METACARPAL_2_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "METACARPAL_2_LEFT",
+      "bytes": 616884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/METACARPAL_2_LEFT.stl"
+    },
+    {
+      "id": "METACARPAL_3_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "METACARPAL_3_LEFT",
+      "bytes": 616484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/METACARPAL_3_LEFT.stl"
+    },
+    {
+      "id": "METACARPAL_4_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "METACARPAL_4_LEFT",
+      "bytes": 415484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/METACARPAL_4_LEFT.stl"
+    },
+    {
+      "id": "METACARPAL_5_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "METACARPAL_5_LEFT",
+      "bytes": 397084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/METACARPAL_5_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_1_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "PHALANGE_HAND_1_LEFT",
+      "bytes": 430484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/PHALANGE_HAND_1_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_2_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "PHALANGE_HAND_2_LEFT",
+      "bytes": 639084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/PHALANGE_HAND_2_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_3_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "PHALANGE_HAND_3_LEFT",
+      "bytes": 748084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/PHALANGE_HAND_3_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_4_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "PHALANGE_HAND_4_LEFT",
+      "bytes": 662884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/PHALANGE_HAND_4_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_5_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "PHALANGE_HAND_5_LEFT",
+      "bytes": 457084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/PHALANGE_HAND_5_LEFT.stl"
+    },
+    {
+      "id": "PISIFORM_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "PISIFORM_LEFT",
+      "bytes": 101884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/PISIFORM_LEFT.stl"
+    },
+    {
+      "id": "SCAPHOID_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "SCAPHOID_LEFT",
+      "bytes": 274684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/SCAPHOID_LEFT.stl"
+    },
+    {
+      "id": "TRAPEZIUM_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "TRAPEZIUM_LEFT",
+      "bytes": 228284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/TRAPEZIUM_LEFT.stl"
+    },
+    {
+      "id": "TRAPEZOID_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "TRAPEZOID_LEFT",
+      "bytes": 92484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/TRAPEZOID_LEFT.stl"
+    },
+    {
+      "id": "TRIQUETRUM_LEFT",
+      "region": "HAND_LEFT",
+      "regionLabel": "Hand (left)",
+      "file": "TRIQUETRUM_LEFT",
+      "bytes": 158684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_LEFT/TRIQUETRUM_LEFT.stl"
+    },
+    {
+      "id": "CAPITATE_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "CAPITATE_RIGHT",
+      "bytes": 280084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/CAPITATE_RIGHT.stl"
+    },
+    {
+      "id": "HAMATE_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "HAMATE_RIGHT",
+      "bytes": 232684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/HAMATE_RIGHT.stl"
+    },
+    {
+      "id": "LUNATE_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "LUNATE_RIGHT",
+      "bytes": 200484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/LUNATE_RIGHT.stl"
+    },
+    {
+      "id": "METACARPAL_1_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "METACARPAL_1_RIGHT",
+      "bytes": 482284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/METACARPAL_1_RIGHT.stl"
+    },
+    {
+      "id": "METACARPAL_2_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "METACARPAL_2_RIGHT",
+      "bytes": 615684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/METACARPAL_2_RIGHT.stl"
+    },
+    {
+      "id": "METACARPAL_3_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "METACARPAL_3_RIGHT",
+      "bytes": 596684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/METACARPAL_3_RIGHT.stl"
+    },
+    {
+      "id": "METACARPAL_4_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "METACARPAL_4_RIGHT",
+      "bytes": 406484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/METACARPAL_4_RIGHT.stl"
+    },
+    {
+      "id": "METACARPAL_5_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "METACARPAL_5_RIGHT",
+      "bytes": 386684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/METACARPAL_5_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_1_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "PHALANGE_HAND_1_RIGHT",
+      "bytes": 408684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/PHALANGE_HAND_1_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_2_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "PHALANGE_HAND_2_RIGHT",
+      "bytes": 652284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/PHALANGE_HAND_2_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_3_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "PHALANGE_HAND_3_RIGHT",
+      "bytes": 711884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/PHALANGE_HAND_3_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_4_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "PHALANGE_HAND_4_RIGHT",
+      "bytes": 615284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/PHALANGE_HAND_4_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_HAND_5_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "PHALANGE_HAND_5_RIGHT",
+      "bytes": 451084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/PHALANGE_HAND_5_RIGHT.stl"
+    },
+    {
+      "id": "PISIFORM_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "PISIFORM_RIGHT",
+      "bytes": 109684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/PISIFORM_RIGHT.stl"
+    },
+    {
+      "id": "SCAPHOID_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "SCAPHOID_RIGHT",
+      "bytes": 265284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/SCAPHOID_RIGHT.stl"
+    },
+    {
+      "id": "TRAPEZIUM_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "TRAPEZIUM_RIGHT",
+      "bytes": 200484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/TRAPEZIUM_RIGHT.stl"
+    },
+    {
+      "id": "TRAPEZOID_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "TRAPEZOID_RIGHT",
+      "bytes": 132684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/TRAPEZOID_RIGHT.stl"
+    },
+    {
+      "id": "TRIQUETRUM_RIGHT",
+      "region": "HAND_RIGHT",
+      "regionLabel": "Hand (right)",
+      "file": "TRIQUETRUM_RIGHT",
+      "bytes": 160084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/HAND_RIGHT/TRIQUETRUM_RIGHT.stl"
+    },
+    {
+      "id": "FEMUR_LEFT",
+      "region": "LOWER_EXTREMITY_LEFT",
+      "regionLabel": "Lower extremity (left)",
+      "file": "FEMUR_LEFT",
+      "bytes": 12512884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_LEFT/FEMUR_LEFT.stl"
+    },
+    {
+      "id": "FIBULA_LEFT",
+      "region": "LOWER_EXTREMITY_LEFT",
+      "regionLabel": "Lower extremity (left)",
+      "file": "FIBULA_LEFT",
+      "bytes": 3044284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_LEFT/FIBULA_LEFT.stl"
+    },
+    {
+      "id": "HIP_LEFT",
+      "region": "LOWER_EXTREMITY_LEFT",
+      "regionLabel": "Lower extremity (left)",
+      "file": "HIP_LEFT",
+      "bytes": 14247084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_LEFT/HIP_LEFT.stl"
+    },
+    {
+      "id": "PATELLA_LEFT",
+      "region": "LOWER_EXTREMITY_LEFT",
+      "regionLabel": "Lower extremity (left)",
+      "file": "PATELLA_LEFT",
+      "bytes": 995884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_LEFT/PATELLA_LEFT.stl"
+    },
+    {
+      "id": "TIBIA_LEFT",
+      "region": "LOWER_EXTREMITY_LEFT",
+      "regionLabel": "Lower extremity (left)",
+      "file": "TIBIA_LEFT",
+      "bytes": 8185284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_LEFT/TIBIA_LEFT.stl"
+    },
+    {
+      "id": "FEMUR_RIGHT",
+      "region": "LOWER_EXTREMITY_RIGHT",
+      "regionLabel": "Lower extremity (right)",
+      "file": "FEMUR_RIGHT",
+      "bytes": 12554884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_RIGHT/FEMUR_RIGHT.stl"
+    },
+    {
+      "id": "FIBULA_RIGHT",
+      "region": "LOWER_EXTREMITY_RIGHT",
+      "regionLabel": "Lower extremity (right)",
+      "file": "FIBULA_RIGHT",
+      "bytes": 3059684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_RIGHT/FIBULA_RIGHT.stl"
+    },
+    {
+      "id": "HIP_RIGHT",
+      "region": "LOWER_EXTREMITY_RIGHT",
+      "regionLabel": "Lower extremity (right)",
+      "file": "HIP_RIGHT",
+      "bytes": 14075284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_RIGHT/HIP_RIGHT.stl"
+    },
+    {
+      "id": "PATELLA_RIGHT",
+      "region": "LOWER_EXTREMITY_RIGHT",
+      "regionLabel": "Lower extremity (right)",
+      "file": "PATELLA_RIGHT",
+      "bytes": 1020684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_RIGHT/PATELLA_RIGHT.stl"
+    },
+    {
+      "id": "TIBIA_RIGHT",
+      "region": "LOWER_EXTREMITY_RIGHT",
+      "regionLabel": "Lower extremity (right)",
+      "file": "TIBIA_RIGHT",
+      "bytes": 8255684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_RIGHT/TIBIA_RIGHT.stl"
+    },
+    {
+      "id": "CALCANEUS_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "CALCANEUS_LEFT",
+      "bytes": 2437884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/CALCANEUS_LEFT.stl"
+    },
+    {
+      "id": "CUBOID_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "CUBOID_LEFT",
+      "bytes": 676284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/CUBOID_LEFT.stl"
+    },
+    {
+      "id": "INTERMEDIATE_CUNEIFORM_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "INTERMEDIATE_CUNEIFORM_LEFT",
+      "bytes": 335684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/INTERMEDIATE_CUNEIFORM_LEFT.stl"
+    },
+    {
+      "id": "LATERAL_CUNEIFORM_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "LATERAL_CUNEIFORM_LEFT",
+      "bytes": 376484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/LATERAL_CUNEIFORM_LEFT.stl"
+    },
+    {
+      "id": "MEDIAL_CUNEIFORM_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "MEDIAL_CUNEIFORM_LEFT",
+      "bytes": 563884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/MEDIAL_CUNEIFORM_LEFT.stl"
+    },
+    {
+      "id": "METATARSAL_1_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "METATARSAL_1_LEFT",
+      "bytes": 1011484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/METATARSAL_1_LEFT.stl"
+    },
+    {
+      "id": "METATARSAL_2_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "METATARSAL_2_LEFT",
+      "bytes": 683084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/METATARSAL_2_LEFT.stl"
+    },
+    {
+      "id": "METATARSAL_3_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "METATARSAL_3_LEFT",
+      "bytes": 623484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/METATARSAL_3_LEFT.stl"
+    },
+    {
+      "id": "METATARSAL_4_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "METATARSAL_4_LEFT",
+      "bytes": 592084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/METATARSAL_4_LEFT.stl"
+    },
+    {
+      "id": "METATARSAL_5_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "METATARSAL_5_LEFT",
+      "bytes": 628884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/METATARSAL_5_LEFT.stl"
+    },
+    {
+      "id": "NAVICULAR_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "NAVICULAR_LEFT",
+      "bytes": 649484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/NAVICULAR_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_1_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "PHALANGE_FOOT_1_LEFT",
+      "bytes": 777284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/PHALANGE_FOOT_1_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_2_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "PHALANGE_FOOT_2_LEFT",
+      "bytes": 372284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/PHALANGE_FOOT_2_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_3_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "PHALANGE_FOOT_3_LEFT",
+      "bytes": 297284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/PHALANGE_FOOT_3_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_4_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "PHALANGE_FOOT_4_LEFT",
+      "bytes": 261284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/PHALANGE_FOOT_4_LEFT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_5_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "PHALANGE_FOOT_5_LEFT",
+      "bytes": 266884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/PHALANGE_FOOT_5_LEFT.stl"
+    },
+    {
+      "id": "TALUS_LEFT",
+      "region": "FOOT_LEFT",
+      "regionLabel": "Foot (left)",
+      "file": "TALUS_LEFT",
+      "bytes": 1568684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT/TALUS_LEFT.stl"
+    },
+    {
+      "id": "CALCANEUS_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "CALCANEUS_RIGHT",
+      "bytes": 2492884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/CALCANEUS_RIGHT.stl"
+    },
+    {
+      "id": "CUBOID_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "CUBOID_RIGHT",
+      "bytes": 677684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/CUBOID_RIGHT.stl"
+    },
+    {
+      "id": "INTERMEDIATE_CUNEIFORM_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "INTERMEDIATE_CUNEIFORM_RIGHT",
+      "bytes": 310484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/INTERMEDIATE_CUNEIFORM_RIGHT.stl"
+    },
+    {
+      "id": "LATERAL_CUNEIFORM_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "LATERAL_CUNEIFORM_RIGHT",
+      "bytes": 379884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/LATERAL_CUNEIFORM_RIGHT.stl"
+    },
+    {
+      "id": "MEDIAL_CUNEIFORM_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "MEDIAL_CUNEIFORM_RIGHT",
+      "bytes": 569684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/MEDIAL_CUNEIFORM_RIGHT.stl"
+    },
+    {
+      "id": "METATARSAL_1_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "METATARSAL_1_RIGHT",
+      "bytes": 1092084,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/METATARSAL_1_RIGHT.stl"
+    },
+    {
+      "id": "METATARSAL_2_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "METATARSAL_2_RIGHT",
+      "bytes": 656484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/METATARSAL_2_RIGHT.stl"
+    },
+    {
+      "id": "METATARSAL_3_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "METATARSAL_3_RIGHT",
+      "bytes": 627284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/METATARSAL_3_RIGHT.stl"
+    },
+    {
+      "id": "METATARSAL_4_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "METATARSAL_4_RIGHT",
+      "bytes": 587684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/METATARSAL_4_RIGHT.stl"
+    },
+    {
+      "id": "METATARSAL_5_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "METATARSAL_5_RIGHT",
+      "bytes": 615484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/METATARSAL_5_RIGHT.stl"
+    },
+    {
+      "id": "NAVICULAR_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "NAVICULAR_RIGHT",
+      "bytes": 619484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/NAVICULAR_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_1_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "PHALANGE_FOOT_1_RIGHT",
+      "bytes": 722684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/PHALANGE_FOOT_1_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_2_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "PHALANGE_FOOT_2_RIGHT",
+      "bytes": 352884,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/PHALANGE_FOOT_2_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_3_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "PHALANGE_FOOT_3_RIGHT",
+      "bytes": 327484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/PHALANGE_FOOT_3_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_4_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "PHALANGE_FOOT_4_RIGHT",
+      "bytes": 286684,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/PHALANGE_FOOT_4_RIGHT.stl"
+    },
+    {
+      "id": "PHALANGE_FOOT_5_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "PHALANGE_FOOT_5_RIGHT",
+      "bytes": 248484,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/PHALANGE_FOOT_5_RIGHT.stl"
+    },
+    {
+      "id": "TALUS_RIGHT",
+      "region": "FOOT_RIGHT",
+      "regionLabel": "Foot (right)",
+      "file": "TALUS_RIGHT",
+      "bytes": 1568284,
+      "url": "https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female/FOOT_RIGHT/TALUS_RIGHT.stl"
+    }
+  ]
+}
