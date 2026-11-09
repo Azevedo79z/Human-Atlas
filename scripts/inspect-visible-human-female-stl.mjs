@@ -25,6 +25,7 @@ for(const file of files){
  try{
   const count=buf.length>=84?buf.readUInt32LE(80):-1;
   if(count>=0&&84+count*50===buf.length){
+   if(count===0)throw new Error('binary STL contains zero triangles');
    format='binary';triangles=count;
    for(let i=0;i<count;i++){
     const off=84+i*50,verts=[];
@@ -33,12 +34,16 @@ for(const file of files){
    }
   }else{
    const txt=buf.toString('utf8');
-   const re=/\\bvertex\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)/g;let m,verts=[];
-   while((m=re.exec(txt))){const v=m.slice(1,4).map(Number);add(v);verts.push(v);if(verts.length===3){triangles++;if(Math.hypot(...cross(sub(verts[1],verts[0]),sub(verts[2],verts[0])))<1e-10)degenerate++;verts=[];}}
-   if(!triangles)throw new Error('not recognized as binary or ASCII STL');
+   const re=/\\bvertex\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)/g;let m,verts=[],vertexCount=0;
+   while((m=re.exec(txt))){const v=m.slice(1,4).map(Number);add(v);verts.push(v);vertexCount++;if(verts.length===3){triangles++;if(Math.hypot(...cross(sub(verts[1],verts[0]),sub(verts[2],verts[0])))<1e-10)degenerate++;verts=[];}}
+   if(!vertexCount)throw new Error('not recognized as binary or ASCII STL');
+   if(vertexCount%3!==0)throw new Error(`ASCII STL has ${vertexCount} vertices; expected complete triangle groups of three`);
+   if(!triangles)throw new Error('ASCII STL contains zero triangles');
    format='ascii';
   }
   const size=lo.map((v,i)=>hi[i]-v),diagonal=Math.hypot(...size);
+  if(!Number.isFinite(diagonal)||size.some(value=>!Number.isFinite(value)))throw new Error('invalid or non-finite mesh bounds');
+  if(size.some(value=>value<=0))throw new Error(`mesh has a zero or negative bounding-box dimension: ${size.join(', ')}`);
   results.push({file:rel,format,bytes:buf.length,triangles,degenerateFacets:degenerate,bounds:{min:lo,max:hi},dimensions:size,diagonal});
  }catch(err){results.push({file:rel,format:'invalid',bytes:buf.length,error:err.message});}
 }
