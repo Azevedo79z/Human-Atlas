@@ -29,11 +29,13 @@ The dataset authors explain that final geometries were visually inspected and ov
 ### 3. NIH 3D / Human Reference Atlas — promising female whole-body reference, contents and license must be verified per asset
 
 - Candidate: NIH 3D entry 3DPX-020992, “Body, Female”: https://3d.nih.gov/entries/3DPX-020992
-- Published asset: `hra-reference-organ-united-female-v1.5.glb`.
+- Published asset: `hra-reference-organ-united-female-v1.5.glb`; download page: https://3d.nih.gov/entries/download/20992/2
 - The entry describes it as a Female-united reference-organ set derived from Visible Human data.
-- NIH 3D explicitly says licensing varies by model and users must review the assigned license. The landing page inspected for this register does not provide a clear license statement for this specific asset.
+- The download page exposes one GLB input file (`3d-vh-f-united.glb`) and one GLB output asset (`3d-vh-f-united`); the landing page labels the output `hra-reference-organ-united-female-v1.5.glb`.
+- NIH 3D's FAQ explicitly states that licenses vary by model and users must review the assigned license. The entry's visible landing-page text did not expose a clear license statement for this specific asset.
+- The downloadable output endpoint was discoverable, but the binary could not be retrieved in this inspection session. Therefore no GLB parser results, node count, object names, hierarchy, transforms, units, bounds or mesh statistics are claimed.
 - A unified GLB may contain named scene objects or combined objects. Its title alone does not establish that it contains individual muscles, tendons or ligaments.
-- Status: inspect metadata, node/object names, source details and assigned license before any reuse. Do not import until these checks pass.
+- Status: download route identified; binary inspection and exact license verification remain blocked. No import.
 
 ### 4. Z-Anatomy / BodyParts3D — useful for nomenclature and educational metadata, not a female-specific mesh source
 
@@ -48,7 +50,7 @@ The dataset authors explain that final geometries were visually inspected and ov
 |---|---|---|---|---|
 | Visible Human Female lower-extremity dataset | Yes | No | CC BY 4.0 | Retain existing lower-limb use; do not duplicate |
 | NLM Visible Human Female images | Yes, source images | Not pre-segmented | NLM describes source images as public domain | Potential segmentation source; high effort |
-| NIH 3D Female-united GLB | Female reference set | Not yet verified | Per-asset license unclear in inspected record | Inspect only; no import |
+| NIH 3D Female-united GLB | Female reference set | Not yet verified | Per-asset license unclear in inspected record | Download route identified; inspect only, no import |
 | Z-Anatomy / BodyParts3D | Not established for female mesh geometry | Anatomical content exists, sex-specific geometry not established | CC BY-SA / version-specific | Use for terminology and reviewed educational metadata only |
 
 ## Required gate before any import
