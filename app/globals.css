@@ -117,3 +117,10 @@ h1 .edition{font-family:inherit;font-weight:500;font-size:10px;letter-spacing:.0
 .structure-relations p{font-size:12px;line-height:1.6;color:#c0cbd4;margin:0}
 .relation-structures{display:flex;flex-wrap:wrap;gap:6px}
 .relation-structures span{font-size:10px;line-height:1.4;padding:5px 8px;border:1px solid rgba(130,145,160,.24);border-radius:999px;color:#d5dee5;background:rgba(130,145,160,.06)}
+
+/* Related structures are navigation controls, not decorative labels. */
+.relation-structures{display:flex;flex-wrap:wrap;gap:6px}
+.relation-chip{display:inline-flex!important;align-items:center;gap:5px;min-height:30px;padding:5px 9px!important;border:1px solid rgba(130,145,160,.28)!important;border-radius:999px!important;background:rgba(130,145,160,.07)!important;color:#d5dee5!important;font-size:10px!important;line-height:1.35!important;text-align:start;white-space:normal}
+.relation-chip:hover:not(:disabled){border-color:rgba(160,190,210,.65)!important;background:rgba(130,165,190,.16)!important;color:#fff!important}
+.relation-chip:focus-visible{outline:2px solid #a9c9df!important;outline-offset:2px}
+.relation-chip:disabled{opacity:.42;cursor:not-allowed}
