@@ -39,6 +39,7 @@ jobs:
           BASE="https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female"
           curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_LEFT/PATELLA_LEFT.stl?download=true" -o geometry-sample/PATELLA_LEFT.stl
           curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_LEFT/FEMUR_LEFT.stl?download=true" -o geometry-sample/FEMUR_LEFT.stl
+          curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_LEFT/TIBIA_LEFT.stl?download=true" -o geometry-sample/TIBIA_LEFT.stl
           curl -L --fail --retry 3 --retry-all-errors "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_SHA}/public/models/female-11.bin" -o geometry-sample/female-11.bin
           cp public/data/female-skeleton-source.json geometry-sample/
           cp public/models/atlas-female.json geometry-sample/
