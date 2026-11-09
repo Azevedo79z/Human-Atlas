@@ -138,3 +138,25 @@ O medidor agora informa, para cada região, a quantidade de marcos disponíveis,
 O relatório também compara distâncias entre centros esquerdo/direito para pares de ossos presentes nos dois lados (pelve, membros, metacarpos, tarso e metatarsos). A diferença é uma pista para assimetrias de escala ou posicionamento, não um teste clínico de simetria nem uma regra para espelhar anatomia. A anatomia real pode ter assimetrias.
 
 Esses diagnósticos só terão valores reais após uma nova execução do workflow com os 143 STL. Permanecem bloqueados a importação, a aplicação de transformações e a substituição de malhas do Atlas.
+
+
+## Auditoria de cobertura das articulações — 9 de novembro de 2026
+
+Foi acrescentado `scripts/audit-visible-human-female-joint-coverage.mjs`, uma auditoria somente de leitura que cruza os nomes do manifesto feminino com os componentes esperados de seis articulações. O relatório distingue estruturas nomeadas de estruturas que não foram encontradas pelo nome. Uma malha de osso inteiro não é contabilizada como identificação individual da cabeça, superfície articular, ligamento, tendão ou cartilagem.
+
+### Cobertura identificada no manifesto atual
+
+| Articulação | Estruturas nomeadas encontradas | Lacunas que exigem atenção |
+| --- | --- | --- |
+| Quadril | Regiões do ílio, púbis e ísquio; fêmur | Acetábulo e cabeça femoral não estão identificados separadamente; lábio e ligamentos do quadril não foram encontrados pelo nome |
+| Joelho | Fêmur, tíbia, fíbula, patela, meniscos, ligamentos cruzados e colaterais, cartilagem articular | A presença nominal não comprova superfícies, orientação ou encaixe |
+| Tornozelo | Tíbia, fíbula, tálus e calcâneo | Maléolos individualizados, ligamentos do tornozelo e cartilagem articular não foram encontrados pelo nome |
+| Ombro | Clavícula, escápula e úmero | Cavidade glenoidal, lábio, tendões do manguito rotador e ligamentos/cápsula não foram encontrados pelo nome |
+| Cotovelo | Úmero, rádio e ulna | Marcos do olécrano/incisura troclear, ligamentos e cartilagem articular não foram encontrados pelo nome |
+| Punho | Rádio, ulna e ossos do carpo | Complexo fibrocartilaginoso triangular, ligamentos radiocárpicos e cartilagem não foram encontrados pelo nome |
+
+**Importante:** este quadro é uma leitura nominal do manifesto, não uma avaliação visual ou biomecânica. Algumas estruturas são regiões de ossos maiores e podem ser representadas por seleção de superfície numa etapa futura; não devem ser inventadas como malhas independentes sem fonte anatômica confiável.
+
+### Automação
+
+O workflow agora verifica a sintaxe do novo auditor, executa a análise do manifesto e inclui `visible-human-female-joint-coverage.json` no artefato de pré-validação. O relatório real só será produzido quando o workflow executar. Nenhum STL ou chunk é modificado por essa auditoria.
