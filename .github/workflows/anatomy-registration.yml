@@ -25,3 +25,29 @@ jobs:
           node-version: '22.13.0'
       - name: Run anatomy registration tests
         run: node --experimental-strip-types --test app/anatomy-registration.test.ts
+
+  geometry-sample:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out atlas repository
+        uses: actions/checkout@v4
+      - name: Download pinned female STL samples and matching atlas chunk
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p geometry-sample
+          BASE="https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/53bd62452ae3fc34ba0fa6188517cd8ca9bf4a10/visible_human_3d_models/CT/Mesh/02_Female"
+          curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_LEFT/PATELLA_LEFT.stl?download=true" -o geometry-sample/PATELLA_LEFT.stl
+          curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_LEFT/FEMUR_LEFT.stl?download=true" -o geometry-sample/FEMUR_LEFT.stl
+          curl -L --fail --retry 3 --retry-all-errors "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_SHA}/public/models/female-11.bin" -o geometry-sample/female-11.bin
+          cp public/data/female-skeleton-source.json geometry-sample/
+          cp public/models/atlas-female.json geometry-sample/
+          sha256sum geometry-sample/* | tee geometry-sample/SHA256SUMS.txt
+          du -h geometry-sample/*
+      - name: Upload temporary geometry sample
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-registration-geometry-sample
+          path: geometry-sample/
+          if-no-files-found: error
+          retention-days: 3
