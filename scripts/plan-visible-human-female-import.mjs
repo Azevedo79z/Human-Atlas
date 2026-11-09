@@ -234,6 +234,7 @@ const report = {
   expectedMeshes:143,mappedMeshes:mappings.length,
   uniqueAtlasLandmarks:new Set(mappings.flatMap(mapping=>mapping.targets.map(target=>target.id))).size,
   axisRotation:rotation,
+  coverage,
   unitAssumption:{value:'millimetres',confirmed:false,warning:'STL has no unit metadata; this plan is not permission to import.'},
   regions,
   mappings:mappings.map(({relative,group,targets})=>({file:relative,group,targets})),
