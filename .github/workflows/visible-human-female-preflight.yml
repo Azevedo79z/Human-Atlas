@@ -17,6 +17,7 @@ on:
       - scripts/plan-visible-human-female-import.mjs
       - scripts/audit-visible-human-female-joint-coverage.mjs
       - scripts/audit-visible-human-female-soft-tissue-coverage.mjs
+      - scripts/audit-visible-human-female-muscle-layers.mjs
       - docs/VISIBLE-HUMAN-FEMALE-SKELETON-PREFLIGHT.md
 
 permissions:
@@ -52,6 +53,7 @@ jobs:
           node --check scripts/plan-visible-human-female-import.mjs
           node --check scripts/audit-visible-human-female-joint-coverage.mjs
           node --check scripts/audit-visible-human-female-soft-tissue-coverage.mjs
+          node --check scripts/audit-visible-human-female-muscle-layers.mjs
           node scripts/test-visible-human-female-inventory.mjs
           node scripts/test-visible-human-female-stl-inspector.mjs
 
@@ -69,6 +71,9 @@ jobs:
 
       - name: Audit female muscle, tendon and ligament coverage
         run: node scripts/audit-visible-human-female-soft-tissue-coverage.mjs > "$RUNNER_TEMP/visible-human-female-soft-tissue-coverage.json"
+
+      - name: Audit female muscle layers and learning metadata
+        run: node scripts/audit-visible-human-female-muscle-layers.mjs > "$RUNNER_TEMP/visible-human-female-muscle-layers.json"
 
       - name: Measure anatomical landmark registration
         continue-on-error: true
@@ -89,5 +94,6 @@ jobs:
             ${{ runner.temp }}/visible-human-female-import-plan.json
             ${{ runner.temp }}/visible-human-female-joint-coverage.json
             ${{ runner.temp }}/visible-human-female-soft-tissue-coverage.json
+            ${{ runner.temp }}/visible-human-female-muscle-layers.json
           if-no-files-found: warn
           retention-days: 14
