@@ -112,3 +112,11 @@ must also be checked against the tibia and additional landmarks, and the joint
 relationships and three-dimensional overlays must be reviewed before any scene
 integration. The transform has not been written into the application or applied
 to production assets.
+
+A second exploratory fit combined the left femur, patella and tibia, using
+bone-specific nearest-surface correspondences but one shared transform. On the
+sampled point clouds, symmetric surface RMS was approximately 8.18 mm (femur),
+3.43 mm (patella) and 6.37 mm (tibia). This is a better diagnostic than fitting
+the femur alone and then transferring that transform, but it remains a surface
+registration—not landmark validation—and must be checked against held-out
+right-side bones before it can be considered a candidate for visual review.
