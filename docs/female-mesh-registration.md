@@ -120,3 +120,27 @@ sampled point clouds, symmetric surface RMS was approximately 8.18 mm (femur),
 the femur alone and then transferring that transform, but it remains a surface
 registration—not landmark validation—and must be checked against held-out
 right-side bones before it can be considered a candidate for visual review.
+
+## Bilateral validation result — global overlay rejected
+
+The temporary geometry artifact was expanded to include the right femur and right
+tibia. A single exploratory transform fitted jointly to the left femur, left patella
+and left tibia did **not** generalize to the held-out right side:
+
+- Right femur symmetric nearest-surface RMS: approximately 42.35 mm.
+- Right tibia symmetric nearest-surface RMS: approximately 133.77 mm.
+
+A second independent scale check points in the same direction. The sampled
+left/right femur center separation is about 198.6 mm in the Visible Human source
+and about 240.0 mm in the HRA female atlas, while the femoral long-axis dimensions
+are close to a 1:1 millimetre-to-metre scale. Those proportions cannot both be
+matched by one uniform scale.
+
+**Decision:** reject a single global similarity transform for overlaying these
+Visible Human bones onto the current HRA female body. The mismatch may reflect
+different pose and/or body proportions; it must not be hidden by per-bone scaling
+or arbitrary joint offsets. Keep both references separate. The safe next design
+is a separately selectable Visible Human skeletal reference (with its own
+coordinate frame), unless a matching body-surface dataset and validated
+landmarks can be established. The current HRA body and its existing structures
+remain untouched.
