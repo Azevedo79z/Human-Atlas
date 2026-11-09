@@ -82,6 +82,22 @@ jobs:
       - name: Plan all 143 source-to-atlas mappings and regional transforms
         run: node scripts/plan-visible-human-female-import.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-import-plan.json"
 
+      - name: Validate source-to-Atlas coverage report
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            import assert from "node:assert/strict";
+            const report = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+            const coverage = report.coverage;
+            assert.ok(coverage, "coverage block must be present in the import plan");
+            assert.equal(coverage.sourceMeshes, 143, "all 143 source meshes must be classified");
+            assert.equal(coverage.atlasManifestInventory.nativeSkeletalParts >= 0, true);
+            assert.equal(coverage.atlasManifestInventory.borrowedParts >= 0, true);
+            assert.equal(coverage.sourceMeshesWithNativeSkeletalTarget + coverage.sourceMeshesMappedOnlyToBorrowedReferences <= 143, true);
+            assert.equal(Object.values(coverage.bySourceRegion).reduce((sum, region) => sum + region.sourceMeshes, 0), 143);
+            console.log(JSON.stringify({ status: "passed", sourceMeshes: coverage.sourceMeshes, bySourceRegion: coverage.bySourceRegion }, null, 2));
+          ' "$RUNNER_TEMP/visible-human-female-import-plan.json"
+
       - name: Upload read-only preflight reports
         if: always()
         uses: actions/upload-artifact@v4
