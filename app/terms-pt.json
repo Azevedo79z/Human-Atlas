@@ -262,5 +262,7 @@
   "obturator internus": "músculo obturador interno",
   "pectineus": "músculo pectíneo",
   "quadratus femoris": "músculo quadrado femoral",
-  "tensor fasciae latae": "músculo tensor da fáscia lata"
+  "tensor fasciae latae": "músculo tensor da fáscia lata",
+  "biceps femoris long": "cabeça longa do músculo bíceps femoral",
+  "biceps femoris short": "cabeça curta do músculo bíceps femoral"
 }
