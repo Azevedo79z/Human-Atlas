@@ -22,50 +22,11 @@ if (path.basename(root) !== '02_Female') {
 
 const bucket = 'https://huggingface.co/buckets/Azevedo79z/visible-human-3d-models-bucket/resolve/';
 const prefix = 'visible_human_3d_models/CT/Mesh/02_Female/';
-const files = [];
-const add = (region, filename) => files.push({ region, filename, key: `${region}/${filename}` });
-const sides = ['LEFT', 'RIGHT'];
+const { FEMALE_BONE_FILES, FEMALE_BONE_FILE_COUNT } = await import('./lib/visible-human-female-inventory.mjs');
+const files = FEMALE_BONE_FILES;
 
-for (const side of sides) {
-  for (const bone of [
-    'CALCANEUS', 'CUBOID', 'INTERMEDIATE_CUNEIFORM', 'LATERAL_CUNEIFORM',
-    'MEDIAL_CUNEIFORM', 'NAVICULAR', 'TALUS',
-  ]) add(`FOOT_${side}`, `${bone}_${side}.stl`);
-  for (let n = 1; n <= 5; n++) {
-    add(`FOOT_${side}`, `METATARSAL_${n}_${side}.stl`);
-    add(`FOOT_${side}`, `PHALANGE_FOOT_${n}_${side}.stl`);
-  }
-
-  for (const bone of [
-    'CAPITATE', 'HAMATE', 'LUNATE', 'PISIFORM', 'SCAPHOID',
-    'TRAPEZIUM', 'TRAPEZOID', 'TRIQUETRUM',
-  ]) add(`HAND_${side}`, `${bone}_${side}.stl`);
-  for (let n = 1; n <= 5; n++) {
-    add(`HAND_${side}`, `METACARPAL_${n}_${side}.stl`);
-    add(`HAND_${side}`, `PHALANGE_HAND_${n}_${side}.stl`);
-  }
-
-  for (const bone of ['FEMUR', 'FIBULA', 'HIP', 'PATELLA', 'TIBIA']) {
-    add(`LOWER_EXTREMITY_${side}`, `${bone}_${side}.stl`);
-  }
-  for (const bone of ['CLAVICLE', 'HUMERUS', 'RADIUS', 'SCAPULA', 'ULNA']) {
-    add(`UPPER_EXTREMITY_${side}`, `${bone}_${side}.stl`);
-  }
-}
-
-add('SKULL', 'SKULL_CRANIAL_MAXILLA.stl');
-add('SKULL', 'SKULL_MANDIBLE.stl');
-add('SPINAL_COLUMN', 'SACRUM.stl');
-for (const [prefixName, last] of [['C', 7], ['T', 12], ['L', 6]]) {
-  for (let n = 1; n <= last; n++) add('SPINAL_COLUMN', `VERTEBRA_${prefixName}${n}.stl`);
-}
-add('THORAX', 'STERNUM.stl');
-for (let n = 1; n <= 12; n++) {
-  for (const side of sides) add('THORAX', `RIB_${n}_${side}.stl`);
-}
-
-if (files.length !== 143 || new Set(files.map(file => file.key)).size !== 143) {
-  throw new Error(`Internal inventory error: expected 143 unique STL paths, generated ${files.length}.`);
+if (files.length !== FEMALE_BONE_FILE_COUNT || files.length !== 143) {
+  throw new Error(`Canonical inventory error: expected 143 STL paths, found ${files.length}.`);
 }
 
 await fs.mkdir(root, { recursive: true });
