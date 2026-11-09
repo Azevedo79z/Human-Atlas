@@ -58,7 +58,7 @@ function readStlBounds(file) {
     }
   } else {
     const text = buffer.toString('utf8');
-    const vertex = /\\bvertex\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)/g;
+    const vertex = /\bvertex\s+([-+\d.eE]+)\s+([-+\d.eE]+)\s+([-+\d.eE]+)/g;
     let match, found = 0;
     while ((match = vertex.exec(text))) {
       add(match.slice(1, 4).map(Number));
