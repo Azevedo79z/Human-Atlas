@@ -161,7 +161,7 @@ for (const side of ['LEFT', 'RIGHT']) {
     addAnchor(`PHALANGE_FOOT_${n}_${side}`, `FOOT_${side}/PHALANGE_FOOT_${n}_${side}.stl`, `${title} ${toe}`, matches);
   }
 }
-const skullTargets = borrowedParts.filter(part => !/mandible|hyoid|alar cartilage/i.test(part.name));
+const skullTargets = borrowedParts.filter(part => /maxilla|nasal bone|palatine bone|parietal bone|temporal bone|zygomatic bone|frontal bone|occipital bone|sphenoid bone|vomer|ethmoid/i.test(part.name));
 addAnchor('SKULL_CRANIAL_MAXILLA', 'SKULL/SKULL_CRANIAL_MAXILLA.stl', 'Cranium and maxilla', skullTargets);
 addAnchor('SKULL_MANDIBLE', 'SKULL/SKULL_MANDIBLE.stl', 'Mandible', borrowedParts.filter(part => part.name.toLowerCase() === 'mandible'));
 
