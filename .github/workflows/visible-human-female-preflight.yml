@@ -1,0 +1,115 @@
+name: Visible Human Female STL preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - central-forense/esqueleto-feminino-visible-human-preflight
+    paths:
+      - .github/workflows/visible-human-female-preflight.yml
+      - scripts/lib/visible-human-female-inventory.mjs
+      - scripts/test-visible-human-female-inventory.mjs
+      - scripts/test-visible-human-female-stl-inspector.mjs
+      - scripts/download-visible-human-female-bones.mjs
+      - scripts/audit-visible-human-female-bones.mjs
+      - scripts/inspect-visible-human-female-stl.mjs
+      - scripts/measure-visible-human-female-registration.mjs
+      - scripts/plan-visible-human-female-import.mjs
+      - scripts/audit-visible-human-female-joint-coverage.mjs
+      - scripts/audit-visible-human-female-soft-tissue-coverage.mjs
+      - scripts/audit-visible-human-female-muscle-layers.mjs
+      - docs/VISIBLE-HUMAN-FEMALE-SKELETON-PREFLIGHT.md
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visible-human-female-preflight
+  cancel-in-progress: true
+
+jobs:
+  inspect:
+    name: Download and inspect 143 female STL meshes
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out homologation branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check JavaScript syntax and canonical female inventory
+        run: |
+          node --check scripts/lib/visible-human-female-inventory.mjs
+          node --check scripts/test-visible-human-female-inventory.mjs
+          node --check scripts/test-visible-human-female-stl-inspector.mjs
+          node --check scripts/audit-visible-human-female-bones.mjs
+          node --check scripts/inspect-visible-human-female-stl.mjs
+          node --check scripts/measure-visible-human-female-registration.mjs
+          node --check scripts/download-visible-human-female-bones.mjs
+          node --check scripts/plan-visible-human-female-import.mjs
+          node --check scripts/audit-visible-human-female-joint-coverage.mjs
+          node --check scripts/audit-visible-human-female-soft-tissue-coverage.mjs
+          node --check scripts/audit-visible-human-female-muscle-layers.mjs
+          node scripts/test-visible-human-female-inventory.mjs
+          node scripts/test-visible-human-female-stl-inspector.mjs
+
+      - name: Download source STL files from the public Hugging Face bucket
+        run: node scripts/download-visible-human-female-bones.mjs "$RUNNER_TEMP/02_Female"
+
+      - name: Audit exact inventory and existing Atlas coverage
+        run: node scripts/audit-visible-human-female-bones.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-inventory.json"
+
+      - name: Inspect STL geometry, coordinates and degenerate facets
+        run: node scripts/inspect-visible-human-female-stl.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-geometry.json"
+
+      - name: Audit female joint component coverage in the Atlas manifest
+        run: node scripts/audit-visible-human-female-joint-coverage.mjs > "$RUNNER_TEMP/visible-human-female-joint-coverage.json"
+
+      - name: Audit female muscle, tendon and ligament coverage
+        run: node scripts/audit-visible-human-female-soft-tissue-coverage.mjs > "$RUNNER_TEMP/visible-human-female-soft-tissue-coverage.json"
+
+      - name: Audit female muscle layers and learning metadata
+        run: node scripts/audit-visible-human-female-muscle-layers.mjs > "$RUNNER_TEMP/visible-human-female-muscle-layers.json"
+
+      - name: Measure anatomical landmark registration
+        continue-on-error: true
+        run: node scripts/measure-visible-human-female-registration.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-registration.json"
+
+      - name: Plan all 143 source-to-atlas mappings and regional transforms
+        run: node scripts/plan-visible-human-female-import.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-import-plan.json"
+
+      - name: Validate source-to-Atlas coverage report
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            import assert from "node:assert/strict";
+            const report = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+            const coverage = report.coverage;
+            assert.ok(coverage, "coverage block must be present in the import plan");
+            assert.equal(coverage.sourceMeshes, 143, "all 143 source meshes must be classified");
+            assert.equal(coverage.atlasManifestInventory.nativeSkeletalParts >= 0, true);
+            assert.equal(coverage.atlasManifestInventory.borrowedParts >= 0, true);
+            assert.equal(coverage.sourceMeshesWithNativeSkeletalTarget + coverage.sourceMeshesMappedOnlyToBorrowedReferences <= 143, true);
+            assert.equal(Object.values(coverage.bySourceRegion).reduce((sum, region) => sum + region.sourceMeshes, 0), 143);
+            console.log(JSON.stringify({ status: "passed", sourceMeshes: coverage.sourceMeshes, bySourceRegion: coverage.bySourceRegion }, null, 2));
+          ' "$RUNNER_TEMP/visible-human-female-import-plan.json"
+
+      - name: Upload read-only preflight reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visible-human-female-preflight
+          path: |
+            ${{ runner.temp }}/visible-human-female-inventory.json
+            ${{ runner.temp }}/visible-human-female-geometry.json
+            ${{ runner.temp }}/visible-human-female-registration.json
+            ${{ runner.temp }}/visible-human-female-import-plan.json
+            ${{ runner.temp }}/visible-human-female-joint-coverage.json
+            ${{ runner.temp }}/visible-human-female-soft-tissue-coverage.json
+            ${{ runner.temp }}/visible-human-female-muscle-layers.json
+          if-no-files-found: warn
+          retention-days: 14
