@@ -46,3 +46,20 @@ BoneHub's 143 female bone labels are therefore a strong candidate for a separate
 Advance BoneHub to a **female skeleton inventory and compatibility audit**, not direct import. It is a promising female-specific source for the missing skeletal regions under CC BY 4.0, but it is one cadaver, has documented acquisition/segmentation limitations, and cannot fill the soft-tissue gap. Keep existing HRA and Visible Human Female muscle assets unchanged while comparing source coverage.
 
 No geometry was downloaded or imported in this research step. No production assets or deployments were changed.
+
+## Atlas coverage audit implementation
+
+The existing read-only import planner, `scripts/plan-visible-human-female-import.mjs`, now reports an explicit `coverage` section in its JSON output. It classifies each of the 143 source meshes by the target systems already present in `public/models/atlas-female.json`:
+
+- meshes with at least one target in the native `skeletal` system;
+- meshes mapped only to `borrowed` references;
+- meshes mapped to mixed systems;
+- meshes mapped to multiple Atlas targets;
+- unique native skeletal and borrowed target IDs used;
+- source-region breakdowns for these categories;
+- total native skeletal and borrowed manifest inventory counts.
+
+This classification is intentionally conservative: a `borrowed` target is not counted as native female geometry. A mapping to a named Atlas part is not proof of geometric equivalence, sex-specific provenance, correct registration or safe replacement. Grouped source structures mapped to multiple Atlas parts require manual anatomical review.
+
+The planner continues to require the exact 143-file source inventory and inspect STL bounds. Its unit assumption and placeholder-derived target positions remain provisional. The generated import plan is a dry-run report, not an import authorization. The existing workflow already runs this planner and uploads its JSON output as `visible-human-female-import-plan.json`; no new production workflow or asset deployment was added.
+
