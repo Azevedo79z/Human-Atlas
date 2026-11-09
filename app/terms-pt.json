@@ -138,5 +138,12 @@
   "left eye": "olho esquerdo",
   "right eye": "olho direito",
   "left femur": "fêmur esquerdo",
-  "right femur": "fêmur direito"
+  "right femur": "fêmur direito",
+  "biceps brachii": "músculo bíceps braquial",
+  "short head of biceps brachii": "cabeça curta do músculo bíceps braquial",
+  "long head of biceps brachii": "cabeça longa do músculo bíceps braquial",
+  "short head of right biceps brachii": "cabeça curta do músculo bíceps braquial direito",
+  "short head of left biceps brachii": "cabeça curta do músculo bíceps braquial esquerdo",
+  "long head of right biceps brachii": "cabeça longa do músculo bíceps braquial direito",
+  "long head of left biceps brachii": "cabeça longa do músculo bíceps braquial esquerdo"
 }
