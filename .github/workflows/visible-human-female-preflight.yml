@@ -1,0 +1,54 @@
+name: Visible Human Female STL preflight
+
+on:
+  push:
+    branches:
+      - central-forense/esqueleto-feminino-visible-human-preflight
+    paths:
+      - .github/workflows/visible-human-female-preflight.yml
+      - scripts/download-visible-human-female-bones.mjs
+      - scripts/audit-visible-human-female-bones.mjs
+      - scripts/inspect-visible-human-female-stl.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visible-human-female-preflight
+  cancel-in-progress: true
+
+jobs:
+  inspect:
+    name: Download and inspect 143 female STL meshes
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out homologation branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Download source STL files from the public Hugging Face bucket
+        run: node scripts/download-visible-human-female-bones.mjs "$RUNNER_TEMP/02_Female"
+
+      - name: Audit inventory and existing Atlas coverage
+        continue-on-error: true
+        run: node scripts/audit-visible-human-female-bones.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-inventory.json"
+
+      - name: Inspect STL geometry, coordinates and degenerate facets
+        continue-on-error: true
+        run: node scripts/inspect-visible-human-female-stl.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-geometry.json"
+
+      - name: Upload read-only preflight reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visible-human-female-preflight
+          path: |
+            ${{ runner.temp }}/visible-human-female-inventory.json
+            ${{ runner.temp }}/visible-human-female-geometry.json
+          if-no-files-found: warn
+          retention-days: 14
