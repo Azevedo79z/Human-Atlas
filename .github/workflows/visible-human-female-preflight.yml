@@ -1,6 +1,7 @@
 name: Visible Human Female STL preflight
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - central-forense/esqueleto-feminino-visible-human-preflight
@@ -11,6 +12,7 @@ on:
       - scripts/inspect-visible-human-female-stl.mjs
       - scripts/measure-visible-human-female-registration.mjs
       - scripts/plan-visible-human-female-import.mjs
+      - docs/VISIBLE-HUMAN-FEMALE-SKELETON-PREFLIGHT.md
 
 permissions:
   contents: read
