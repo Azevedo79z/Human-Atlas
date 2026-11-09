@@ -84,7 +84,7 @@ export const EXPLANATIONS_PT:Record<string,string> = {
  'tibialis anterior':'Músculo anterior da perna que realiza dorsiflexão e inversão do pé.',
  'adductor magnus':'Músculo medial da coxa que realiza principalmente a adução do quadril e contribui para sua extensão.',
  gracilis:'Músculo delgado e superficial da região medial da coxa. Participa da adução do quadril e da flexão do joelho.',
- biceps brachii:'Músculo da parte anterior do braço, com cabeça longa e cabeça curta. Atua principalmente na flexão do cotovelo e na supinação do antebraço; também auxilia movimentos do ombro.',
+ 'biceps brachii':'Músculo da parte anterior do braço, com cabeça longa e cabeça curta. Atua principalmente na flexão do cotovelo e na supinação do antebraço; também auxilia movimentos do ombro.',
  'long head of biceps brachii':'A cabeça longa do bíceps braquial origina-se na região supraglenoidal da escápula, cruza a articulação do ombro e participa da flexão do cotovelo e da supinação do antebraço. Também contribui para a estabilidade do ombro.',
  'short head of biceps brachii':'A cabeça curta do bíceps braquial origina-se no processo coracoide da escápula e participa da flexão do cotovelo, da supinação do antebraço e da flexão do ombro.',
  'long head of right biceps brachii':'A cabeça longa do bíceps braquial direito cruza a articulação do ombro e participa da flexão do cotovelo e da supinação do antebraço. Também contribui para a estabilidade do ombro.',
