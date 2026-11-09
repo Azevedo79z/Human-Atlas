@@ -291,6 +291,7 @@ const report = {
     maxMillimetres: best.maxMillimetres,
   },
   regionalFits,
+  bilateralCentreComparisons: bilateralComparisons,
   globalAnchorResiduals: globalResiduals,
   unitAssessment: {
     assumption: 'STL coordinates provisionally treated as millimetres',
