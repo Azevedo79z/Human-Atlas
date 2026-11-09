@@ -86,10 +86,11 @@ const targetFor = source => {
 
   if (region === 'SKULL') {
     group = file.includes('MANDIBLE') ? 'mandible' : 'skull';
+    const skullTargets = atlas.parts.filter(part => part.system === 'borrowed' &&
+      /maxilla|nasal bone|palatine bone|parietal bone|temporal bone|zygomatic bone|frontal bone|occipital bone|sphenoid bone|vomer|ethmoid/i.test(part.name));
     targets = file.includes('MANDIBLE')
       ? partByName('Mandible')
-      : atlas.parts.filter(part => part.system === 'borrowed' &&
-          !/mandible|hyoid|alar cartilage/i.test(part.name));
+      : skullTargets;
   } else if (region === 'THORAX' && /^RIB_(\d+)_(LEFT|RIGHT)\.stl$/i.test(file)) {
     const [,number,which] = /^RIB_(\d+)_(LEFT|RIGHT)\.stl$/i.exec(file);
     group = 'thorax';
