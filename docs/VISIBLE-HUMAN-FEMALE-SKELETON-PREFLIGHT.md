@@ -112,3 +112,8 @@ A checagem valida nomes e caminhos, não o conteúdo anatômico dos arquivos. A 
 ## Fonte única do inventário de origem
 
 A lista canônica dos 143 arquivos está centralizada em `scripts/lib/visible-human-female-inventory.mjs`. O downloader usa essa lista para obter os STL e o planejador importa a mesma lista para conferir a pasta extraída antes do mapeamento. O workflow também observa alterações nesse módulo. Assim, a definição dos caminhos não precisa ser mantida em dois scripts independentes.
+
+
+## Testes automatizados do inventário
+
+Antes de baixar os STL, o workflow verifica a sintaxe dos módulos Node.js e executa `scripts/test-visible-human-female-inventory.mjs`. O teste usa apenas APIs nativas do Node.js e confere os 143 caminhos únicos, a contagem esperada por região, a extensão STL e a consistência da chave canônica. Não exige pacote adicional, token ou serviço pago. Essa etapa testa a lista centralizada; não substitui o download nem a inspeção geométrica dos arquivos.
