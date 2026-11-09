@@ -52,12 +52,10 @@ jobs:
       - name: Download source STL files from the public Hugging Face bucket
         run: node scripts/download-visible-human-female-bones.mjs "$RUNNER_TEMP/02_Female"
 
-      - name: Audit inventory and existing Atlas coverage
-        continue-on-error: true
+      - name: Audit exact inventory and existing Atlas coverage
         run: node scripts/audit-visible-human-female-bones.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-inventory.json"
 
       - name: Inspect STL geometry, coordinates and degenerate facets
-        continue-on-error: true
         run: node scripts/inspect-visible-human-female-stl.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-geometry.json"
 
       - name: Measure anatomical landmark registration
