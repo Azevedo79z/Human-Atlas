@@ -371,6 +371,8 @@ export const term = (name:string, language:Language) => {
   // Keep the source laterality explicit in neutral Brazilian Portuguese.
   const side=key.match(/^(.*) \(left\)$/) ?? key.match(/^(.*) \(right\)$/);
   if(side&&terms[side[1]])return `${terms[side[1]]} (lado ${key.endsWith('(left)')?'esquerdo':'direito'})`;
+  const prefix=key.match(/^(left|right) (.+)$/);
+  if(prefix&&terms[prefix[2]])return `${terms[prefix[2]]} (lado ${prefix[1]==='left'?'esquerdo':'direito'})`;
   return name;
  }
  return name;
