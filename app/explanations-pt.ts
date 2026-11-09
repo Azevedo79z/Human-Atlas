@@ -105,4 +105,21 @@ export const EXPLANATIONS_PT:Record<string,string> = {
  sternum:'Osso plano na parte anterior do tórax. Articula-se com as clavículas e com as cartilagens costais.',
  'vertebral column':'Conjunto de vértebras que se estende do pescoço à pelve. Sustenta o tronco, permite movimentos e protege a medula espinal.',
  omentum:'Dobra do peritônio que se estende a partir do estômago sobre órgãos abdominais. Contém tecido adiposo e participa da defesa local.',
+ 'nucleus pulposus':'Porção central, gelatinosa e hidratada do disco intervertebral. Ajuda a distribuir as cargas e a amortecer forças entre corpos vertebrais.',
+ 'anterior cruciate ligament of knee':'Ligamento que cruza o interior do joelho e limita principalmente o deslocamento anterior da tíbia em relação ao fêmur, contribuindo para a estabilidade rotacional.',
+ 'posterior cruciate ligament of knee':'Ligamento que cruza o interior do joelho e limita principalmente o deslocamento posterior da tíbia em relação ao fêmur.',
+ 'anterolateral ligament of knee':'Estrutura ligamentar da região anterolateral do joelho que contribui para o controle da rotação e da estabilidade lateral.',
+ 'fibular collateral ligament':'Ligamento da face lateral do joelho que conecta o fêmur à cabeça da fíbula e resiste ao estresse em varo.',
+ 'tibial collateral ligament':'Ligamento da face medial do joelho, também chamado ligamento colateral medial, que ajuda a resistir ao estresse em valgo.',
+ 'right tibial collateral ligament':'Ligamento colateral medial do joelho direito. Ajuda a resistir ao estresse em valgo e estabiliza a face medial da articulação.',
+ 'left tibial collateral ligament':'Ligamento colateral medial do joelho esquerdo. Ajuda a resistir ao estresse em valgo e estabiliza a face medial da articulação.',
+ 'patellar ligament':'Faixa resistente que liga o ápice da patela à tuberosidade da tíbia. Transmite a força do quadríceps para estender o joelho.',
+ 'articular cartilage of knee':'Revestimento liso das superfícies ósseas do joelho. Reduz o atrito e distribui as cargas durante o movimento.',
+ 'medial perichondular surface':'Superfície periférica medial associada ao conjunto cartilaginoso articular do joelho nesta referência anatômica.',
+ 'lateral perichondular surface':'Superfície periférica lateral associada ao conjunto cartilaginoso articular do joelho nesta referência anatômica.',
+ 'anterior cruciate enthesis':'Região de inserção do ligamento cruzado anterior no osso. A entese é a zona de transição que transmite força do ligamento ao esqueleto.',
+ 'posterior cruciate enthesis':'Região de inserção do ligamento cruzado posterior no osso, onde a força do ligamento é transmitida à estrutura óssea.',
+ 'lateral epicondylar enthesis':'Região de fixação de estruturas fibrosas no epicôndilo lateral do fêmur.',
+ 'medial epicondylar enthesis':'Região de fixação de estruturas fibrosas no epicôndilo medial do fêmur.'
+
 };
