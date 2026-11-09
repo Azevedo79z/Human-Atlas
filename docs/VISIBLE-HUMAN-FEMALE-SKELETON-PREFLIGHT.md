@@ -98,3 +98,5 @@ O workflow executa o planejador como etapa obrigatória; falha de mapeamento int
 A integração deverá substituir as 65 malhas esqueléticas atuais e os 180 placeholders masculinos pelas 143 malhas femininas, preservando órgãos, tecidos e demais sistemas. Usar transformações regionais e validar articulações/pose antes de atualizar o manifesto e os chunks. A geometria óssea não pode ser deformada por escala não uniforme.
 
 **Estado:** pré-validação automatizada concluída. Nenhuma malha foi importada, removida ou alterada; `atlas-female.json`, chunks atuais e produção permanecem intocados.
+
+O planejador `scripts/plan-visible-human-female-import.mjs` foi alinhado ao medidor: `SKULL_CRANIAL_MAXILLA` considera apenas alvos cranianos/maxilares identificados no manifesto, e `SKULL_MANDIBLE` permanece separado. O plano e o medidor passam, assim, a usar o mesmo recorte anatômico para esses dois arquivos. Essa consistência de mapeamento não equivale a validação geométrica.
