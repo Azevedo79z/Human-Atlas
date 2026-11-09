@@ -1,7 +1,7 @@
 import {flushSync} from 'react-dom';
 import {registerAtlasTools} from './agent-tools';
 import {useEffect,useMemo,useRef,useState} from 'react';
-import {Activity,ArrowUpRight,BookOpen,CheckCircle2,ChevronLeft,ChevronRight,Focus,GraduationCap,Info,Layers3,Pause,RotateCcw,RotateCw,Search,X} from 'lucide-react';
+import {Activity,ArrowUpRight,BookOpen,CheckCircle2,ChevronLeft,ChevronRight,ClipboardCheck,Focus,GraduationCap,Info,Layers3,Pause,RotateCcw,RotateCw,Search,X} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Badge} from '@/components/ui/badge';
 import {Slider} from '@/components/ui/slider';
@@ -53,7 +53,7 @@ export default function Home(){
  // The document carries the language so the browser hyphenates, aligns and
  // orders punctuation correctly, and so `dir`-based styling applies.
  useEffect(()=>{document.documentElement.lang=language;document.documentElement.dir=direction(language);},[language]);
- const [atlas,setAtlas]=useState<Atlas|null>(null),[state,setState]=useState(()=>initial('male')),[progress,setProgress]=useState(0),[error,setError]=useState(''),[panel,setPanel]=useState<'layers'|'search'|null>(null),[details,setDetails]=useState(false),[about,setAbout]=useState(false),[query,setQuery]=useState(''),[chosen,setChosen]=useState<Concept|null>(null),[studyOpen,setStudyOpen]=useState(false),[studySystem,setStudySystem]=useState<SystemId>('skeletal'),[studyIndex,setStudyIndex]=useState(0),[studyCompleted,setStudyCompleted]=useState<string[]>([]);
+ const [atlas,setAtlas]=useState<Atlas|null>(null),[state,setState]=useState(()=>initial('male')),[progress,setProgress]=useState(0),[error,setError]=useState(''),[panel,setPanel]=useState<'layers'|'search'|null>(null),[details,setDetails]=useState(false),[about,setAbout]=useState(false),[query,setQuery]=useState(''),[chosen,setChosen]=useState<Concept|null>(null),[studyOpen,setStudyOpen]=useState(false),[studySystem,setStudySystem]=useState<SystemId>('skeletal'),[studyIndex,setStudyIndex]=useState(0),[studyCompleted,setStudyCompleted]=useState<string[]>([]),[studyQuizMode,setStudyQuizMode]=useState(false),[studyQuizIndex,setStudyQuizIndex]=useState(0),[studyQuizAnswer,setStudyQuizAnswer]=useState<string|null>(null),[studyQuizMastered,setStudyQuizMastered]=useState<string[]>([]);
  const source=edition_(sex,language);
 
  useEffect(()=>{const abort=new AbortController();setProgress(0);setError('');setAtlas(null);setChosen(null);setDetails(false);setPanel(null);setQuery('');setState(initial(sex));fetch(edition(sex).manifest,{signal:abort.signal}).then(r=>{if(!r.ok)throw new Error(say(language,'catalogueError'));return r.json();}).then(data=>setAtlas(data as Atlas)).catch(e=>{if(e.name!=='AbortError')setError(e.message);});return()=>abort.abort();},[sex,language]);
@@ -66,6 +66,10 @@ export default function Home(){
  const studyKey=(c:Concept)=>sex+':'+c.id;
  const studyDone=studyCurrent?studyCompleted.includes(studyKey(studyCurrent)):false;
  const studyProgress=studyItems.length?Math.round(studyItems.filter(c=>studyCompleted.includes(studyKey(c))).length/studyItems.length*100):0;
+ const studyQuizQuestions=useMemo(()=>{if(!atlas)return[];return studyItems.flatMap(sourceConcept=>{const relation=anatomyRelations(sourceConcept.name)[0];if(!relation)return[];const relatedNames=relation.structures;const correct=relatedNames.map(target=>atlas.concepts.find(item=>item.name===target)).find((item):item is Concept=>!!item);if(!correct)return[];const distractors=atlas.concepts.filter(item=>item.id!==sourceConcept.id&&item.id!==correct.id&&!relatedNames.includes(item.name)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,3);if(distractors.length<3)return[];const options=[correct,...distractors].sort((a,b)=>a.name.localeCompare(b.name));return[{source:sourceConcept,relation,correct,options,key:studyKey(sourceConcept)}];});},[atlas,studyItems]);
+ const studyQuizCurrent=studyQuizQuestions[studyQuizIndex];
+ const studyQuizDone=studyQuizCurrent?studyQuizMastered.includes(studyQuizCurrent.key):false;
+ const studyQuizProgress=studyQuizQuestions.length?Math.round(studyQuizMastered.filter(key=>studyQuizQuestions.some(q=>q.key===key)).length/studyQuizQuestions.length*100):0;
  useEffect(()=>{if(activeSystems.length&&!activeSystems.some(s=>s.id===studySystem)){setStudySystem(activeSystems[0].id);setStudyIndex(0);}},[sex,atlas]);
  const selectedParts=state.selected.map(id=>parts.get(id)).filter(p=>!!p),selected=selectedParts[0],system=SYSTEMS.find(s=>s.id===selected?.system);
  const relatedIds=useMemo(()=>{if(!atlas||!chosen)return[];const names=anatomyRelations(chosen.name).flatMap(r=>r.structures);return [...new Set(names.flatMap(n=>atlas.concepts.find(concept=>concept.name===n)?.elements??[]))].filter(id=>!state.selected.includes(id));},[atlas,chosen,state.selected]);
@@ -89,6 +93,7 @@ export default function Home(){
  const openStudy=()=>{setPanel(null);setDetails(false);setStudyOpen(v=>!v);};
  const inspectStudyItem=()=>{if(!studyCurrent)return;choose(studyCurrent);setDetails(false);};
  const completeStudyItem=()=>{if(!studyCurrent)return;setStudyCompleted(items=>items.includes(studyKey(studyCurrent))?items:[...items,studyKey(studyCurrent)]);};
+ const answerStudyQuiz=(id:string)=>{if(!studyQuizCurrent)return;setStudyQuizAnswer(id);if(id===studyQuizCurrent.correct.id)setStudyQuizMastered(items=>items.includes(studyQuizCurrent.key)?items:[...items,studyQuizCurrent.key]);};
  return <main className="studio">
   {atlas&&<AnatomyScene atlas={atlas} state={{...state,related:relatedIds,inspectorOpen:details&&selectedParts.length>0}} onSelect={choosePart} onProgress={n=>{setProgress(n);if(n===100)setError('');}} onError={setError}/>}
   <div className="vignette"/>
