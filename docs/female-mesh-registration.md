@@ -17,6 +17,25 @@ are millimetres, or that the two female references share an origin. The transfor
 fitted from three non-collinear corresponding landmarks. Every additional landmark
 is an independent validation point; it does not change the fit.
 
+## Candidate shared structures found in the current female atlas
+
+The female atlas manifest contains native skeletal meshes that also have named
+counterparts in the Visible Human Female STL inventory. These are candidate
+registration anchors, not proof that the two geometries are already aligned:
+
+- Femur (left/right): HRA parts HRAF0937 / HRAF0911.
+- Tibia (left/right): HRA parts HRAF0954 / HRAF0927.
+- Fibula (left/right): HRA parts HRAF0955 / HRAF0928.
+- Patella (left/right): HRA parts HRAF0953 / HRAF0929.
+- Sacrum: HRA part HRAF0825.
+- Ilium compact bone (left/right): HRA parts HRAF0828 / HRAF0827.
+- Thoracic and cervical vertebrae: HRA parts HRAF0831–HRAF0849.
+
+These names give us a practical pilot region (knee/lower limb) and additional
+cross-checks around the pelvis and spine. The atlas also contains a sternum and
+native vertebral/pelvic structures, but those are not all one-to-one with the STL
+segmentation labels.
+
 ## Calibration procedure
 
 1. Identify unambiguous structures present in both references (prefer the same
