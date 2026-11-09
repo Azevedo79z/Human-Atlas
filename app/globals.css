@@ -110,3 +110,23 @@ h1 .edition{font-family:inherit;font-weight:500;font-size:10px;letter-spacing:.0
 
 /* Provenance is shown per selected mesh, not inferred from the edition-wide source. */
 .structure-provenance{align-items:center;flex-wrap:wrap;gap:10px 18px}.structure-provenance a{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#74818e}
+
+/* Educational anatomical relationships in the structure inspector. */
+.structure-relations{display:grid;gap:8px;padding:12px 0;border-bottom:1px solid rgba(130,145,160,.18)}
+.relation-heading{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#91a0ad;font-weight:650}
+.structure-relations p{font-size:12px;line-height:1.6;color:#c0cbd4;margin:0}
+.relation-structures{display:flex;flex-wrap:wrap;gap:6px}
+.relation-structures span{font-size:10px;line-height:1.4;padding:5px 8px;border:1px solid rgba(130,145,160,.24);border-radius:999px;color:#d5dee5;background:rgba(130,145,160,.06)}
+
+/* Related structures are navigation controls, not decorative labels. */
+.relation-structures{display:flex;flex-wrap:wrap;gap:6px}
+.relation-chip{display:inline-flex!important;align-items:center;gap:5px;min-height:30px;padding:5px 9px!important;border:1px solid rgba(130,145,160,.28)!important;border-radius:999px!important;background:rgba(130,145,160,.07)!important;color:#d5dee5!important;font-size:10px!important;line-height:1.35!important;text-align:start;white-space:normal}
+.relation-chip:hover:not(:disabled){border-color:rgba(160,190,210,.65)!important;background:rgba(130,165,190,.16)!important;color:#fff!important}
+.relation-chip:focus-visible{outline:2px solid #a9c9df!important;outline-offset:2px}
+.relation-chip:disabled{opacity:.42;cursor:not-allowed}
+
+.relation-legend{display:flex;flex-wrap:wrap;gap:10px;color:#9eabb6;font-size:10px;line-height:1.4}
+.relation-legend span{display:inline-flex;align-items:center;gap:5px}
+.relation-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;box-shadow:0 0 8px currentColor}
+.relation-legend .legend-selected{background:#6bd9c8;color:#6bd9c8}
+.relation-legend .legend-related{background:#f5a33a;color:#f5a33a}
