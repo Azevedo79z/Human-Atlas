@@ -244,12 +244,12 @@ const regionalFits = Object.fromEntries(Object.entries(groups).map(([name, ids])
   const sourceSpanMetres = sourceCentres.length ? span(sourceCentres) : [0, 0, 0];
   const targetSpanMetres = targetCentres.length ? span(targetCentres) : [0, 0, 0];
   const uniqueTargets = new Set(targetCentres.map(point => point.map(value => value.toFixed(6)).join(','))).size;
-  const enoughAnchors = selected.length >= 3 && uniqueTargets >= 3;
+  const enoughDistinctCentres = selected.length >= 3 && uniqueTargets >= 3;
   return [name, {
     anchorIds: ids,
     anchorCount: selected.length,
     uniqueTargetCentres: uniqueTargets,
-    fitEligibility: enoughAnchors ? 'candidate-only-review-required' : 'insufficient-independent-anchors',
+    fitEligibility: enoughDistinctCentres ? 'candidate-only-review-required' : 'insufficient-distinct-centres',
     sourceSpanMillimetres: sourceSpanMetres.map(value => +(value * 1000).toFixed(2)),
     targetSpanMillimetres: targetSpanMetres.map(value => +(value * 1000).toFixed(2)),
     ...fitted,
