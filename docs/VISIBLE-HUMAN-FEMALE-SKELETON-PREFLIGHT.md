@@ -129,3 +129,12 @@ O leitor geométrico rejeita agora STL binário com zero triângulos, STL ASCII 
 A auditoria de cobertura e o inspetor geométrico agora comparam os caminhos STL encontrados com a lista canônica compartilhada de 143 entradas. Os relatórios identificam caminhos esperados ausentes e caminhos STL inesperados; a inspeção geométrica também falha quando o conjunto não corresponde exatamente ao inventário. No workflow, as etapas de auditoria e inspeção deixaram de usar `continue-on-error`: inventário divergente, arquivo inválido ou faceta degenerada interrompem o preflight antes do planejamento final.
 
 O teste de regressão do inspetor cria um conjunto sintético completo de 143 malhas mínimas e verifica também cenários de arquivo ausente, arquivo extra, STL binário vazio e STL ASCII incompleto. É um teste do código com fixtures artificiais, não uma medição dos modelos anatômicos originais.
+
+
+## Diagnóstico regional e comparação bilateral — nova etapa de homologação
+
+O medidor agora informa, para cada região, a quantidade de marcos disponíveis, quantos centros-alvo distintos existem, a extensão espacial dos centros de origem e do Atlas e se há pelo menos três marcos/centros distintos para uma avaliação candidata. Essa indicação é apenas uma triagem de suficiência: não comprova independência geométrica, registro de superfície ou encaixe articular. Regiões abaixo desse mínimo são marcadas como insuficientes, em vez de receberem uma aparência enganosa de ajuste aprovado.
+
+O relatório também compara distâncias entre centros esquerdo/direito para pares de ossos presentes nos dois lados (pelve, membros, metacarpos, tarso e metatarsos). A diferença é uma pista para assimetrias de escala ou posicionamento, não um teste clínico de simetria nem uma regra para espelhar anatomia. A anatomia real pode ter assimetrias.
+
+Esses diagnósticos só terão valores reais após uma nova execução do workflow com os 143 STL. Permanecem bloqueados a importação, a aplicação de transformações e a substituição de malhas do Atlas.
