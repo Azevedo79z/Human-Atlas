@@ -106,7 +106,65 @@ for (const [file, display] of [
   ['VERTEBRA_L6', 'Lumbar vertebra 6'],
 ]) addAnchor(file, `SPINAL_COLUMN/${file}.stl`, display);
 addAnchor('SACRUM', 'SPINAL_COLUMN/SACRUM.stl', 'Sacrum');
+
 addAnchor('STERNUM', 'THORAX/STERNUM.stl', 'Sternum');
+
+// Extend registration coverage to female-reference upper limbs, hands, feet,
+// ribs and cranial/maxillary complex. These remain centre-of-bounds anchors,
+// not surface registration or permission to import.
+const borrowedParts = atlas.parts.filter(part => part.system === 'borrowed');
+const ordinalNames = ["first","second","third","fourth","fifth","sixth","seventh","eighth","ninth","tenth","eleventh","twelfth"];
+for (const side of ['LEFT', 'RIGHT']) {
+  const sideName = side === 'LEFT' ? 'left' : 'right';
+  const title = side === 'LEFT' ? 'Left' : 'Right';
+  for (const bone of ['CLAVICLE','HUMERUS','RADIUS','SCAPULA','ULNA']) {
+    const display = `${title} ${bone.toLowerCase()}`;
+    const matches = borrowedParts.filter(part => part.name.toLowerCase() === display.toLowerCase());
+    addAnchor(`${bone}_${side}`, `UPPER_EXTREMITY_${side}/${bone}_${side}.stl`, display, matches);
+  }
+  for (let n = 1; n <= 12; n++) {
+    const display = `${title} ${ordinalNames[n - 1]} rib`;
+    const matches = borrowedParts.filter(part => part.name.toLowerCase() === display.toLowerCase());
+    addAnchor(`RIB_${n}_${side}`, `THORAX/RIB_${n}_${side}.stl`, display, matches);
+  }
+  for (let n = 1; n <= 5; n++) {
+    const display = `${title} ${ordinalNames[n - 1]} metacarpal bone`;
+    const matches = borrowedParts.filter(part => part.name.toLowerCase() === display.toLowerCase());
+    addAnchor(`METACARPAL_${n}_${side}`, `HAND_${side}/METACARPAL_${n}_${side}.stl`, display, matches);
+  }
+  const fingers = ['index finger','middle finger','ring finger','little finger'];
+  for (let n = 2; n <= 5; n++) {
+    const finger = fingers[n - 2];
+    const matches = borrowedParts.filter(part => part.name.toLowerCase().includes(`of ${sideName} ${finger}`));
+    addAnchor(`PHALANGE_HAND_${n}_${side}`, `HAND_${side}/PHALANGE_HAND_${n}_${side}.stl`, `${title} ${finger}`, matches);
+  }
+  const footBones = [
+    ['CALCANEUS', `${title} calcaneus`], ['CUBOID', `${title} cuboid bone`],
+    ['INTERMEDIATE_CUNEIFORM', `${title} intermediate cuneiform bone`],
+    ['LATERAL_CUNEIFORM', `${title} lateral cuneiform bone`],
+    ['MEDIAL_CUNEIFORM', `${title} medial cuneiform bone`],
+    ['NAVICULAR', `Navicular bone of ${sideName} foot`], ['TALUS', `${title} talus`],
+  ];
+  for (const [fileStem, display] of footBones) {
+    const matches = borrowedParts.filter(part => part.name.toLowerCase() === display.toLowerCase());
+    addAnchor(`${fileStem}_${side}`, `FOOT_${side}/${fileStem}_${side}.stl`, display, matches);
+  }
+  for (let n = 1; n <= 5; n++) {
+    const display = `${title} ${ordinalNames[n - 1]} metatarsal bone`;
+    const matches = borrowedParts.filter(part => part.name.toLowerCase() === display.toLowerCase());
+    addAnchor(`METATARSAL_${n}_${side}`, `FOOT_${side}/METATARSAL_${n}_${side}.stl`, display, matches);
+  }
+  const toes = ['big toe','second toe','third toe','fourth toe','little toe'];
+  for (let n = 1; n <= 5; n++) {
+    const toe = toes[n - 1];
+    const matches = borrowedParts.filter(part => part.name.toLowerCase().includes(`of ${sideName} ${toe}`));
+    addAnchor(`PHALANGE_FOOT_${n}_${side}`, `FOOT_${side}/PHALANGE_FOOT_${n}_${side}.stl`, `${title} ${toe}`, matches);
+  }
+}
+const skullTargets = borrowedParts.filter(part => !/mandible|hyoid|alar cartilage/i.test(part.name));
+addAnchor('SKULL_CRANIAL_MAXILLA', 'SKULL/SKULL_CRANIAL_MAXILLA.stl', 'Cranium and maxilla', skullTargets);
+addAnchor('SKULL_MANDIBLE', 'SKULL/SKULL_MANDIBLE.stl', 'Mandible', borrowedParts.filter(part => part.name.toLowerCase() === 'mandible'));
+
 
 const permutations = [
   [0, 1, 2], [0, 2, 1], [1, 0, 2],
@@ -165,9 +223,16 @@ const best = candidates[0];
 const groups = {
   pelvis: ['HIP_LEFT', 'HIP_RIGHT', 'SACRUM'],
   spine: ['VERTEBRA_C1', 'VERTEBRA_C7', 'VERTEBRA_T1', 'VERTEBRA_T12', 'VERTEBRA_L1', 'VERTEBRA_L6', 'SACRUM'],
-  thorax: ['VERTEBRA_T1', 'VERTEBRA_T12', 'STERNUM'],
+  thorax: ['VERTEBRA_T1', 'VERTEBRA_T12', 'STERNUM', ...anchors.filter(anchor => anchor.id.startsWith('RIB_')).map(anchor => anchor.id)],
   leftLeg: ['FEMUR_LEFT', 'PATELLA_LEFT', 'TIBIA_LEFT', 'FIBULA_LEFT'],
   rightLeg: ['FEMUR_RIGHT', 'PATELLA_RIGHT', 'TIBIA_RIGHT', 'FIBULA_RIGHT'],
+  leftArm: ['CLAVICLE_LEFT','HUMERUS_LEFT','RADIUS_LEFT','SCAPULA_LEFT','ULNA_LEFT'],
+  rightArm: ['CLAVICLE_RIGHT','HUMERUS_RIGHT','RADIUS_RIGHT','SCAPULA_RIGHT','ULNA_RIGHT'],
+  leftHand: anchors.filter(anchor => anchor.id.endsWith('_LEFT') && (anchor.id.startsWith('METACARPAL_') || anchor.id.startsWith('PHALANGE_HAND_'))).map(anchor => anchor.id),
+  rightHand: anchors.filter(anchor => anchor.id.endsWith('_RIGHT') && (anchor.id.startsWith('METACARPAL_') || anchor.id.startsWith('PHALANGE_HAND_'))).map(anchor => anchor.id),
+  leftFoot: anchors.filter(anchor => anchor.id.endsWith('_LEFT') && (['CALCANEUS','CUBOID','INTERMEDIATE_CUNEIFORM','LATERAL_CUNEIFORM','MEDIAL_CUNEIFORM','NAVICULAR','TALUS'].some(prefix => anchor.id.startsWith(prefix+'_')) || anchor.id.startsWith('METATARSAL_') || anchor.id.startsWith('PHALANGE_FOOT_'))).map(anchor => anchor.id),
+  rightFoot: anchors.filter(anchor => anchor.id.endsWith('_RIGHT') && (['CALCANEUS','CUBOID','INTERMEDIATE_CUNEIFORM','LATERAL_CUNEIFORM','MEDIAL_CUNEIFORM','NAVICULAR','TALUS'].some(prefix => anchor.id.startsWith(prefix+'_')) || anchor.id.startsWith('METATARSAL_') || anchor.id.startsWith('PHALANGE_FOOT_'))).map(anchor => anchor.id),
+  skull: ['SKULL_CRANIAL_MAXILLA','SKULL_MANDIBLE'],
 };
 const regionalFits = Object.fromEntries(Object.entries(groups).map(([name, ids]) => {
   const selected = anchors.filter(anchor => ids.includes(anchor.id));
