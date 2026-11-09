@@ -199,6 +199,36 @@ function fit(entries) {
     residuals:entries.map((entry,index)=>({file:entry.relative,errorMillimetres:+(errors[index]*1000).toFixed(2)}))};
 }
 const regions=Object.fromEntries([...byGroup].sort(([a],[b])=>a.localeCompare(b)).map(([group,entries])=>[group,fit(entries)]));
+const targetIdsBySystem = system => new Set(
+  mappings.flatMap(mapping => mapping.targets.filter(target => target.system === system).map(target => target.id)),
+);
+const countBySourceRegion = Object.fromEntries(
+  [...new Set(mappings.map(mapping => mapping.region))].sort().map(region => {
+    const entries = mappings.filter(mapping => mapping.region === region);
+    return [region, {
+      sourceMeshes: entries.length,
+      withNativeSkeletalTarget: entries.filter(mapping => mapping.targets.some(target => target.system === 'skeletal')).length,
+      borrowedOnly: entries.filter(mapping => mapping.targets.length && mapping.targets.every(target => target.system === 'borrowed')).length,
+      withMultipleAtlasTargets: entries.filter(mapping => mapping.targets.length > 1).length,
+    }];
+  }),
+);
+const coverage = {
+  method: 'Read-only mapping classification based on explicit Atlas manifest target systems. A borrowed target is not counted as native female source geometry.',
+  sourceMeshes: mappings.length,
+  sourceMeshesWithNativeSkeletalTarget: mappings.filter(mapping => mapping.targets.some(target => target.system === 'skeletal')).length,
+  sourceMeshesMappedOnlyToBorrowedReferences: mappings.filter(mapping => mapping.targets.length && mapping.targets.every(target => target.system === 'borrowed')).length,
+  sourceMeshesMappedToMixedSystems: mappings.filter(mapping => new Set(mapping.targets.map(target => target.system)).size > 1).length,
+  sourceMeshesMappedToMultipleAtlasTargets: mappings.filter(mapping => mapping.targets.length > 1).length,
+  uniqueNativeSkeletalTargetsUsed: targetIdsBySystem('skeletal').size,
+  uniqueBorrowedTargetsUsed: targetIdsBySystem('borrowed').size,
+  atlasManifestInventory: {
+    nativeSkeletalParts: atlas.parts.filter(part => part.system === 'skeletal').length,
+    borrowedParts: atlas.parts.filter(part => part.system === 'borrowed').length,
+  },
+  bySourceRegion: countBySourceRegion,
+  interpretation: 'These are name/manifest mapping counts only. They do not prove that a target mesh is female-specific, geometrically compatible, correctly registered, or safe to replace. Multiple borrowed targets may represent one grouped source bone and require anatomical review.',
+};
 const report = {
   source:'BoneHub Visible Human Female CT/Mesh/02_Female',
   expectedMeshes:143,mappedMeshes:mappings.length,
