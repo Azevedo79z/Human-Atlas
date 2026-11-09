@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+/// <reference types="vite/client" />\nimport { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 let client: SupabaseClient | null | undefined;
 
