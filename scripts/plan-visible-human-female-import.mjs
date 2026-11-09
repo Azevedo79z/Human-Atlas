@@ -53,7 +53,7 @@ function sourceBounds(file) {
     }
   } else {
     const text = buffer.toString('utf8');
-    const expression = /\\bvertex\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)\\s+([-+\\d.eE]+)/g;
+    const expression = /\bvertex\s+([-+\d.eE]+)\s+([-+\d.eE]+)\s+([-+\d.eE]+)/g;
     let match, count = 0;
     while ((match = expression.exec(text))) { add(match.slice(1, 4).map(Number)); count++; }
     if (!count) throw new Error(`${file}: unrecognized STL.`);
@@ -77,7 +77,7 @@ if (sourceFiles.length !== 143) throw new Error(`Expected 143 STL files; found $
 const mappings = [];
 const targetFor = source => {
   const {region,file} = source;
-  const match = /^(.*)_(LEFT|RIGHT)\\.stl$/i.exec(file);
+  const match = /^(.*)_(LEFT|RIGHT)\.stl$/i.exec(file);
   const side = match?.[2]?.toUpperCase();
   const title = side ? sideTitle(side) : '';
   const lower = side ? sideName(side) : '';
@@ -90,29 +90,29 @@ const targetFor = source => {
       ? partByName('Mandible')
       : atlas.parts.filter(part => part.system === 'borrowed' &&
           !/mandible|hyoid|alar cartilage/i.test(part.name));
-  } else if (region === 'THORAX' && /^RIB_(\\d+)_(LEFT|RIGHT)\\.stl$/i.test(file)) {
-    const [,number,which] = /^RIB_(\\d+)_(LEFT|RIGHT)\\.stl$/i.exec(file);
+  } else if (region === 'THORAX' && /^RIB_(\d+)_(LEFT|RIGHT)\.stl$/i.test(file)) {
+    const [,number,which] = /^RIB_(\d+)_(LEFT|RIGHT)\.stl$/i.exec(file);
     group = 'thorax';
     targets = partByName(`${sideTitle(which)} ${ORDINAL[Number(number)-1]} rib`);
   } else if (region === 'THORAX' && file === 'STERNUM.stl') {
     group = 'thorax'; targets = partByName('Sternum');
   } else if (region === 'SPINAL_COLUMN' && file === 'SACRUM.stl') {
     group = 'spine'; targets = partByName('Sacrum');
-  } else if (region === 'SPINAL_COLUMN' && /^VERTEBRA_([CTL])(\\d+)\\.stl$/i.test(file)) {
-    const [,letter,number] = /^VERTEBRA_([CTL])(\\d+)\\.stl$/i.exec(file);
+  } else if (region === 'SPINAL_COLUMN' && /^VERTEBRA_([CTL])(\d+)\.stl$/i.test(file)) {
+    const [,letter,number] = /^VERTEBRA_([CTL])(\d+)\.stl$/i.exec(file);
     const name = letter.toUpperCase() === 'C' ? 'Cervical' : letter.toUpperCase() === 'T' ? 'Thoracic' : 'Lumbar';
     group = 'spine'; targets = partByName(`${name} vertebra ${number}`);
   } else if (region.startsWith('LOWER_EXTREMITY_') && side) {
-    const bone = file.replace(/_(LEFT|RIGHT)\\.stl$/i,'');
+    const bone = file.replace(/_(LEFT|RIGHT)\.stl$/i,'');
     group = bone === 'HIP' ? 'pelvis' : `leg-${lower}`;
     if (bone === 'HIP') targets = atlas.parts.filter(part => part.system === 'skeletal' &&
       /(ilium|ischium|pubis)/i.test(part.name) && part.name.toLowerCase().includes(`(${lower})`));
     else targets = partByName(`${bone.charAt(0)}${bone.slice(1).toLowerCase()} (${lower})`);
   } else if (region.startsWith('UPPER_EXTREMITY_') && side) {
-    const bone = file.replace(/_(LEFT|RIGHT)\\.stl$/i,'');
+    const bone = file.replace(/_(LEFT|RIGHT)\.stl$/i,'');
     group = `arm-${lower}`; targets = partByName(`${title} ${bone.toLowerCase()}`);
   } else if (region.startsWith('HAND_') && side) {
-    const bone = file.replace(/_(LEFT|RIGHT)\\.stl$/i,'');
+    const bone = file.replace(/_(LEFT|RIGHT)\.stl$/i,'');
     group = `hand-${lower}`;
     const carpal = ['CAPITATE','HAMATE','LUNATE','PISIFORM','SCAPHOID','TRAPEZIUM','TRAPEZOID','TRIQUETRUM'];
     if (carpal.includes(bone)) {
@@ -128,7 +128,7 @@ const targetFor = source => {
         part.name.toLowerCase().includes(`of ${lower} ${finger}`));
     }
   } else if (region.startsWith('FOOT_') && side) {
-    const bone = file.replace(/_(LEFT|RIGHT)\\.stl$/i,'');
+    const bone = file.replace(/_(LEFT|RIGHT)\.stl$/i,'');
     group = `foot-${lower}`;
     if (['CALCANEUS','CUBOID','INTERMEDIATE_CUNEIFORM','LATERAL_CUNEIFORM','MEDIAL_CUNEIFORM','TALUS'].includes(bone)) {
       const display = {
