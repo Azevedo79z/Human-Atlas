@@ -364,7 +364,15 @@ const qualified = (name:string) => KEYS_BY_LENGTH.find(key=>name.startsWith(`${k
 export const term = (name:string, language:Language) => {
  const key=name.toLowerCase().trim();
  if(language==='ar')return (TERMS_AR as Record<string,string>)[key] ?? name;
- if(language==='pt')return (TERMS_PT as Record<string,string>)[key] ?? name;
+ if(language==='pt'){
+  const terms=TERMS_PT as Record<string,string>;
+  if(terms[key])return terms[key];
+  // Many reference datasets suffix paired structures with (left)/(right).
+  // Keep the source laterality explicit in neutral Brazilian Portuguese.
+  const side=key.match(/^(.*) \\(left\\)$/) ?? key.match(/^(.*) \\(right\\)$/);
+  if(side&&terms[side[1]])return `${terms[side[1]]} (lado ${key.endsWith('(left)')?'esquerdo':'direito'})`;
+  return name;
+ }
  return name;
 };
 /** True when the Arabic vocabulary actually covers this name. */
