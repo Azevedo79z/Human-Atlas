@@ -9,6 +9,7 @@ on:
       - scripts/download-visible-human-female-bones.mjs
       - scripts/audit-visible-human-female-bones.mjs
       - scripts/inspect-visible-human-female-stl.mjs
+      - scripts/measure-visible-human-female-registration.mjs
 
 permissions:
   contents: read
@@ -42,6 +43,10 @@ jobs:
         continue-on-error: true
         run: node scripts/inspect-visible-human-female-stl.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-geometry.json"
 
+      - name: Measure anatomical landmark registration
+        continue-on-error: true
+        run: node scripts/measure-visible-human-female-registration.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-registration.json"
+
       - name: Upload read-only preflight reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -50,5 +55,6 @@ jobs:
           path: |
             ${{ runner.temp }}/visible-human-female-inventory.json
             ${{ runner.temp }}/visible-human-female-geometry.json
+            ${{ runner.temp }}/visible-human-female-registration.json
           if-no-files-found: warn
           retention-days: 14
