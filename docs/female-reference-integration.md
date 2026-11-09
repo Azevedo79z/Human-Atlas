@@ -27,8 +27,8 @@ A generic muscle atlas may be considered only as a separately labelled illustrat
 ## Integration rules
 
 1. Keep the current Human Reference Atlas female organ/surface model as its own source layer.
-2. Add these 3D bones as a separately attributed female skeletal reference; do not relabel male-derived geometry as female.
-3. Validate patient-coordinate axis conversion, scale, center and alignment against shared anatomical landmarks before enabling the layer by default.
+2. Keep the Visible Human bones as a separately attributed source reference. Do not overlay them on the HRA female body: bilateral geometry checks rejected a single global similarity transform.
+3. If a future overlay is proposed, require a matching body-surface reference and independent anatomical landmark validation; never conceal mismatch with per-bone scaling or arbitrary joint offsets.
 4. Keep the source mesh identity and attribution available in each selected bone's detail panel.
 5. Do not merge grouped source labels into individually named bones unless there is a validated segmentation to support that split.
 6. Preserve the existing male atlas and current female dataset as fallbacks until visual, picking, search, mobile and performance tests pass.
@@ -36,7 +36,7 @@ A generic muscle atlas may be considered only as a separately labelled illustrat
 ## Next implementation stages
 
 - Add a lazy-loaded STL pipeline with bounded concurrency, caching and graceful failure handling.
-- Convert source patient coordinates (+Z superior, -Y anterior, +X left) into the atlas scene coordinate system and validate the transform.
+- Build a separate Visible Human scene in its own patient coordinate frame; do not convert it into HRA scene coordinates unless new matching-body evidence supports a validated transform.
 - Add selectable/searchable bone records and Portuguese labels while retaining the original source identifier.
 - Replace the provisional male-derived placeholder layer only after the female source skeleton is aligned and tested.
 - Expand muscle coverage separately; this full-skeleton dataset contains bone meshes, not whole-body muscle geometry.
