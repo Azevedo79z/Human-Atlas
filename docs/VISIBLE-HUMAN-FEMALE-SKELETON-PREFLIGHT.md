@@ -56,6 +56,31 @@ STL não registra a unidade física. Os tamanhos corporais e a escala resultante
 - Hioide, a maioria dos sesamoides e cartilagens costais ausentes.
 - Mãos e pés armazenados em pastas separadas dos demais ossos dos membros.
 
+## Mapeamento completo — 143 arquivos
+O planejador read-only `scripts/plan-visible-human-female-import.mjs` relacionou os 143 STL a 223 malhas/landmarks do manifesto atual, sem arquivos sem correspondência. O workflow executou essa etapa em 9 de novembro de 2026. A relação é uma associação de referência, não uma autorização para aplicar as transformações.
+
+| Região de planejamento | STL mapeados | RMS dos centros | Maior resíduo |
+| --- | ---: | ---: | ---: |
+| Pelve | 2 | 0,24 mm | 0,24 mm |
+| Coluna (inclui sacro) | 26 | 3,87 mm | 8,72 mm |
+| Tórax (costelas e esterno) | 25 | 14,69 mm | 33,44 mm |
+| Perna esquerda | 4 | 19,17 mm | 27,81 mm |
+| Perna direita | 4 | 21,32 mm | 29,41 mm |
+| Braço esquerdo | 5 | 68,29 mm | 100,07 mm |
+| Braço direito | 5 | 76,25 mm | 104,29 mm |
+| Mão esquerda | 18 | 41,16 mm | 74,84 mm |
+| Mão direita | 18 | 39,34 mm | 72,42 mm |
+| Pé esquerdo | 17 | 31,07 mm | 59,54 mm |
+| Pé direito | 17 | 32,58 mm | 61,22 mm |
+| Crânio/maxila e mandíbula | 2 | insuficiente | insuficiente |
+
+**Como interpretar:** os resíduos medem a distância entre centros de caixas delimitadoras após o melhor ajuste uniforme regional, não a distância entre superfícies. Braços, mãos e pés apresentam discrepâncias grandes; crânio e mandíbula têm somente um landmark cada, insuficiente para determinar uma transformação confiável. A pelve tem somente dois anchors, portanto o seu resultado também exige inspeção visual independente.
+
+## Bloqueio de importação
+A etapa de mapeamento passou (143/143), mas o registro geométrico ainda **não está aprovado para importação**. Não aplicar a transformação global ou regional atual às malhas. A próxima fase precisa de registro de superfície/ICP ou landmarks anatômicos adicionais, revisão de articulações e checagem visual em pose neutra. A transformação final deverá preservar escala uniforme por estrutura/região e passar por validação de colisões e continuidade articular.
+
+O workflow executa o planejador como etapa obrigatória; falha de mapeamento interrompe a validação. Nenhum arquivo do Atlas ativo é modificado.
+
 ## Próxima etapa — integração ainda bloqueada
 A integração deverá substituir as 65 malhas esqueléticas atuais e os 180 placeholders masculinos pelas 143 malhas femininas, preservando órgãos, tecidos e demais sistemas. Usar transformações regionais e validar articulações/pose antes de atualizar o manifesto e os chunks. A geometria óssea não pode ser deformada por escala não uniforme.
 
