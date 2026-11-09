@@ -172,3 +172,5 @@ h1 .edition{font-family:inherit;font-weight:500;font-size:10px;letter-spacing:.0
 .study-feedback.feedback-correct{border-color:rgba(105,203,184,.35);background:rgba(57,154,132,.1);color:#9be4d4}
 .study-feedback.feedback-retry{border-color:rgba(226,170,112,.35);background:rgba(175,119,62,.1);color:#f1c38f}
 .study-quiz .study-navigation{margin-top:4px}
+
+.study-storage-status{display:flex;align-items:center;gap:6px;margin:12px 0 0;color:#83d9c5;font-size:10px;font-weight:650;line-height:1.5}
