@@ -43,7 +43,9 @@ jobs:
           node --check scripts/lib/visible-human-female-inventory.mjs
           node --check scripts/test-visible-human-female-inventory.mjs
           node --check scripts/test-visible-human-female-stl-inspector.mjs
+          node --check scripts/audit-visible-human-female-bones.mjs
           node --check scripts/inspect-visible-human-female-stl.mjs
+          node --check scripts/measure-visible-human-female-registration.mjs
           node --check scripts/download-visible-human-female-bones.mjs
           node --check scripts/plan-visible-human-female-import.mjs
           node scripts/test-visible-human-female-inventory.mjs
