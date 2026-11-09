@@ -49,7 +49,6 @@ jobs:
         run: node scripts/measure-visible-human-female-registration.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-registration.json"
 
       - name: Plan all 143 source-to-atlas mappings and regional transforms
-        continue-on-error: true
         run: node scripts/plan-visible-human-female-import.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-import-plan.json"
 
       - name: Upload read-only preflight reports
