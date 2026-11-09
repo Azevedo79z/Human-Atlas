@@ -117,3 +117,8 @@ A lista canônica dos 143 arquivos está centralizada em `scripts/lib/visible-hu
 ## Testes automatizados do inventário
 
 Antes de baixar os STL, o workflow verifica a sintaxe dos módulos Node.js e executa `scripts/test-visible-human-female-inventory.mjs`. O teste usa apenas APIs nativas do Node.js e confere os 143 caminhos únicos, a contagem esperada por região, a extensão STL e a consistência da chave canônica. Não exige pacote adicional, token ou serviço pago. Essa etapa testa a lista centralizada; não substitui o download nem a inspeção geométrica dos arquivos.
+
+
+## Regressão do leitor STL
+
+O leitor geométrico rejeita agora STL binário com zero triângulos, STL ASCII com quantidade de vértices que não fecha grupos de três, coordenadas não finitas e caixas delimitadoras com dimensão nula ou inválida. O workflow executa também um teste de regressão com uma malha binária válida e dois arquivos inválidos sintéticos, antes de baixar os 143 arquivos de origem. Esses testes sintéticos verificam o comportamento do leitor; não certificam as malhas reais do repositório de origem.
