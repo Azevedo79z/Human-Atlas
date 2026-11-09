@@ -160,3 +160,20 @@ Foi acrescentado `scripts/audit-visible-human-female-joint-coverage.mjs`, uma au
 ### Automação
 
 O workflow agora verifica a sintaxe do novo auditor, executa a análise do manifesto e inclui `visible-human-female-joint-coverage.json` no artefato de pré-validação. O relatório real só será produzido quando o workflow executar. Nenhum STL ou chunk é modificado por essa auditoria.
+
+
+## Auditoria de músculos, tendões e ligamentos — 9 de novembro de 2026
+
+Foi acrescentado `scripts/audit-visible-human-female-soft-tissue-coverage.mjs`. A ferramenta faz inventário nominal, somente de leitura, dos sistemas `muscular`, `donor-muscle` e `connective`, agrupando músculos por regiões anatômicas e listando tendões e ligamentos explicitamente nomeados.
+
+### Leitura inicial do manifesto
+
+O manifesto possui 16 entradas no sistema `muscular`, 76 em `donor-muscle` e 76 em `connective`. As 76 entradas `donor-muscle` concentram-se em quadril, coxa e perna, bilateralmente; as entradas `muscular` incluem músculos extraoculares, reto femoral e tendão do quadríceps. As entradas `connective` incluem discos intervertebrais e estruturas do joelho.
+
+Isso revela uma cobertura nominal desigual: não há no inventário muscular atual um conjunto equivalente de músculos do tronco, cintura escapular, braço, antebraço e mão. A auditoria também vai discriminar tendões e ligamentos encontrados por nome, sem presumir que toda estrutura de tecido conjuntivo seja um tendão ou ligamento.
+
+### Limites e segurança
+
+A presença no manifesto não comprova que a malha exista, esteja carregada, tenha geometria válida ou seja selecionável na interface. A ausência de um nome não prova ausência anatômica: uma estrutura pode estar agrupada numa malha maior ou ter outro rótulo. O relatório não cria anatomia nem altera geometrias.
+
+O workflow verifica a sintaxe do auditor, executa a análise e anexa `visible-human-female-soft-tissue-coverage.json` ao artefato de pré-validação. Os números detalhados do relatório dependem da execução real do workflow.
