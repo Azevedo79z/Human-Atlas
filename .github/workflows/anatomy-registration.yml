@@ -1,0 +1,27 @@
+name: Anatomy registration tests
+
+on:
+  push:
+    branches:
+      - central-forense/esqueleto-feminino-completo
+  pull_request:
+    paths:
+      - app/anatomy-registration.ts
+      - app/anatomy-registration.test.ts
+      - .github/workflows/anatomy-registration.yml
+
+permissions:
+  contents: read
+
+jobs:
+  registration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Run anatomy registration tests
+        run: node --experimental-strip-types --test app/anatomy-registration.test.ts
