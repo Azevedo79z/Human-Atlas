@@ -46,7 +46,7 @@ export const EDITIONS:Edition[] = [
   hidden:['reproductive']},
  {sex:'female',label:'Female',caption:'ADULT HUMAN · FEMALE',manifest:'/models/atlas-female.json',dataset:'Human Reference Atlas female v1.10',
   summary:'964 individual meshes and 1,173 named concepts from an adult female reference assembly, plus 180 bones borrowed from the male reference and 76 leg muscles from a second female reference, standing in for regions its own source does not model.',
-  limits:'A reference assembly with body surface, brain, and selected organs including female reproductive anatomy. Skeletal coverage is limited to the spine, sternum, pelvis, and knees, and muscle coverage to the eye and knee: its source models no skull, rib, arm, or foot bone, so those are borrowed from the male reference and listed separately as male-derived bones, switched off until you ask for them. It models almost no muscle, so the muscles of the hip, thigh, and lower leg come from a second female reference and are listed as donor leg muscles. No muscle is taken from the male reference: muscle carries the shape of the body it came from too plainly for that to be honest. Its reproductive structures start hidden; switch that system on, or search for one, to show them. Placenta and umbilical structures belong to a pregnancy reference and also stay hidden until switched on.',
+  limits:'A reference assembly with body surface, brain, and selected organs including female reproductive anatomy. Skeletal coverage is limited to the spine, sternum, pelvis, and knees, and muscle coverage to the eye and knee: its source models no skull, rib, arm, or foot bone, so those are borrowed from the male reference and listed separately as complementary bones, enabled alongside the skeleton preset and clearly attributed to their source. It models almost no muscle, so the muscles of the hip, thigh, and lower leg come from a second female reference and are listed as donor leg muscles. No muscle is taken from the male reference: muscle carries the shape of the body it came from too plainly for that to be honest. Its reproductive structures start hidden; switch that system on, or search for one, to show them. Placenta and umbilical structures belong to a pregnancy reference and also stay hidden until switched on.',
   credit:'3D Reference Organ Set for Female v1.10 by Kristen Browne and Heidi Schlehlein, HuBMAP Human Reference Atlas, built on the Visible Human Dataset of the U.S. National Library of Medicine. Its leg muscles come from the Visible Human Female lower-extremity set of Andreassen and colleagues. Both are licensed under CC Attribution 4.0 International.',
   licence:'https://creativecommons.org/licenses/by/4.0/',
   download:'https://humanatlas.io/3d-reference-library',
@@ -57,7 +57,15 @@ export const EDITIONS:Edition[] = [
 export const edition = (sex:Sex) => EDITIONS.find(e=>e.sex===sex) ?? EDITIONS[0];
 /** Systems a reference body starts with switched off, on top of those left out of
  * DEFAULT_VISIBLE for every body. They stay listed, so a reader can switch them on. */
-export const defaultVisible = (sex:Sex):SystemId[] => {const off=edition(sex).hidden;return DEFAULT_VISIBLE.filter(id=>!off.includes(id));};
+/** Female source has partial skeletal coverage. Show its clearly attributed
+ * complementary bones alongside the native skeleton, and expose its own skin
+ * surface by default. Sensory (including eyes) is already part of DEFAULT_VISIBLE. */
+export const defaultVisible = (sex:Sex):SystemId[] => {
+ const off=edition(sex).hidden;
+ const visible=DEFAULT_VISIBLE.filter(id=>!off.includes(id));
+ if(sex==='female') visible.push('borrowed','integumentary');
+ return visible;
+};
 export type View = 'three-quarter'|'front'|'back'|'side';
 export interface SceneState {inspectorOpen?:boolean;explode:number;visible:SystemId[];selected:string[];isolate:boolean;view:View;rotate:boolean;reset:number}
 export const DEFAULT_VISIBLE:SystemId[] = ['cardiac','sensory','skeletal','muscular','arterial','venous','nervous','brain','respiratory','digestive','urinary','lymphatic','endocrine','reproductive','connective'];
@@ -356,7 +364,15 @@ const qualified = (name:string) => KEYS_BY_LENGTH.find(key=>name.startsWith(`${k
 export const term = (name:string, language:Language) => {
  const key=name.toLowerCase().trim();
  if(language==='ar')return (TERMS_AR as Record<string,string>)[key] ?? name;
- if(language==='pt')return (TERMS_PT as Record<string,string>)[key] ?? name;
+ if(language==='pt'){
+  const terms=TERMS_PT as Record<string,string>;
+  if(terms[key])return terms[key];
+  // Many reference datasets suffix paired structures with (left)/(right).
+  // Keep the source laterality explicit in neutral Brazilian Portuguese.
+  const side=key.match(/^(.*) \(left\)$/) ?? key.match(/^(.*) \(right\)$/);
+  if(side&&terms[side[1]])return `${terms[side[1]]} (lado ${key.endsWith('(left)')?'esquerdo':'direito'})`;
+  return name;
+ }
  return name;
 };
 /** True when the Arabic vocabulary actually covers this name. */
