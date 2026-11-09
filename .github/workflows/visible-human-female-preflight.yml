@@ -10,6 +10,7 @@ on:
       - scripts/audit-visible-human-female-bones.mjs
       - scripts/inspect-visible-human-female-stl.mjs
       - scripts/measure-visible-human-female-registration.mjs
+      - scripts/plan-visible-human-female-import.mjs
 
 permissions:
   contents: read
@@ -47,6 +48,10 @@ jobs:
         continue-on-error: true
         run: node scripts/measure-visible-human-female-registration.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-registration.json"
 
+      - name: Plan all 143 source-to-atlas mappings and regional transforms
+        continue-on-error: true
+        run: node scripts/plan-visible-human-female-import.mjs "$RUNNER_TEMP/02_Female" > "$RUNNER_TEMP/visible-human-female-import-plan.json"
+
       - name: Upload read-only preflight reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -56,5 +61,6 @@ jobs:
             ${{ runner.temp }}/visible-human-female-inventory.json
             ${{ runner.temp }}/visible-human-female-geometry.json
             ${{ runner.temp }}/visible-human-female-registration.json
+            ${{ runner.temp }}/visible-human-female-import-plan.json
           if-no-files-found: warn
           retention-days: 14
