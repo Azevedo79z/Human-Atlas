@@ -1,6 +1,9 @@
 import {SYSTEMS_AR,EDITIONS_AR} from './anatomy-ar';
 import {EXPLANATIONS_AR} from './explanations-ar';
 import TERMS_AR from './terms-ar.json';
+import {SYSTEMS_PT,EDITIONS_PT} from './anatomy-pt';
+import {EXPLANATIONS_PT} from './explanations-pt';
+import TERMS_PT from './terms-pt.json';
 import type {Language} from './i18n';
 
 export type SystemId = 'skeletal'|'muscular'|'arterial'|'venous'|'nervous'|'digestive'|'respiratory'|'urinary'|'reproductive'|'lymphatic'|'endocrine'|'integumentary'|'connective'|'sensory'|'cardiac'|'pregnancy'|'brain'|'borrowed'|'donor-muscle';
@@ -350,15 +353,19 @@ const qualified = (name:string) => KEYS_BY_LENGTH.find(key=>name.startsWith(`${k
 /** The Arabic name of a structure, where the vocabulary has one. Names not
  * covered stay in English: that is normal in Arabic medical teaching, and a
  * guessed anatomical term is worse than an English one. */
-export const term = (name:string, language:Language) =>
- language==='ar' ? (TERMS_AR as Record<string,string>)[name.toLowerCase().trim()] ?? name : name;
+export const term = (name:string, language:Language) => {
+ const key=name.toLowerCase().trim();
+ if(language==='ar')return (TERMS_AR as Record<string,string>)[key] ?? name;
+ if(language==='pt')return (TERMS_PT as Record<string,string>)[key] ?? name;
+ return name;
+};
 /** True when the Arabic vocabulary actually covers this name. */
 export const translated = (name:string) => (TERMS_AR as Record<string,string>)[name.toLowerCase().trim()]!==undefined;
 export const systemName = (id:SystemId, language:Language) =>
- (language==='ar' ? SYSTEMS_AR[id]?.name : undefined) ?? SYSTEMS.find(s=>s.id===id)?.name ?? '';
+ (language==='ar' ? SYSTEMS_AR[id]?.name : language==='pt' ? SYSTEMS_PT[id]?.name : undefined) ?? SYSTEMS.find(s=>s.id===id)?.name ?? '';
 export const edition_ = (sex:Sex, language:Language) => {
  const base=edition(sex);
- return language==='ar' ? {...base,...EDITIONS_AR[sex]} : base;
+ return language==='ar' ? {...base,...EDITIONS_AR[sex]} : language==='pt' ? {...base,...EDITIONS_PT[sex]} : base;
 };
 
 const entryFor = (name:string) => {
@@ -367,7 +374,11 @@ const entryFor = (name:string) => {
 };
 /** True when the atlas describes this structure itself, rather than falling back
  * to its system. The interface labels the fallback so the difference is visible. */
-export const described = (name:string) => entryFor(name)!==undefined;
+const portugueseFor = (name:string) => {
+ const key=name.toLowerCase().trim(),base=shared(key);
+ return EXPLANATIONS_PT[key] ?? EXPLANATIONS_PT[base] ?? EXPLANATIONS_PT[qualified(base) ?? ''];
+};
+export const described = (name:string,language:Language='en') => language==='pt' ? portugueseFor(name)!==undefined : entryFor(name)!==undefined;
 /** The English lookup finds which structure this is; Arabic then answers with
  * its own wording, and falls back to the English one where it has none yet. */
 const arabicFor = (name:string) => {
@@ -375,6 +386,7 @@ const arabicFor = (name:string) => {
  return EXPLANATIONS_AR[key] ?? EXPLANATIONS_AR[base] ?? EXPLANATIONS_AR[qualified(base) ?? ''];
 };
 export function explanation(name:string,system:SystemId,sex:Sex='male',language:Language='en'){
+ if(language==='pt')return portugueseFor(name) ?? SYSTEMS_PT[system]?.description ?? 'Descrição específica ainda não disponível em português. Consulte o nome original da estrutura e a visão geral do sistema.';
  if(language==='ar'){
   const own=arabicFor(name);
   if(own)return own;
