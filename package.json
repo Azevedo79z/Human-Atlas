@@ -11,7 +11,8 @@
     "build:vercel": "vite build",
     "check": "tsc --noEmit"
   },
-  "dependencies": {\n    "@supabase/supabase-js": "^2.99.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.99.0",
     "@base-ui/react": "1.7.0",
     "@shadcn/react": "0.3.0",
     "@types/three": "^0.159.0",
