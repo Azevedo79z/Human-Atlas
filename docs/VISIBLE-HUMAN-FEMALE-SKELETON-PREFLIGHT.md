@@ -122,3 +122,10 @@ Antes de baixar os STL, o workflow verifica a sintaxe dos módulos Node.js e exe
 ## Regressão do leitor STL
 
 O leitor geométrico rejeita agora STL binário com zero triângulos, STL ASCII com quantidade de vértices que não fecha grupos de três, coordenadas não finitas e caixas delimitadoras com dimensão nula ou inválida. O workflow executa também um teste de regressão com uma malha binária válida e dois arquivos inválidos sintéticos, antes de baixar os 143 arquivos de origem. Esses testes sintéticos verificam o comportamento do leitor; não certificam as malhas reais do repositório de origem.
+
+
+## Conferência exata do inventário durante auditoria e geometria
+
+A auditoria de cobertura e o inspetor geométrico agora comparam os caminhos STL encontrados com a lista canônica compartilhada de 143 entradas. Os relatórios identificam caminhos esperados ausentes e caminhos STL inesperados; a inspeção geométrica também falha quando o conjunto não corresponde exatamente ao inventário. No workflow, as etapas de auditoria e inspeção deixaram de usar `continue-on-error`: inventário divergente, arquivo inválido ou faceta degenerada interrompem o preflight antes do planejamento final.
+
+O teste de regressão do inspetor cria um conjunto sintético completo de 143 malhas mínimas e verifica também cenários de arquivo ausente, arquivo extra, STL binário vazio e STL ASCII incompleto. É um teste do código com fixtures artificiais, não uma medição dos modelos anatômicos originais.
