@@ -234,10 +234,47 @@ const groups = {
   rightFoot: anchors.filter(anchor => anchor.id.endsWith('_RIGHT') && (['CALCANEUS','CUBOID','INTERMEDIATE_CUNEIFORM','LATERAL_CUNEIFORM','MEDIAL_CUNEIFORM','NAVICULAR','TALUS'].some(prefix => anchor.id.startsWith(prefix+'_')) || anchor.id.startsWith('METATARSAL_') || anchor.id.startsWith('PHALANGE_FOOT_'))).map(anchor => anchor.id),
   skull: ['SKULL_CRANIAL_MAXILLA','SKULL_MANDIBLE'],
 };
+const span = points => [0, 1, 2].map(axis =>
+  Math.max(...points.map(point => point[axis])) - Math.min(...points.map(point => point[axis])));
 const regionalFits = Object.fromEntries(Object.entries(groups).map(([name, ids]) => {
   const selected = anchors.filter(anchor => ids.includes(anchor.id));
-  return [name, { anchorIds: ids, ...fit(selected, best.rotation) }];
+  const fitted = fit(selected, best.rotation);
+  const sourceCentres = selected.map(anchor => rotate(best.rotation, anchor.source));
+  const targetCentres = selected.map(anchor => anchor.target);
+  const sourceSpanMetres = sourceCentres.length ? span(sourceCentres) : [0, 0, 0];
+  const targetSpanMetres = targetCentres.length ? span(targetCentres) : [0, 0, 0];
+  const uniqueTargets = new Set(targetCentres.map(point => point.map(value => value.toFixed(6)).join(','))).size;
+  const enoughAnchors = selected.length >= 3 && uniqueTargets >= 3;
+  return [name, {
+    anchorIds: ids,
+    anchorCount: selected.length,
+    uniqueTargetCentres: uniqueTargets,
+    fitEligibility: enoughAnchors ? 'candidate-only-review-required' : 'insufficient-independent-anchors',
+    sourceSpanMillimetres: sourceSpanMetres.map(value => +(value * 1000).toFixed(2)),
+    targetSpanMillimetres: targetSpanMetres.map(value => +(value * 1000).toFixed(2)),
+    ...fitted,
+  }];
 }));
+const bilateralPairs = [
+  'HIP','FEMUR','PATELLA','TIBIA','FIBULA','CLAVICLE','HUMERUS','RADIUS','SCAPULA','ULNA',
+  'METACARPAL_1','METACARPAL_2','METACARPAL_3','METACARPAL_4','METACARPAL_5',
+  'CALCANEUS','TALUS','NAVICULAR','METATARSAL_1','METATARSAL_2','METATARSAL_3','METATARSAL_4','METATARSAL_5',
+];
+const anchorById = new Map(anchors.map(anchor => [anchor.id, anchor]));
+const bilateralComparisons = bilateralPairs.flatMap(stem => {
+  const left = anchorById.get(`${stem}_LEFT`), right = anchorById.get(`${stem}_RIGHT`);
+  if (!left || !right) return [];
+  const sourceLeft = rotate(best.rotation, left.source).map(value => best.scale * value);
+  const sourceRight = rotate(best.rotation, right.source).map(value => best.scale * value);
+  const targetDistance = Math.hypot(...left.target.map((value, axis) => value - right.target[axis]));
+  const sourceDistance = Math.hypot(...sourceLeft.map((value, axis) => value - sourceRight[axis]));
+  return [{
+    structure: stem,
+    sourceLeftRightCentreDistanceMillimetres: +(sourceDistance * 1000).toFixed(2),
+    atlasLeftRightCentreDistanceMillimetres: +(targetDistance * 1000).toFixed(2),
+    absoluteDifferenceMillimetres: +(Math.abs(sourceDistance - targetDistance) * 1000).toFixed(2),
+  }];
+});
 const globalResiduals = anchors.map((anchor, index) => ({
   id: anchor.id,
   errorMillimetres: best.errorsMillimetres[index],
@@ -261,7 +298,7 @@ const report = {
     confirmed: false,
     warning: 'STL has no embedded unit metadata. Do not apply geometry until source units and anatomical alignment are independently reviewed.',
   },
-  method: '24 proper axis permutations tested; positive uniform scale and translation fitted to anatomical landmark centres. Regional fits reuse the selected axis rotation.',
+  method: '24 proper axis permutations tested; positive uniform scale and translation fitted to anatomical landmark centres. Regional fits reuse the selected axis rotation. Region eligibility is a coarse anchor-count diagnostic, not a registration pass. Bilateral comparisons measure centre-to-centre distances only.',
   limitations: [
     'This is a centre-landmark registration preflight, not a surface-to-surface or joint-articulation validation.',
     'Skull, ribs, upper limbs, hands and feet do not all have one-to-one host bone anchors in the current female atlas.',
