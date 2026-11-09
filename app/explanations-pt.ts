@@ -120,7 +120,7 @@ export const EXPLANATIONS_PT:Record<string,string> = {
  'anterior cruciate enthesis':'Região de inserção do ligamento cruzado anterior no osso. A entese é a zona de transição que transmite força do ligamento ao esqueleto.',
  'posterior cruciate enthesis':'Região de inserção do ligamento cruzado posterior no osso, onde a força do ligamento é transmitida à estrutura óssea.',
  'lateral epicondylar enthesis':'Região de fixação de estruturas fibrosas no epicôndilo lateral do fêmur.',
- 'medial epicondylar enthesis':'Região de fixação de estruturas fibrosas no epicôndilo medial do fêmur.'
+ 'medial epicondylar enthesis':'Região de fixação de estruturas fibrosas no epicôndilo medial do fêmur.',
 
  'spinal cord segment':'Cada segmento da medula espinal está relacionado a pares de nervos espinais que conectam regiões do corpo ao sistema nervoso central. A nomenclatura cervical, torácica, lombar e sacral indica sua posição de referência.',
  'uterine artery':'Ramo arterial que leva sangue ao útero e a estruturas adjacentes. Seu trajeto e suas anastomoses com a artéria ovariana variam entre indivíduos.',
