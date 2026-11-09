@@ -166,7 +166,7 @@ const rotate = point => rotation.map(row => row.reduce((sum,value,axis)=>sum+val
 function fit(entries) {
   const pairs = entries.map(entry => ({
     source: rotate(centre(entry.sourceBounds).map(value=>value/1000)),
-    target: centre(merge(entry.targets.map(target => atlas.parts.find(part=>part.id===target.id)).filter(Boolean).map(part=>part.bounds))),
+    target: centre(merge(entry.targets.map(target => atlas.parts.find(part=>part.id===target.id)).filter(Boolean))),
   }));
   const mean = points => points.reduce((sum,point)=>sum.map((value,axis)=>value+point[axis]/points.length),[0,0,0]);
   const fromMean=mean(pairs.map(pair=>pair.source)),toMean=mean(pairs.map(pair=>pair.target));
