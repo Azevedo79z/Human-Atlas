@@ -37,7 +37,7 @@ try {
   runCase('unexpected-extra-file', [...allValid, ['EXTRA/UNLISTED.stl', binaryTriangle()]], 2, 'EXTRA/UNLISTED.stl');
   runCase('empty-binary', allValid.map(([name, bytes], i) => [name, i === 0 ? Buffer.alloc(84) : bytes]), 2, 'binary STL contains zero triangles');
   runCase('incomplete-ascii', allValid.map(([name, bytes], i) => [name, i === 0
-    ? Buffer.from('solid test\\n facet normal 0 0 1\\n vertex 0 0 0\\n vertex 1 0 0\\nendsolid test\\n')
+    ? Buffer.from('solid test\n facet normal 0 0 1\n vertex 0 0 0\n vertex 1 0 0\nendsolid test\n')
     : bytes]), 2, 'expected complete triangle groups of three');
   console.log('STL inspector regression tests passed: canonical inventory accepted; missing/extra files, empty binary and incomplete ASCII rejected.');
 } finally {
