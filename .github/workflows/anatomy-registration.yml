@@ -40,6 +40,8 @@ jobs:
           curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_LEFT/PATELLA_LEFT.stl?download=true" -o geometry-sample/PATELLA_LEFT.stl
           curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_LEFT/FEMUR_LEFT.stl?download=true" -o geometry-sample/FEMUR_LEFT.stl
           curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_LEFT/TIBIA_LEFT.stl?download=true" -o geometry-sample/TIBIA_LEFT.stl
+          curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_RIGHT/FEMUR_RIGHT.stl?download=true" -o geometry-sample/FEMUR_RIGHT.stl
+          curl -L --fail --retry 3 --retry-all-errors "$BASE/LOWER_EXTREMITY_RIGHT/TIBIA_RIGHT.stl?download=true" -o geometry-sample/TIBIA_RIGHT.stl
           curl -L --fail --retry 3 --retry-all-errors "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_SHA}/public/models/female-11.bin" -o geometry-sample/female-11.bin
           cp public/data/female-skeleton-source.json geometry-sample/
           cp public/models/atlas-female.json geometry-sample/
