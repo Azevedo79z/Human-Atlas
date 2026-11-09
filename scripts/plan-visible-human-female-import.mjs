@@ -63,33 +63,14 @@ function sourceBounds(file) {
 const ORDINAL = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
 const sideName = side => side === 'LEFT' ? 'left' : 'right';
 const sideTitle = side => side === 'LEFT' ? 'Left' : 'Right';
-// Build the canonical source inventory and require an exact path match. A count-only
-// check could accept 143 files even when one expected bone is missing and a stale
-// or unrelated STL is present in its place.
-const expectedSourceFiles = [];
-const addExpected = (region, file) => expectedSourceFiles.push({region,file,relative:path.join(region,file)});
-const sides = ['LEFT','RIGHT'];
-for (const side of sides) {
-  for (const bone of ['CALCANEUS','CUBOID','INTERMEDIATE_CUNEIFORM','LATERAL_CUNEIFORM','MEDIAL_CUNEIFORM','NAVICULAR','TALUS']) addExpected(`FOOT_${side}`, `${bone}_${side}.stl`);
-  for (let n=1;n<=5;n++) {
-    addExpected(`FOOT_${side}`, `METATARSAL_${n}_${side}.stl`);
-    addExpected(`FOOT_${side}`, `PHALANGE_FOOT_${n}_${side}.stl`);
-  }
-  for (const bone of ['CAPITATE','HAMATE','LUNATE','PISIFORM','SCAPHOID','TRAPEZIUM','TRAPEZOID','TRIQUETRUM']) addExpected(`HAND_${side}`, `${bone}_${side}.stl`);
-  for (let n=1;n<=5;n++) {
-    addExpected(`HAND_${side}`, `METACARPAL_${n}_${side}.stl`);
-    addExpected(`HAND_${side}`, `PHALANGE_HAND_${n}_${side}.stl`);
-  }
-  for (const bone of ['FEMUR','FIBULA','HIP','PATELLA','TIBIA']) addExpected(`LOWER_EXTREMITY_${side}`, `${bone}_${side}.stl`);
-  for (const bone of ['CLAVICLE','HUMERUS','RADIUS','SCAPULA','ULNA']) addExpected(`UPPER_EXTREMITY_${side}`, `${bone}_${side}.stl`);
-}
-addExpected('SKULL','SKULL_CRANIAL_MAXILLA.stl');
-addExpected('SKULL','SKULL_MANDIBLE.stl');
-addExpected('SPINAL_COLUMN','SACRUM.stl');
-for (const [prefix,last] of [['C',7],['T',12],['L',6]]) for (let n=1;n<=last;n++) addExpected('SPINAL_COLUMN', `VERTEBRA_${prefix}${n}.stl`);
-addExpected('THORAX','STERNUM.stl');
-for (let n=1;n<=12;n++) for (const side of sides) addExpected('THORAX', `RIB_${n}_${side}.stl`);
-
+// Use the exact same canonical path inventory as the downloader, then
+// compare it against the extracted folder to catch missing or unexpected STL files.
+import { FEMALE_BONE_FILES, FEMALE_BONE_FILE_COUNT } from './lib/visible-human-female-inventory.mjs';
+const expectedSourceFiles = FEMALE_BONE_FILES.map(({region,filename}) => ({
+  region,
+  file: filename,
+  relative: path.join(region, filename),
+}));
 const actualSourceFiles = [];
 for (const region of fs.readdirSync(root, {withFileTypes:true})) {
   if (!region.isDirectory()) continue;
@@ -103,7 +84,8 @@ const expectedKeys = new Set(expectedSourceFiles.map(file => `${file.region}/${f
 const actualKeys = new Set(actualSourceFiles.map(file => `${file.region}/${file.file}`));
 const missingSourceFiles = [...expectedKeys].filter(key => !actualKeys.has(key)).sort();
 const unexpectedSourceFiles = [...actualKeys].filter(key => !expectedKeys.has(key)).sort();
-if (missingSourceFiles.length || unexpectedSourceFiles.length || actualSourceFiles.length !== expectedSourceFiles.length) {
+if (expectedSourceFiles.length !== FEMALE_BONE_FILE_COUNT || FEMALE_BONE_FILE_COUNT !== 143 ||
+    missingSourceFiles.length || unexpectedSourceFiles.length || actualSourceFiles.length !== FEMALE_BONE_FILE_COUNT) {
   throw new Error(`Source inventory mismatch. Missing: ${missingSourceFiles.join(', ') || 'none'}. Unexpected: ${unexpectedSourceFiles.join(', ') || 'none'}.`);
 }
 const sourceFiles = expectedSourceFiles;
