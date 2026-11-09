@@ -9,6 +9,7 @@ on:
       - .github/workflows/visible-human-female-preflight.yml
       - scripts/lib/visible-human-female-inventory.mjs
       - scripts/test-visible-human-female-inventory.mjs
+      - scripts/test-visible-human-female-stl-inspector.mjs
       - scripts/download-visible-human-female-bones.mjs
       - scripts/audit-visible-human-female-bones.mjs
       - scripts/inspect-visible-human-female-stl.mjs
@@ -41,9 +42,12 @@ jobs:
         run: |
           node --check scripts/lib/visible-human-female-inventory.mjs
           node --check scripts/test-visible-human-female-inventory.mjs
+          node --check scripts/test-visible-human-female-stl-inspector.mjs
+          node --check scripts/inspect-visible-human-female-stl.mjs
           node --check scripts/download-visible-human-female-bones.mjs
           node --check scripts/plan-visible-human-female-import.mjs
           node scripts/test-visible-human-female-inventory.mjs
+          node scripts/test-visible-human-female-stl-inspector.mjs
 
       - name: Download source STL files from the public Hugging Face bucket
         run: node scripts/download-visible-human-female-bones.mjs "$RUNNER_TEMP/02_Female"
