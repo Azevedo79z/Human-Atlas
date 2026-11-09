@@ -122,7 +122,6 @@ export const EXPLANATIONS_PT:Record<string,string> = {
  'lateral epicondylar enthesis':'Região de fixação de estruturas fibrosas no epicôndilo lateral do fêmur.',
  'medial epicondylar enthesis':'Região de fixação de estruturas fibrosas no epicôndilo medial do fêmur.'
 
- 'optic nerve':'Nervo craniano II, formado por axônios das células ganglionares da retina. Conduz informações visuais em direção ao quiasma óptico e ao encéfalo.',
  'spinal cord segment':'Cada segmento da medula espinal está relacionado a pares de nervos espinais que conectam regiões do corpo ao sistema nervoso central. A nomenclatura cervical, torácica, lombar e sacral indica sua posição de referência.',
  'uterine artery':'Ramo arterial que leva sangue ao útero e a estruturas adjacentes. Seu trajeto e suas anastomoses com a artéria ovariana variam entre indivíduos.',
  'renal artery':'Artéria que leva sangue ao rim. Seus ramos distribuem-se pelo hilo renal e participam da irrigação do parênquima.',
@@ -140,8 +139,6 @@ export const EXPLANATIONS_PT:Record<string,string> = {
  'uterine vein':'Veia que participa da drenagem do útero para as veias ilíacas internas, por meio de plexos venosos pélvicos.',
  'ophthalmic vein':'Veia que drena estruturas da órbita e estabelece comunicações com sistemas venosos da face e do crânio.',
  'central retinal vein':'Veia que acompanha a artéria central da retina e drena o sangue da retina em direção ao sistema venoso oftálmico.',
- 'superior vena cava':'Grande veia que retorna ao átrio direito o sangue da cabeça, pescoço, membros superiores e parte do tórax.',
- 'inferior vena cava':'Grande veia que retorna ao átrio direito o sangue do abdome, da pelve e dos membros inferiores.',
  'adductor brevis':'Músculo do compartimento medial da coxa. Aproxima a coxa da linha média e auxilia na flexão do quadril.',
  'adductor longus':'Músculo superficial do compartimento medial da coxa. Atua principalmente na adução da coxa e auxilia a flexão do quadril.',
  'biceps femoris long head':'Cabeça longa do bíceps femoral, músculo posterior da coxa que estende o quadril e flexiona o joelho; também contribui para a rotação lateral da perna quando o joelho está flexionado.',
@@ -166,12 +163,6 @@ export const EXPLANATIONS_PT:Record<string,string> = {
  'pectineus':'Músculo curto da região proximal e medial da coxa. Participa da adução e auxilia a flexão do quadril.',
  'quadratus femoris':'Músculo profundo da região glútea que realiza rotação lateral e auxilia a adução da coxa.',
  'tensor fasciae latae':'Músculo anterolateral do quadril que tensiona o trato iliotibial, auxilia a flexão e abdução do quadril e contribui para a estabilidade do joelho.',
- 'anterior cruciate ligament of knee':'Ligamento que cruza o interior do joelho e limita principalmente o deslocamento anterior da tíbia em relação ao fêmur, contribuindo para a estabilidade rotacional.',
- 'posterior cruciate ligament of knee':'Ligamento que cruza o interior do joelho e limita principalmente o deslocamento posterior da tíbia em relação ao fêmur.',
- 'anterolateral ligament of knee':'Estrutura ligamentar da região anterolateral do joelho que contribui para o controle da rotação e da estabilidade lateral.',
- 'fibular collateral ligament':'Ligamento da face lateral do joelho que conecta o fêmur à cabeça da fíbula e resiste ao estresse em varo.',
- 'tibial collateral ligament':'Ligamento da face medial do joelho, também chamado ligamento colateral medial, que ajuda a resistir ao estresse em valgo.',
- 'patellar ligament':'Faixa resistente que liga o ápice da patela à tuberosidade da tíbia. Transmite a força do quadríceps para estender o joelho.',
 
 
 };
