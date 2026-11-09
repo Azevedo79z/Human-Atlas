@@ -10,7 +10,7 @@ const LABELS:Record<string,string>={FEMUR:'Fêmur',PATELLA:'Patela',TIBIA:'Tíbi
 const formatName=(id:string)=>{const side=id.endsWith('_LEFT')?'esquerdo':'direito';const key=id.replace(/_(LEFT|RIGHT)$/,'');return `${LABELS[key]??key} ${side}`;};
 
 export default function VisibleHumanReference({onClose}:Props){
- const host=useRef<HTMLDivElement>(null),sceneRef=useRef<T.Scene|null>(null),cameraRef=useRef<T.PerspectiveCamera|null>(null),controlsRef=useRef<OrbitControls|null>(null),rendererRef=useRef<T.WebGLRenderer|null>(null),meshes=useRef(new Map<string,T.Mesh>()),manifestRef=useRef<Manifest|null>(null);
+ const inFlight=useRef(new Set<string>()),host=useRef<HTMLDivElement>(null),sceneRef=useRef<T.Scene|null>(null),cameraRef=useRef<T.PerspectiveCamera|null>(null),controlsRef=useRef<OrbitControls|null>(null),rendererRef=useRef<T.WebGLRenderer|null>(null),meshes=useRef(new Map<string,T.Mesh>()),manifestRef=useRef<Manifest|null>(null);
  const [manifest,setManifest]=useState<Manifest|null>(null),[side,setSide]=useState<'LEFT'|'RIGHT'>('LEFT'),[selected,setSelected]=useState('FEMUR_LEFT'),[loaded,setLoaded]=useState<string[]>([]),[loading,setLoading]=useState(false),[error,setError]=useState('');
  const items=useMemo(()=>manifest?.bones.filter(b=>b.region===`LOWER_EXTREMITY_${side}`&&/^(FEMUR|PATELLA|TIBIA|FIBULA)_/.test(b.file))??[],[manifest,side]);
  useEffect(()=>{const abort=new AbortController();fetch('/data/female-skeleton-source.json',{signal:abort.signal}).then(r=>{if(!r.ok)throw new Error('Não foi possível abrir o catálogo da referência.');return r.json();}).then((m:Manifest)=>{manifestRef.current=m;setManifest(m);}).catch(e=>{if(e.name!=='AbortError')setError(e.message);});return()=>abort.abort();},[]);
@@ -29,7 +29,8 @@ export default function VisibleHumanReference({onClose}:Props){
   return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();controls.dispose();meshes.current.forEach(m=>{m.geometry.dispose();(m.material as T.Material).dispose();});meshes.current.clear();renderer.dispose();renderer.domElement.remove();sceneRef.current=null;};
  },[]);
  const loadSide=async(nextSide:'LEFT'|'RIGHT')=>{
-  const m=manifestRef.current;if(!m||!sceneRef.current||!cameraRef.current||!controlsRef.current)return;
+  if(inFlight.current.has(nextSide))return;inFlight.current.add(nextSide);
+  const m=manifestRef.current;if(!m||!sceneRef.current||!cameraRef.current||!controlsRef.current){inFlight.current.delete(nextSide);return;}
   setSide(nextSide);setSelected(`FEMUR_${nextSide}`);setError('');setLoading(true);
   try{
    const bones=m.bones.filter(b=>b.region===`LOWER_EXTREMITY_${nextSide}`&&/^(FEMUR|PATELLA|TIBIA|FIBULA)_/.test(b.file));
@@ -49,9 +50,9 @@ export default function VisibleHumanReference({onClose}:Props){
    const box=new T.Box3();meshes.current.forEach(mesh=>{if(mesh.name.endsWith(nextSide))box.expandByObject(mesh);});
    if(!box.isEmpty()){const center=box.getCenter(new T.Vector3()),size=box.getSize(new T.Vector3()),extent=Math.max(size.x,size.y,size.z);controlsRef.current.target.copy(center);cameraRef.current.position.copy(center).add(new T.Vector3(0,extent*.18,extent*2.3));cameraRef.current.near=Math.max(.001,extent/1000);cameraRef.current.far=Math.max(20,extent*20);cameraRef.current.updateProjectionMatrix();controlsRef.current.update();}
   }catch(e){setError(e instanceof Error?e.message:'Erro desconhecido ao carregar os modelos.');}
-  finally{setLoading(false);}
+  finally{inFlight.current.delete(nextSide);setLoading(false);}
  };
- useEffect(()=>{if(manifest&&!loaded.some(id=>id.endsWith(side)))void loadSide(side);},[manifest,side]);
+ useEffect(()=>{if(manifest&&items.length&&!items.every(item=>loaded.includes(item.id)))void loadSide(side);},[manifest,side,items,loaded]);
  useEffect(()=>{const el=host.current;if(!el)return;const raycaster=new T.Raycaster(),pointer=new T.Vector2();const click=(event:PointerEvent)=>{const rect=el.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);if(!cameraRef.current||!sceneRef.current)return;raycaster.setFromCamera(pointer,cameraRef.current);const hits=raycaster.intersectObjects([...meshes.current.values()],false);if(hits[0])setSelected(hits[0].object.name);};el.addEventListener('pointerup',click);return()=>el.removeEventListener('pointerup',click);},[]);
  const selectedBone=manifest?.bones.find(b=>b.id===selected);
  const focus=(id:string)=>{setSelected(id);const mesh=meshes.current.get(id),camera=cameraRef.current,controls=controlsRef.current;if(!mesh||!camera||!controls)return;const box=new T.Box3().setFromObject(mesh),center=box.getCenter(new T.Vector3()),size=box.getSize(new T.Vector3()),extent=Math.max(size.x,size.y,size.z);controls.target.copy(center);camera.position.copy(center).add(new T.Vector3(0,extent*.25,extent*2.6));controls.update();};
