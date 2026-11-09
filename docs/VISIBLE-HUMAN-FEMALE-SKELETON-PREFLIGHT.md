@@ -100,3 +100,10 @@ A integração deverá substituir as 65 malhas esqueléticas atuais e os 180 pla
 **Estado:** pré-validação automatizada concluída. Nenhuma malha foi importada, removida ou alterada; `atlas-female.json`, chunks atuais e produção permanecem intocados.
 
 O planejador `scripts/plan-visible-human-female-import.mjs` foi alinhado ao medidor: `SKULL_CRANIAL_MAXILLA` considera apenas alvos cranianos/maxilares identificados no manifesto, e `SKULL_MANDIBLE` permanece separado. O plano e o medidor passam, assim, a usar o mesmo recorte anatômico para esses dois arquivos. Essa consistência de mapeamento não equivale a validação geométrica.
+
+
+## Integridade exata do inventário de origem
+
+O planejador agora reconstrói a lista canônica dos 143 caminhos STL esperados e compara os caminhos reais do diretório com essa lista antes de mapear qualquer estrutura. A validação interrompe a execução se houver arquivo esperado ausente, arquivo STL inesperado ou divergência na quantidade total. Isso evita que uma pasta com 143 arquivos, mas contendo uma peça errada no lugar de outra, passe por uma verificação baseada apenas em contagem.
+
+A checagem valida nomes e caminhos, não o conteúdo anatômico dos arquivos. A integridade geométrica continua dependendo da inspeção STL, dos relatórios de malha e da validação de registro descrita acima.
