@@ -1,5 +1,8 @@
 import {flushSync} from 'react-dom';
-import {registerAtlasTools} from './agent-tools';\nimport AuthPanel from './auth-panel';\nimport {getSupabaseClient} from './supabase';\nimport type {User} from '@supabase/supabase-js';
+import {registerAtlasTools} from './agent-tools';
+import AuthPanel from './auth-panel';
+import {getSupabaseClient} from './supabase';
+import type {User} from '@supabase/supabase-js';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {Activity,ArrowUpRight,BookOpen,CheckCircle2,ChevronLeft,ChevronRight,ClipboardCheck,Focus,GraduationCap,Info,Layers3,Pause,RotateCcw,RotateCw,Search,X} from 'lucide-react';
 import {Button} from '@/components/ui/button';
@@ -53,7 +56,9 @@ export default function Home(){
  // The document carries the language so the browser hyphenates, aligns and
  // orders punctuation correctly, and so `dir`-based styling applies.
  useEffect(()=>{document.documentElement.lang=language;document.documentElement.dir=direction(language);},[language]);
- const [atlas,setAtlas]=useState<Atlas|null>(null),[state,setState]=useState(()=>initial('male')),[progress,setProgress]=useState(0),[error,setError]=useState(''),[panel,setPanel]=useState<'layers'|'search'|null>(null),[details,setDetails]=useState(false),[about,setAbout]=useState(false),[query,setQuery]=useState(''),[chosen,setChosen]=useState<Concept|null>(null),[studyOpen,setStudyOpen]=useState(false),[studySystem,setStudySystem]=useState<SystemId>('skeletal'),[studyIndex,setStudyIndex]=useState(0),[studyCompleted,setStudyCompleted]=useState<string[]>([]),[studyQuizMode,setStudyQuizMode]=useState(false),[studyQuizIndex,setStudyQuizIndex]=useState(0),[studyQuizAnswer,setStudyQuizAnswer]=useState<string|null>(null),[studyQuizMastered,setStudyQuizMastered]=useState<string[]>([]),[studyProgressLoadedFor,setStudyProgressLoadedFor]=useState<Sex|null>(null),[studySaveStatus,setStudySaveStatus]=useState<'saved'|'unavailable'>('saved');\n const [authUser,setAuthUser]=useState<User|null>(null),[cloudProgressLoadedFor,setCloudProgressLoadedFor]=useState<string|null>(null);\n const supabase=getSupabaseClient();
+ const [atlas,setAtlas]=useState<Atlas|null>(null),[state,setState]=useState(()=>initial('male')),[progress,setProgress]=useState(0),[error,setError]=useState(''),[panel,setPanel]=useState<'layers'|'search'|null>(null),[details,setDetails]=useState(false),[about,setAbout]=useState(false),[query,setQuery]=useState(''),[chosen,setChosen]=useState<Concept|null>(null),[studyOpen,setStudyOpen]=useState(false),[studySystem,setStudySystem]=useState<SystemId>('skeletal'),[studyIndex,setStudyIndex]=useState(0),[studyCompleted,setStudyCompleted]=useState<string[]>([]),[studyQuizMode,setStudyQuizMode]=useState(false),[studyQuizIndex,setStudyQuizIndex]=useState(0),[studyQuizAnswer,setStudyQuizAnswer]=useState<string|null>(null),[studyQuizMastered,setStudyQuizMastered]=useState<string[]>([]),[studyProgressLoadedFor,setStudyProgressLoadedFor]=useState<Sex|null>(null),[studySaveStatus,setStudySaveStatus]=useState<'saved'|'unavailable'>('saved');
+ const [authUser,setAuthUser]=useState<User|null>(null),[cloudProgressLoadedFor,setCloudProgressLoadedFor]=useState<string|null>(null);
+ const supabase=getSupabaseClient();
  const source=edition_(sex,language);
  // Browser-only persistence; the static atlas has no account or backend yet.
  useEffect(()=>{
