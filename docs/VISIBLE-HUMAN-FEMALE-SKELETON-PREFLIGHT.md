@@ -76,6 +76,19 @@ O planejador read-only `scripts/plan-visible-human-female-import.mjs` relacionou
 
 **Como interpretar:** os resíduos medem a distância entre centros de caixas delimitadoras após o melhor ajuste uniforme regional, não a distância entre superfícies. Braços, mãos e pés apresentam discrepâncias grandes; crânio e mandíbula têm somente um landmark cada, insuficiente para determinar uma transformação confiável. A pelve tem somente dois anchors, portanto o seu resultado também exige inspeção visual independente.
 
+## Ampliação dos marcos de registro — etapa de homologação
+
+O medidor de registro foi ampliado para amostrar também:
+- Clavícula, úmero, rádio, escápula e ulna de cada lado.
+- As 12 costelas de cada lado, além do esterno e da coluna.
+- Metacarpos e falanges agrupadas dos dedos indicador, médio, anelar e mínimo.
+- Ossos do tarso, metatarsos e falanges agrupadas dos cinco dedos de cada pé.
+- Complexo craniano/maxilar e mandíbula como grupos separados.
+
+Esses alvos são referências já presentes no manifesto e continuam identificados como estruturas doadoras/placeholder quando essa é sua procedência. A ampliação aumenta a cobertura dos centros de caixas delimitadoras; **não** transforma esses centros em registro de superfície, não valida articulações e não autoriza substituir as malhas. Ossos do carpo e falanges do polegar não entram nesta rodada porque a correspondência individual no manifesto não foi confirmada.
+
+O novo relatório precisa ser produzido pelo workflow após esta alteração. Até que o artefato seja inspecionado, não há novos resíduos medidos nem aprovação de alinhamento para membros superiores, mãos, pés ou crânio.
+
 ## Bloqueio de importação
 A etapa de mapeamento passou (143/143), mas o registro geométrico ainda **não está aprovado para importação**. Não aplicar a transformação global ou regional atual às malhas. A próxima fase precisa de registro de superfície/ICP ou landmarks anatômicos adicionais, revisão de articulações e checagem visual em pose neutra. A transformação final deverá preservar escala uniforme por estrutura/região e passar por validação de colisões e continuidade articular.
 
