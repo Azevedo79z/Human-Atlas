@@ -107,3 +107,8 @@ O planejador `scripts/plan-visible-human-female-import.mjs` foi alinhado ao medi
 O planejador agora reconstrói a lista canônica dos 143 caminhos STL esperados e compara os caminhos reais do diretório com essa lista antes de mapear qualquer estrutura. A validação interrompe a execução se houver arquivo esperado ausente, arquivo STL inesperado ou divergência na quantidade total. Isso evita que uma pasta com 143 arquivos, mas contendo uma peça errada no lugar de outra, passe por uma verificação baseada apenas em contagem.
 
 A checagem valida nomes e caminhos, não o conteúdo anatômico dos arquivos. A integridade geométrica continua dependendo da inspeção STL, dos relatórios de malha e da validação de registro descrita acima.
+
+
+## Fonte única do inventário de origem
+
+A lista canônica dos 143 arquivos está centralizada em `scripts/lib/visible-human-female-inventory.mjs`. O downloader usa essa lista para obter os STL e o planejador importa a mesma lista para conferir a pasta extraída antes do mapeamento. O workflow também observa alterações nesse módulo. Assim, a definição dos caminhos não precisa ser mantida em dois scripts independentes.
