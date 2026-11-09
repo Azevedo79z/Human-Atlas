@@ -4,8 +4,8 @@
 export type Language = 'en'|'ar'|'pt';
 export const LANGUAGES:{id:Language;label:string;direction:'ltr'|'rtl'}[] = [
  {id:'en',label:'English',direction:'ltr'},
- {id:'ar',label:'العربية',direction:'rtl'},
  {id:'pt',label:'Português (BR)',direction:'ltr'},
+ {id:'ar',label:'العربية',direction:'rtl'},
 ];
 export const direction = (language:Language) => LANGUAGES.find(l=>l.id===language)?.direction ?? 'ltr';
 
@@ -108,6 +108,7 @@ export const say = (language:Language, phrase:Phrase) => TEXT[phrase][language];
  * so a search has to compare stripped forms or it misses obvious matches. */
 export const fold = (text:string) => text
  .toLowerCase()
+ .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
  .replace(/[ً-ْٰـ]/g,'')
  .replace(/[أإآٱ]/g,'ا')
  .replace(/ى/g,'ي')
