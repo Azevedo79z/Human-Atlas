@@ -91,8 +91,8 @@ export default function Home(){
    if(error){setCloudProgressLoadedFor(null);return;}
    const cloudCompleted=Array.isArray(data?.completed_concepts)?data.completed_concepts.filter((value)=>typeof value==='string'&&value.startsWith(sex+':')):[];
    const cloudMastered=Array.isArray(data?.mastered_questions)?data.mastered_questions.filter((value)=>typeof value==='string'&&value.startsWith(sex+':')):[];
-   setStudyCompleted(local=>[...new Set([...local,...cloudCompleted])]);
-   setStudyQuizMastered(local=>[...new Set([...local,...cloudMastered])]);
+   setStudyCompleted(cloudCompleted);
+   setStudyQuizMastered(cloudMastered);
    setCloudProgressLoadedFor(ownerKey);
   });
   return()=>{active=false;};
