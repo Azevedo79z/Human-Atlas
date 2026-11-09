@@ -7,6 +7,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { FEMALE_BONE_FILES, FEMALE_BONE_FILE_COUNT } from './lib/visible-human-female-inventory.mjs';
 
 const source=process.argv[2];
 if(!source){console.error('Usage: node scripts/inspect-visible-human-female-stl.mjs PATH_TO_02_Female');process.exit(1);}
@@ -15,6 +16,12 @@ const root=path.resolve(source);
 if(!/(^|[\\/])02_Female$/i.test(root)){console.error('Safety stop: input directory must be named 02_Female.');process.exit(1);}
 const files=[];
 (function walk(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())walk(p);else if(e.name.toLowerCase().endsWith('.stl'))files.push(p);}})(root);
+const relPaths=new Set(files.map(file=>path.relative(root,file).split(path.sep).join('/')));
+const expectedPaths=new Set(FEMALE_BONE_FILES.map(file=>file.key));
+const missingPaths=[...expectedPaths].filter(key=>!relPaths.has(key)).sort();
+const unexpectedPaths=[...relPaths].filter(key=>!expectedPaths.has(key)).sort();
+const exactInventoryMatches=files.length===FEMALE_BONE_FILE_COUNT &&
+  relPaths.size===FEMALE_BONE_FILE_COUNT && missingPaths.length===0 && unexpectedPaths.length===0;
 const results=[];
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
@@ -48,6 +55,6 @@ for(const file of files){
  }catch(err){results.push({file:rel,format:'invalid',bytes:buf.length,error:err.message});}
 }
 const valid=results.filter(x=>x.format!=='invalid');
-const report={safety:'READ ONLY — no source files or Atlas assets changed.',sourceFolder:'02_Female',fileCount:files.length,validStlFiles:valid.length,invalidFiles:results.filter(x=>x.format==='invalid'),totalTriangles:valid.reduce((n,x)=>n+x.triangles,0),totalDegenerateFacets:valid.reduce((n,x)=>n+x.degenerateFacets,0),formatCounts:valid.reduce((o,x)=>(o[x.format]=(o[x.format]||0)+1,o),{}),unitWarning:'STL files do not encode physical units. Bounds are raw coordinates and must not be interpreted as mm or cm until verified against source documentation and anatomical landmarks.',meshes:results};
+const report={safety:'READ ONLY — no source files or Atlas assets changed.',sourceFolder:'02_Female',expectedFileCount:FEMALE_BONE_FILE_COUNT,fileCount:files.length,exactInventoryMatches,missingExpectedPaths:missingPaths,unexpectedPaths,validStlFiles:valid.length,invalidFiles:results.filter(x=>x.format==='invalid'),totalTriangles:valid.reduce((n,x)=>n+x.triangles,0),totalDegenerateFacets:valid.reduce((n,x)=>n+x.degenerateFacets,0),formatCounts:valid.reduce((o,x)=>(o[x.format]=(o[x.format]||0)+1,o),{}),unitWarning:'STL files do not encode physical units. Bounds are raw coordinates and must not be interpreted as mm or cm until verified against source documentation and anatomical landmarks.',meshes:results};
 console.log(JSON.stringify(report,null,2));
-if(!valid.length||results.some(x=>x.format==='invalid')||valid.some(x=>x.degenerateFacets>0))process.exitCode=2;
+if(!exactInventoryMatches||!valid.length||results.some(x=>x.format==='invalid')||valid.some(x=>x.degenerateFacets>0))process.exitCode=2;
