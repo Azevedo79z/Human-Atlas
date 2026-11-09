@@ -85,3 +85,8 @@ These tests are committed but have **not yet been executed** in this environment
 ## Binary geometry access status
 
 The pinned source inventory identifies the left/right femur and patella STL files and their exact byte sizes. The repository manifest also identifies their candidate atlas counterparts. However, the STL payloads and the atlas chunk binary have not yet been retrieved into a local analysis workspace, so no vertex coordinates or anatomical landmarks have been measured. File names and bounding boxes alone are not sufficient to approve a transform.
+
+A GitHub Actions workflow now runs the focused registration test file on pushes to
+this development branch and on relevant pull-request changes. The workflow is
+configured, but no run result has been observed yet; do not treat the tests as
+passing until GitHub reports a completed successful run.
