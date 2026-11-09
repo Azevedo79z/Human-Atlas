@@ -17,6 +17,7 @@ const anatomicalRegion=(raw:string,language:Language):string=>{
  const groups:[RegExp,string,string][]=[
   [/brain|cerebr|hippocamp|thalam|hypothalam|amygdal|cerebell|olfactory bulb/,'Encéfalo','Brain'],
   [/skull|cranial|mandible|maxilla|zygoma|frontal bone|parietal bone|temporal bone|occipital bone|sphenoid|ethmoid|nasal bone|eye|orbit|retina|cornea|iris|sclera|pupil|lens|ear|cochlea|tongue|mouth|tooth|teeth/,'Cabeça','Head'],
+  [/vertebr|spinal cord|intervertebral|back|erector spinae/,'Coluna e dorso','Spine and back'],
   [/cervical|larynx|pharynx|thyroid cartilage|trachea|neck/,'Pescoço','Neck'],
   [/thorac|rib|sternum|manubrium|heart|lung|bronch|aorta|pulmonary|esophag|diaphragm/,'Tórax','Thorax'],
   [/abdomen|abdominal|liver|stomach|spleen|pancrea|gallbladder|kidney|renal|intestin|colon|duodenum|omentum|ureter/,'Abdome','Abdomen'],
@@ -24,8 +25,8 @@ const anatomicalRegion=(raw:string,language:Language):string=>{
   [/shoulder|scapula|clavicle|rotator cuff/,'Cintura escapular','Shoulder girdle'],
   [/humerus|biceps brachii|triceps brachii|brachial/,'Braço','Arm'],
   [/forearm|radius|ulna|radial|ulnar|median nerve|wrist|carpal|metacarp|phalanx of hand|hand/,'Antebraço e mão','Forearm and hand'],
-  [/vertebr|spinal cord|intervertebral|back|erector spinae/,'Coluna e dorso','Spine and back'],
-  [/hip|glute|femur|femoral|thigh|quadriceps|hamstring|adductor|sartorius|patella|knee|meniscus|cruciate|collateral ligament/,'Quadril e coxa','Hip and thigh'],
+  [/knee|meniscus|patella|cruciate|collateral ligament/,'Joelho','Knee'],
+  [/hip|glute|femur|femoral|thigh|quadriceps|hamstring|adductor|sartorius/,'Quadril e coxa','Hip and thigh'],
   [/tibia|fibula|calf|gastrocnemius|soleus|tibialis|perone|ankle|tarsal|calcaneus|talus|metatars|foot|plantar/,'Perna e pé','Leg and foot']
  ];
  const match=groups.find(([pattern])=>pattern.test(n));
@@ -34,7 +35,7 @@ const anatomicalRegion=(raw:string,language:Language):string=>{
 };
 const anatomicalLaterality=(raw:string,language:Language):string=>{
  const n=raw.toLowerCase();
- const right=/(^|\\b)(right|dexter|dextra)(\\b|$)/.test(n),left=/(^|\\b)(left|sinister|sinistra)(\\b|$)/.test(n);
+ const right=/(^|\b)(right|dexter|dextra)(\b|$)/.test(n),left=/(^|\b)(left|sinister|sinistra)(\b|$)/.test(n);
  if(right&&left)return language==='pt'?'Bilateral / múltiplos lados':language==='ar'?'ثنائي الجانب':'Bilateral / multiple sides';
  if(right)return language==='pt'?'Direito':language==='ar'?'أيمن':'Right';
  if(left)return language==='pt'?'Esquerdo':language==='ar'?'أيسر':'Left';
