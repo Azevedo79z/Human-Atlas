@@ -18,6 +18,12 @@ The pinned manifest lists 143 female STL labels. They cover the skull, spinal co
 
 Known source limitations are recorded in `public/data/female-skeleton-source.json`: incomplete elbow surfaces; grouped phalanges; combined cranium/maxilla, sacrum/coccyx and sternum; absent hyoid and most sesamoid bones; and no costal cartilage.
 
+## Female muscle coverage
+
+The current female manifest already includes 76 donor-muscle meshes across 40 distinct source names, from a second female Visible Human specimen. The University of Denver release covers the pelvis-to-ankle region and is licensed CC BY 4.0. It does **not** supply a whole-body female muscle set for the trunk, upper limbs, neck or head. See `public/data/female-muscle-source.json` for the coverage inventory. The Portuguese term dictionary and educational explanations were expanded for 26 additional muscle names in this branch; laterality is rendered from the source's left/right suffix.
+
+A generic muscle atlas may be considered only as a separately labelled illustrative layer, never as female-specimen-specific geometry. Any such source must retain its own licence and attribution.
+
 ## Integration rules
 
 1. Keep the current Human Reference Atlas female organ/surface model as its own source layer.

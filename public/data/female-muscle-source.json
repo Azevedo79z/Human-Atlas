@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "title": "3D Models of the Visible Human Male and Female Lower Extremities",
+    "repository": "https://digitalcommons.du.edu/visiblehuman/",
+    "doi": "https://doi.org/10.1038/s41597-022-01905-2",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "scope": "Female specimen; pelvis to ankle; muscle, bone, cartilage, ligament and fat geometries segmented from Visible Human cryosections."
+  },
+  "currentAtlasCoverage": {
+    "systemId": "donor-muscle",
+    "meshCount": 76,
+    "distinctSourceNames": 40,
+    "representedRegions": [
+      "quadril",
+      "coxa",
+      "perna",
+      "pé (estruturas musculares relacionadas)"
+    ],
+    "sourceIdentity": "A second female specimen/reference; not the same individual as the main HuBMAP female organ/surface assembly."
+  },
+  "knownGaps": [
+    "This source does not provide a complete female muscle set for the trunk, upper limbs, neck or head.",
+    "Do not present generic or male-derived muscle geometry as female-specimen-specific.",
+    "Any future generic anatomical muscle layer must be clearly labelled as a separate illustrative reference and carry its own licence and provenance."
+  ],
+  "labels": [
+    "Adductor brevis",
+    "Adductor longus",
+    "Adductor magnus",
+    "Biceps femoris long",
+    "Biceps femoris short",
+    "Gastrocnemius medial",
+    "Gracilis",
+    "Plantaris",
+    "Popliteus",
+    "Rectus femoris",
+    "Sartorius",
+    "Semimembranosus",
+    "Semitendinosus",
+    "Vastus intermedius",
+    "Vastus lateralis",
+    "Vastus medialis",
+    "Extensor digitorum longus",
+    "Extensor hallucis longus",
+    "Flexor digitorum longus",
+    "Flexor hallucis longus",
+    "Gastrocnemius lateral",
+    "Peroneus longus",
+    "Soleus",
+    "Tibialis anterior",
+    "Tibialis posterior",
+    "Gluteus maximus",
+    "Gluteus medius",
+    "Gluteus minimus",
+    "Iliacus",
+    "Inferior gemellus",
+    "Obturator externus",
+    "Obturator internus",
+    "Pectineus",
+    "Piriformis",
+    "Psoas major",
+    "Quadratus femoris",
+    "Superior gemellus",
+    "Tensor fasciae latae",
+    "Biceps femoris long head",
+    "Biceps femoris short head"
+  ]
+}
