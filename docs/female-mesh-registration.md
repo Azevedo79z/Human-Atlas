@@ -69,3 +69,19 @@ segmentation labels.
 The registration utility is committed, but no landmark coordinates have yet been
 measured. Therefore no transform has been approved, no STL has been converted or
 loaded into the viewer, and no preview deployment should be treated as updated.
+
+## Automated checks
+
+The repository now exposes `npm run test:registration`, with focused checks for:
+
+- identity transforms;
+- a known 90-degree rotation, uniform scale and translation;
+- rejection of collinear anchors;
+- rejection of duplicate IDs and non-finite coordinates;
+- reporting of an independent validation-point mismatch without silently refitting.
+
+These tests are committed but have **not yet been executed** in this environment. They must pass before the registration helper is used in the asset pipeline.
+
+## Binary geometry access status
+
+The pinned source inventory identifies the left/right femur and patella STL files and their exact byte sizes. The repository manifest also identifies their candidate atlas counterparts. However, the STL payloads and the atlas chunk binary have not yet been retrieved into a local analysis workspace, so no vertex coordinates or anatomical landmarks have been measured. File names and bounding boxes alone are not sufficient to approve a transform.
