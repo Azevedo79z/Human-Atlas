@@ -62,6 +62,7 @@ export default function Home(){
  const counts=useMemo(()=>Object.fromEntries(SYSTEMS.map(s=>[s.id,atlas?.parts.filter(p=>p.system===s.id).length??0])),[atlas]);
  const activeSystems=SYSTEMS.filter(s=>counts[s.id]>0);
  const selectedParts=state.selected.map(id=>parts.get(id)).filter(p=>!!p),selected=selectedParts[0],system=SYSTEMS.find(s=>s.id===selected?.system);
+ const relatedIds=useMemo(()=>{if(!atlas||!chosen)return[];const names=anatomyRelations(chosen.name).flatMap(r=>r.structures);return [...new Set(names.flatMap(n=>atlas.concepts.find(concept=>concept.name===n)?.elements??[]))].filter(id=>!state.selected.includes(id));},[atlas,chosen,state.selected]);
  const selectedSource=selected?.system==='borrowed'
   ? {name:language==='pt'?'BodyParts3D 4.0 · referência masculina':'BodyParts3D 4.0 · male reference',url:'https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html'}
   : selected?.system==='donor-muscle'
@@ -80,7 +81,7 @@ export default function Home(){
  const reset=()=>{setState(s=>({...initial(sex),reset:s.reset+1}));setChosen(null);setDetails(false);setPanel(null);};
  const openPanel=(next:'layers'|'search')=>{setDetails(false);setPanel(p=>p===next?null:next);};
  return <main className="studio">
-  {atlas&&<AnatomyScene atlas={atlas} state={{...state,inspectorOpen:details&&selectedParts.length>0}} onSelect={choosePart} onProgress={n=>{setProgress(n);if(n===100)setError('');}} onError={setError}/>}
+  {atlas&&<AnatomyScene atlas={atlas} state={{...state,related:relatedIds,inspectorOpen:details&&selectedParts.length>0}} onSelect={choosePart} onProgress={n=>{setProgress(n);if(n===100)setError('');}} onError={setError}/>}
   <div className="vignette"/>
   <header className="identity"><div className="eyebrow"><span className="status-dot"/> {t('eyebrow')}</div><h1>{t('title')}<Badge variant="outline" className="edition">3D</Badge></h1><div className="identity-meta">{atlas?atlas.parts.length.toLocaleString('en'):'—'} {t('pieces')} <span>·</span> {source.dataset}</div>
    <div className="anatomy-choice"><Select value={sex} onValueChange={value=>setSex(value as Sex)}><SelectTrigger aria-label={t('referenceBodyLabel')}><span>{rtl?`${t('referenceBody')} ${source.label}`:`${source.label} ${t('referenceBody')}`}</span></SelectTrigger><SelectContent className="anatomy-choice-menu">{EDITIONS.map(e=><SelectItem key={e.sex} value={e.sex}>{rtl?`${t('referenceBody')} ${edition_(e.sex,language).label}`:`${edition_(e.sex,language).label} ${t('referenceBody')}`}</SelectItem>)}</SelectContent></Select></div></header>
