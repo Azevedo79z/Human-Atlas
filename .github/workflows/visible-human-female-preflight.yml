@@ -7,6 +7,7 @@ on:
       - central-forense/esqueleto-feminino-visible-human-preflight
     paths:
       - .github/workflows/visible-human-female-preflight.yml
+      - scripts/lib/visible-human-female-inventory.mjs
       - scripts/download-visible-human-female-bones.mjs
       - scripts/audit-visible-human-female-bones.mjs
       - scripts/inspect-visible-human-female-stl.mjs
