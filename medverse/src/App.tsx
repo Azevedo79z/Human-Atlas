@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Activity, ArrowDown, ArrowRight, ArrowUpRight, Atom, AudioWaveform,
   BookOpen, BrainCircuit, Check, CircleHelp,
-  Dna, FlaskConical, GraduationCap, Layers3, Menu, Microscope,
+  Dna, Droplets, FlaskConical, GitBranch, GraduationCap, Layers3, Menu, Microscope,
   Search, ShieldCheck, Sparkles, Stethoscope, X,
 } from "lucide-react";
 
@@ -83,6 +83,22 @@ const modules: ModuleItem[] = [
     description: "Ferramentas para estruturar perguntas, organizar fontes e explorar evidências científicas com transparência sobre a origem dos dados.",
     icon: FlaskConical, status: "planned", tags: ["Evidências", "Projetos", "Dados"],
   },
+  {
+    id: "blood-lab",
+    number: "09",
+    title: "Blood Lab",
+    subtitle: "O universo dos grupos sanguíneos",
+    description: "Ambiente educacional sobre os sistemas ABO e Rh, antígenos, anticorpos, compatibilidade de transfusão de hemácias e herança dos grupos sanguíneos. Os resultados serão apresentados como conteúdo de estudo, não como orientação para transfusão real.",
+    icon: Droplets, status: "planned", tags: ["ABO", "Fator Rh", "Compatibilidade", "Herança"],
+  },
+  {
+    id: "genetic-lineage",
+    number: "10",
+    title: "Genetic Lineage",
+    subtitle: "Histórias que atravessam gerações",
+    description: "Construtor de heredogramas e simulador educacional de hereditariedade, com cruzamentos genéticos, probabilidades condicionadas aos genótipos conhecidos e explicações sobre características simples e complexas.",
+    icon: GitBranch, status: "planned", tags: ["DNA", "Heredogramas", "Genética", "Probabilidades"],
+  },
 ];
 
 const statusLabel = {
@@ -93,7 +109,7 @@ const statusLabel = {
 
 function HumanHologram() {
   return (
-    <div className="holo-stage" aria-label="Ilustração holográfica abstrata do corpo humano">
+    <div className="holo-stage" aria-label="Prévia conceitual holográfica; modelo anatômico proporcional será integrado em etapa futura">
       <div className="holo-orbit orbit-one" />
       <div className="holo-orbit orbit-two" />
       <div className="holo-orbit orbit-three" />
@@ -129,9 +145,9 @@ function HumanHologram() {
           <circle cx="143" cy="420" r="2.5" /><circle cx="217" cy="420" r="2.5" />
         </g>
       </svg>
-      <div className="holo-label label-top"><span className="pulse-dot" /> BIO-SCAN / LIVE</div>
+      <div className="holo-label label-top"><span className="pulse-dot" /> BIO-VISUAL / PREVIEW</div>
       <div className="holo-label label-left"><i /> SISTEMAS<br /><b>08</b></div>
-      <div className="holo-label label-right"><i /> ATLAS 3D<br /><b>READY</b></div>
+      <div className="holo-label label-right"><i /> MODELO ANATÔMICO<br /><b>EM EVOLUÇÃO</b></div>
       <div className="holo-coordinate">MEDVERSE // HUMAN INTERFACE</div>
     </div>
   );
@@ -257,7 +273,7 @@ function App() {
               <button className="text-button" onClick={() => goTo("universe")}><span className="play-icon">↘</span> Descobrir o MEDVERSE</button>
             </div>
             <div className="hero-meta">
-              <div><span className="meta-number">08</span><span className="meta-label">AMBIENTES PLANEJADOS</span></div>
+              <div><span className="meta-number">10</span><span className="meta-label">AMBIENTES PLANEJADOS</span></div>
               <div className="meta-divider" />
               <div><span className="meta-number">3D</span><span className="meta-label">EXPLORAÇÃO INTERATIVA</span></div>
               <div className="meta-divider" />
@@ -266,7 +282,7 @@ function App() {
           </div>
           <div className="hero-visual" data-reveal>
             <HumanHologram />
-            <div className="visual-caption"><span>FIG. 001</span><span>HUMAN DIGITAL INTERFACE</span><span>01 / 08</span></div>
+            <div className="visual-caption"><span>FIG. 001</span><span>HUMAN DIGITAL INTERFACE</span><span>01 / 10</span></div>
           </div>
           <div className="scroll-cue" onClick={() => goTo("universe")} role="button" tabIndex={0} onKeyDown={(event) => event.key === "Enter" && goTo("universe")}><span>DESLIZE PARA EXPLORAR</span><ArrowDown size={15} /></div>
           <div className="hero-index">01 <span>/</span> 04</div>
@@ -321,7 +337,7 @@ function App() {
                 const Icon = item.icon;
                 return (
                   <article className="module-card" key={item.id} data-reveal>
-                    <div className="module-card-top"><span className="module-number">{item.number} / 08</span><span className={`module-status status-${item.status}`}><i />{statusLabel[item.status]}</span></div>
+                    <div className="module-card-top"><span className="module-number">{item.number} / 10</span><span className={`module-status status-${item.status}`}><i />{statusLabel[item.status]}</span></div>
                     <div className="module-icon"><Icon size={23} strokeWidth={1.6} /></div>
                     <h3>{item.title}</h3>
                     <h4>{item.subtitle}</h4>
