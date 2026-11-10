@@ -73,11 +73,13 @@ jobs:
       - name: Parse STL meshes and write validation report
         run: node scripts/validate-female-left-foot.mjs "${{ runner.temp }}/FOOT_LEFT" --out "${{ runner.temp }}/female-left-foot-validation.json"
 
-      - name: Upload validation report
+      - name: Upload source meshes and validation report for offline geometric comparison
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: female-left-foot-validation
-          path: ${{ runner.temp }}/female-left-foot-validation.json
+          name: female-left-foot-geometry-review
+          path: |
+            ${{ runner.temp }}/FOOT_LEFT/
+            ${{ runner.temp }}/female-left-foot-validation.json
           if-no-files-found: warn
           retention-days: 14
