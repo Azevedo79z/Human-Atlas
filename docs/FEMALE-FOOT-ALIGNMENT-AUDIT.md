@@ -61,3 +61,28 @@ The corresponding right-foot borrowed inventory is present as well, but this pil
 Alavi, S. H., & Asseln, M. (2026). *Visible-Human-3D-Models* [Dataset]. https://doi.org/10.57967/hf/10464. License: CC BY 4.0.
 
 Andreassen, T. E., Hume, D. R., Hamilton, L. D., Walker, K. E., Higinbotham, S. E., & Shelburne, K. B. (2023). Three Dimensional Lower Extremity Musculoskeletal Geometry of the Visible Human Female and Male. *Scientific Data*, 10, 34. https://doi.org/10.1038/s41597-022-01905-2.
+
+## Registration-anchor download and integrity audit
+
+A second isolated GitHub Actions job downloaded the five female left lower-extremity anchor meshes from the same BoneHub subject and source revision. The job completed successfully: [run 42833188527](https://github.com/Azevedo79z/Human-Atlas/actions/runs/42833188527).
+
+| Anchor | Bytes | Triangles |
+| --- | ---: | ---: |
+| FEMUR_LEFT.stl | 12,512,884 | 250,256 |
+| FIBULA_LEFT.stl | 3,044,284 | 60,884 |
+| HIP_LEFT.stl | 14,247,084 | 284,940 |
+| PATELLA_LEFT.stl | 995,884 | 19,916 |
+| TIBIA_LEFT.stl | 8,185,284 | 163,704 |
+| **Total** | **38,985,420** | **779,700** |
+
+All five files are binary STL and passed parsing. SHA-256 checksums:
+
+- FEMUR_LEFT: `5881c6585151527f1d584ed705c0ebabe0117ff7edc79fbeecd80a036812cdbb`
+- FIBULA_LEFT: `12c091d23e0c17b36730112d14087e56f270d38b0d1c73b792b3622e2e6fc67b`
+- HIP_LEFT: `3cbe60c7f7e1c1ccfa4413a7961f77e18f0f387d1af677d75906fcb4d988155c`
+- PATELLA_LEFT: `15289d078c8c9cd009cdcbcf8d38e99d8d5752d77710bfffeadbfe10ca0e7898`
+- TIBIA_LEFT: `e9a1d2d03e38f243b02842dca44ae3262f05df8f263bbdb79f73210381adc8d6`
+
+The report preserves raw source bounds in the workflow artifact `female-left-anchor-audit`. Their coordinate values are consistent with a millimetre-scale source, but this audit intentionally does not declare units or infer a transform. No atlas manifest, binary model chunk, or production geometry was changed.
+
+The next technical task is vertex-level registration against the HRA female native hip/femur/patella/tibia/fibula meshes. The transform must be supported by multiple anatomical landmarks and one consistent rigid rotation plus uniform scale and translation; bounding-box agreement alone is not acceptance.
