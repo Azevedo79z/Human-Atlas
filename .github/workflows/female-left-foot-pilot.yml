@@ -40,7 +40,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$DEST"
-          base='https://huggingface.co/buckets/Azevedo79z/visible-human-3d-models-bucket/resolve/main/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT'
+          base='https://huggingface.co/buckets/Azevedo79z/visible-human-3d-models-bucket/resolve/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT'
           while IFS=' ' read -r name expected; do
             [ -n "$name" ] || continue
             curl --fail --location --retry 3 --retry-delay 2 \
