@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - main
+      - feat/female-foot-registration-preflight
     paths:
       - .github/workflows/female-foot-overlay-preview.yml
       - scripts/build-female-foot-overlay.py
