@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Activity, ArrowDown, ArrowRight, ArrowUpRight, Atom, AudioWaveform,
-  BookOpen, BrainCircuit, Check, ChevronRight, CircleHelp, Command,
+  BookOpen, BrainCircuit, Check, CircleHelp,
   Dna, FlaskConical, GraduationCap, Layers3, Menu, Microscope,
   Search, ShieldCheck, Sparkles, Stethoscope, X,
 } from "lucide-react";
