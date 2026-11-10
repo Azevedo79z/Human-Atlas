@@ -265,3 +265,45 @@ kbd { color: #71899a; border: 1px solid var(--line); border-radius: 5px; padding
   .atlas-frame-wrap { min-height: 250px; }
   .atlas-frame { min-height: 55vh; }
 }
+
+
+/* Atlas embed: constrain the workspace to the modal viewport and prevent
+   the iframe's intrinsic height from stretching the MEDVERSE page. */
+.modal-backdrop {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.module-modal-atlas {
+  height: min(92vh, 900px);
+  max-height: calc(100dvh - 16px);
+  min-height: 0;
+}
+.atlas-frame-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 100%;
+  overscroll-behavior: contain;
+}
+.atlas-frame {
+  height: 100%;
+  min-height: 0;
+}
+@media (max-width: 760px) {
+  .modal-backdrop {
+    padding: 8px;
+    overflow-y: auto;
+  }
+  .module-modal-atlas {
+    height: calc(100dvh - 16px);
+    max-height: calc(100dvh - 16px);
+    min-height: 0;
+  }
+  .atlas-frame-wrap {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+  .atlas-frame {
+    height: 100%;
+    min-height: 0;
+  }
+}
