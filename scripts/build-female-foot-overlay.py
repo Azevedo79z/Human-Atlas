@@ -65,6 +65,6 @@ def main():
  glb=scene.export(file_type="glb")
  open(a.out,"wb").write(glb)
  report={"status":"visual_review_artifact_not_approved_for_import","candidateMeshes":len(included),"atlasReferenceMeshes":len(PAIRS),"candidateColor":"orange","atlasReferenceColor":"blue translucent","units":"meters","transform":{"scale":scale,"rotationRowVectorConvention":rot.tolist(),"translationMeters":trans.tolist()},"sourceMeshes":included,"limitations":["Global transform initialized from 12 paired bone centroids.","Human visual review is required for laterality, articulation, orientation, and joint-surface fit.","Five phalange files are grouped by digit and have no one-to-one atlas counterpart.","This GLB is a separate review artifact; it does not modify or replace atlas geometry."],"glbBytes":len(glb)}
- with open(a.report,"w",encoding="utf-8") as f: json.dump(report,f,indent=2); f.write("\\n")
+ with open(a.report,"w",encoding="utf-8") as f: json.dump(report,f,indent=2); f.write("\n")
  print(json.dumps(report,indent=2))
 if __name__=="__main__": main()
