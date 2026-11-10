@@ -32,5 +32,5 @@ const files=expected.map(name=>{
 });
 const report={dataset:'BoneHub Visible-Human-3d-Models',subject:'02_Female',region:'LOWER_EXTREMITY_LEFT',purpose:'registration anchors only; no production geometry modified',files,totals:{files:files.length,bytes:files.reduce((n,f)=>n+f.bytes,0),triangles:files.reduce((n,f)=>n+f.triangles,0)},limitations:['Raw STL coordinates only; units, axes and registration are not inferred.','Bounds and triangle counts do not establish anatomical alignment.']};
 const json=JSON.stringify(report,null,2);
-if(output)fs.writeFileSync(output,json+'\\n');
+if(output)fs.writeFileSync(output,json+'\n');
 console.log(json);
