@@ -221,11 +221,6 @@ function App() {
   };
 
   const openModule = (item: ModuleItem) => {
-    if (item.action === "atlas") {
-      window.open("https://humanatlas-8em.pages.dev", "_blank", "noopener,noreferrer");
-      setNotice("Human Atlas aberto em uma nova aba. A integração nativa virá em uma próxima etapa.");
-      return;
-    }
     setSelectedModule(item);
   };
 
@@ -377,16 +372,42 @@ function App() {
 
       {selectedModule && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && setSelectedModule(null)}>
-          <section className="module-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <section className={selectedModule.action === "atlas" ? "module-modal module-modal-atlas" : "module-modal"} role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <button className="modal-close icon-button" aria-label="Fechar" onClick={() => setSelectedModule(null)}><X size={19} /></button>
-            <div className="eyebrow"><span className="eyebrow-line" /> AMBIENTE {selectedModule.number} / MEDVERSE</div>
-            <div className="modal-icon">{(() => { const Icon = selectedModule.icon; return <Icon size={27} />; })()}</div>
-            <span className={`module-status status-${selectedModule.status}`}><i />{statusLabel[selectedModule.status]}</span>
-            <h2 id="modal-title">{selectedModule.title}</h2>
-            <h3>{selectedModule.subtitle}</h3>
-            <p>{selectedModule.description}</p>
-            <div className="modal-note"><ShieldCheck size={17} /><span>Este ambiente será liberado após implementação e testes. Nenhuma função clínica será apresentada como ferramenta de diagnóstico.</span></div>
-            <button className="primary-button" onClick={() => { setSelectedModule(null); setNotice(`${selectedModule.title}: ambiente registrado no roteiro de desenvolvimento.`); }}>ENTENDI <Check size={16} /></button>
+            {selectedModule.action === "atlas" ? (
+              <>
+                <div className="atlas-modal-heading">
+                  <div>
+                    <div className="eyebrow"><span className="eyebrow-line" /> ANATOMY EXPLORER / LIVE</div>
+                    <h2 id="modal-title">Human Atlas</h2>
+                    <p>Explore o modelo anatômico 3D conectado ao MEDVERSE. Use os controles do atlas para alternar sistemas e selecionar estruturas.</p>
+                  </div>
+                  <a className="atlas-external-link" href="https://humanatlas-8em.pages.dev/" target="_blank" rel="noreferrer">ABRIR EM NOVA ABA <ArrowUpRight size={14} /></a>
+                </div>
+                <div className="atlas-frame-wrap">
+                  <iframe
+                    className="atlas-frame"
+                    src="https://humanatlas-8em.pages.dev/"
+                    title="Human Atlas — explorador anatômico 3D"
+                    loading="lazy"
+                    allow="fullscreen"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                  />
+                </div>
+                <div className="modal-note"><ShieldCheck size={17} /><span>O Human Atlas continua hospedado separadamente. Esta é uma integração incorporada; o modelo e seus dados originais não foram alterados. A fidelidade e a cobertura de cada sistema dependem dos dados anatômicos disponíveis no atlas.</span></div>
+              </>
+            ) : (
+              <>
+                <div className="eyebrow"><span className="eyebrow-line" /> AMBIENTE {selectedModule.number} / MEDVERSE</div>
+                <div className="modal-icon">{(() => { const Icon = selectedModule.icon; return <Icon size={27} />; })()}</div>
+                <span className={`module-status status-${selectedModule.status}`}><i />{statusLabel[selectedModule.status]}</span>
+                <h2 id="modal-title">{selectedModule.title}</h2>
+                <h3>{selectedModule.subtitle}</h3>
+                <p>{selectedModule.description}</p>
+                <div className="modal-note"><ShieldCheck size={17} /><span>Este ambiente será liberado após implementação e testes. Nenhuma função clínica será apresentada como ferramenta de diagnóstico.</span></div>
+                <button className="primary-button" onClick={() => { setSelectedModule(null); setNotice(`${selectedModule.title}: ambiente registrado no roteiro de desenvolvimento.`); }}>ENTENDI <Check size={16} /></button>
+              </>
+            )}
           </section>
         </div>
       )}
