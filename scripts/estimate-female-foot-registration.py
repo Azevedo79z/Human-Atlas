@@ -13,6 +13,7 @@ import struct
 import sys
 
 import numpy as np
+from scipy.spatial import cKDTree
 
 PAIRS = {
     "CALCANEUS_LEFT": "BM0134",
@@ -74,6 +75,28 @@ def fit_similarity(source, target):
     residuals = np.linalg.norm(predicted - target, axis=1)
     return scale, rotation, translation, residuals
 
+def surface_distance(source, target, scale, rotation, translation, sample_limit=5000):
+    """Symmetric nearest-vertex distances after the centroid-derived transform."""
+    transformed = scale * (source @ rotation) + translation
+    def sample(points):
+        if len(points) <= sample_limit:
+            return points
+        indices = np.linspace(0, len(points) - 1, sample_limit, dtype=np.int64)
+        return points[indices]
+    a = sample(transformed)
+    b = sample(target)
+    ab = cKDTree(b).query(a, k=1)[0]
+    ba = cKDTree(a).query(b, k=1)[0]
+    def stats(values):
+        return {
+            "meanMeters": float(np.mean(values)),
+            "medianMeters": float(np.median(values)),
+            "p95Meters": float(np.percentile(values, 95)),
+            "maxMeters": float(np.max(values)),
+        }
+    return {"sourceToAtlas": stats(ab), "atlasToSource": stats(ba),
+            "symmetricMeanMeters": float((np.mean(ab) + np.mean(ba)) / 2)}
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stl-dir", required=True)
@@ -89,12 +112,15 @@ def main():
         raise ValueError(f'female-12.bin byte mismatch: expected {chunk_info["bytes"]}, got {len(chunk)}')
     parts = {p["id"]: p for p in manifest["parts"]}
     source_centroids, target_centroids, names, vertex_counts = [], [], [], []
+    source_meshes, target_meshes = [], []
     for filename, part_id in PAIRS.items():
         stl_path = os.path.join(args.stl_dir, filename + ".stl")
         source = read_stl_vertices(stl_path)
         target = target_vertices(chunk, parts[part_id])
         source_centroids.append(source.mean(axis=0))
         target_centroids.append(target.mean(axis=0))
+        source_meshes.append(source)
+        target_meshes.append(target)
         names.append(filename)
         vertex_counts.append({"sourceVertices": int(len(source)), "atlasVertices": int(len(target)), "atlasPartId": part_id})
 
@@ -109,11 +135,12 @@ def main():
             "sourceVertices": vertex_counts[i]["sourceVertices"],
             "atlasVertices": vertex_counts[i]["atlasVertices"],
             "centroidResidualMeters": float(residuals[i]),
+            "surfaceDistance": surface_distance(source_meshes[i], target_meshes[i], scale, rotation, translation),
         })
 
     report = {
         "status": "preflight_only_not_approved_for_import",
-        "method": "12 paired bone vertex centroids; least-squares uniform-scale proper rotation and translation",
+        "method": "12 paired bone vertex centroids; least-squares uniform-scale proper rotation and translation; symmetric nearest-vertex surface-distance diagnostics",
         "sourceDataset": "BoneHub Visible-Human-3D-Models / 02_Female / FOOT_LEFT",
         "atlasManifest": "public/models/atlas-female.json",
         "atlasChunk": "public/models/female-12.bin",
@@ -128,6 +155,7 @@ def main():
         "perBone": per_bone,
         "limitations": [
             "Centroid registration is a global initialization, not a surface-level anatomical validation.",
+            "Nearest-vertex distances are diagnostic only; meshes have different tessellation and are not a substitute for signed-distance or joint-surface review.",
             "A low centroid residual does not prove joint-surface compatibility or correct bone orientation.",
             "No atlas files or source meshes are modified by this script.",
             "The source represents one 59-year-old female cadaveric reference.",
