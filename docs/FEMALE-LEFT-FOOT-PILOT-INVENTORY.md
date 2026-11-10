@@ -63,3 +63,15 @@ The full left-foot pilot is modest enough to test as a focused asset set; do not
 Alavi, S. H., & Asseln, M. (2026). *Visible-Human-3D-Models* [Dataset]. Hugging Face. https://doi.org/10.57967/hf/10464. License: CC BY 4.0.
 
 Andreassen, T. E., Hume, D. R., Hamilton, L. D., Walker, K. E., Higinbotham, S. E., & Shelburne, K. B. (2023). Three Dimensional Lower Extremity Musculoskeletal Geometry of the Visible Human Female and Male. *Scientific Data*, 10, 34. https://doi.org/10.1038/s41597-022-01905-2.
+
+
+## Automated validation workflow
+
+The isolated GitHub Actions workflow is defined at
+`.github/workflows/female-left-foot-pilot.yml`. It downloads only the 17
+left-foot STL files, checks each exact byte count against this inventory,
+runs the STL parser, and uploads a JSON validation report. It does not modify
+the application, atlas manifests, or production geometry.
+
+Manual execution: GitHub Actions → "Validate female left-foot STL pilot" →
+Run workflow → branch `docs/female-left-foot-pilot`.
