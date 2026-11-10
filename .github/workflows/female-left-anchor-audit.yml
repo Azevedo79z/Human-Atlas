@@ -1,0 +1,58 @@
+name: Validate female left-leg registration anchors
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/female-foot-alignment-audit
+    paths:
+      - .github/workflows/female-left-anchor-audit.yml
+      - scripts/validate-female-left-anchors.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: female-left-anchor-audit
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Download and inspect five female left-leg anchors
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out audit branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check validator syntax
+        run: node --check scripts/validate-female-left-anchors.mjs
+
+      - name: Download only the five registration anchors
+        env:
+          DEST: ${{ runner.temp }}/FEMALE_LEFT_ANCHORS
+        run: |
+          set -euo pipefail
+          mkdir -p "$DEST"
+          base='https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/main/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_LEFT'
+          for name in FEMUR_LEFT FIBULA_LEFT HIP_LEFT PATELLA_LEFT TIBIA_LEFT; do
+            curl --fail --location --retry 3 --retry-delay 2 \
+              "$base/$name.stl" -o "$DEST/$name.stl"
+          done
+
+      - name: Parse meshes and record bounds, bytes and checksums
+        run: node scripts/validate-female-left-anchors.mjs "${{ runner.temp }}/FEMALE_LEFT_ANCHORS" --out "${{ runner.temp }}/female-left-anchor-audit.json"
+
+      - name: Upload anchor audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-left-anchor-audit
+          path: ${{ runner.temp }}/female-left-anchor-audit.json
+          if-no-files-found: warn
+          retention-days: 14
