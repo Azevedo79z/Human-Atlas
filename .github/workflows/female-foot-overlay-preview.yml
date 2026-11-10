@@ -30,7 +30,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check numpy scipy trimesh
       - name: Download the 17 female left-foot STL files
         env:
-          DEST: \${{ runner.temp }}/FOOT_LEFT
+          DEST: ${{ runner.temp }}/FOOT_LEFT
         run: |
           set -euo pipefail
           mkdir -p "$DEST"
@@ -62,33 +62,33 @@ jobs:
       - name: Download female atlas manifest and geometry chunk
         run: |
           set -euo pipefail
-          mkdir -p "\${{ runner.temp }}/atlas"
+          mkdir -p "${{ runner.temp }}/atlas"
           base='https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/docs/female-left-foot-pilot/public/models'
-          curl --fail --location "$base/atlas-female.json" -o "\${{ runner.temp }}/atlas/atlas-female.json"
-          curl --fail --location "$base/female-12.bin" -o "\${{ runner.temp }}/atlas/female-12.bin"
+          curl --fail --location "$base/atlas-female.json" -o "${{ runner.temp }}/atlas/atlas-female.json"
+          curl --fail --location "$base/female-12.bin" -o "${{ runner.temp }}/atlas/female-12.bin"
       - name: Estimate registration transform
         run: |
           python scripts/estimate-female-foot-registration.py \
-            --stl-dir "\${{ runner.temp }}/FOOT_LEFT" \
-            --manifest "\${{ runner.temp }}/atlas/atlas-female.json" \
-            --chunk "\${{ runner.temp }}/atlas/female-12.bin" \
-            --out "\${{ runner.temp }}/female-foot-registration-preflight.json"
+            --stl-dir "${{ runner.temp }}/FOOT_LEFT" \
+            --manifest "${{ runner.temp }}/atlas/atlas-female.json" \
+            --chunk "${{ runner.temp }}/atlas/female-12.bin" \
+            --out "${{ runner.temp }}/female-foot-registration-preflight.json"
       - name: Build separate GLB overlay
         run: |
           python scripts/build-female-foot-overlay.py \
-            --stl-dir "\${{ runner.temp }}/FOOT_LEFT" \
-            --manifest "\${{ runner.temp }}/atlas/atlas-female.json" \
-            --chunk "\${{ runner.temp }}/atlas/female-12.bin" \
-            --registration "\${{ runner.temp }}/female-foot-registration-preflight.json" \
-            --out "\${{ runner.temp }}/female-left-foot-overlay.glb" \
-            --report "\${{ runner.temp }}/female-left-foot-overlay-report.json"
+            --stl-dir "${{ runner.temp }}/FOOT_LEFT" \
+            --manifest "${{ runner.temp }}/atlas/atlas-female.json" \
+            --chunk "${{ runner.temp }}/atlas/female-12.bin" \
+            --registration "${{ runner.temp }}/female-foot-registration-preflight.json" \
+            --out "${{ runner.temp }}/female-left-foot-overlay.glb" \
+            --report "${{ runner.temp }}/female-left-foot-overlay-report.json"
       - name: Upload visual review package
         uses: actions/upload-artifact@v4
         with:
           name: female-left-foot-overlay-preview
           path: |
-            \${{ runner.temp }}/female-left-foot-overlay.glb
-            \${{ runner.temp }}/female-left-foot-overlay-report.json
-            \${{ runner.temp }}/female-foot-registration-preflight.json
+            ${{ runner.temp }}/female-left-foot-overlay.glb
+            ${{ runner.temp }}/female-left-foot-overlay-report.json
+            ${{ runner.temp }}/female-foot-registration-preflight.json
           if-no-files-found: error
           retention-days: 14
