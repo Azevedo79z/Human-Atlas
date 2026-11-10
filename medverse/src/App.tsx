@@ -206,7 +206,7 @@ function App() {
 
   const openModule = (item: ModuleItem) => {
     if (item.action === "atlas") {
-      window.open("https://atlas.taim.best", "_blank", "noopener,noreferrer");
+      window.open("https://humanatlas-8em.pages.dev", "_blank", "noopener,noreferrer");
       setNotice("Human Atlas aberto em uma nova aba. A integração nativa virá em uma próxima etapa.");
       return;
     }
