@@ -1,0 +1,82 @@
+name: Female left-foot registration preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/female-foot-registration-preflight
+    paths:
+      - .github/workflows/female-foot-registration-preflight.yml
+      - scripts/estimate-female-foot-registration.py
+
+permissions:
+  contents: read
+
+concurrency:
+  group: female-foot-registration-preflight
+  cancel-in-progress: true
+
+jobs:
+  estimate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical dependency
+        run: python -m pip install --disable-pip-version-check numpy
+      - name: Download the isolated 17-bone source set
+        env:
+          DEST: ${{ runner.temp }}/FOOT_LEFT
+        run: |
+          set -euo pipefail
+          mkdir -p "$DEST"
+          base='https://huggingface.co/buckets/Azevedo79z/visible-human-3d-models-bucket/resolve/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT'
+          while IFS=' ' read -r name expected; do
+            [ -n "$name" ] || continue
+            curl --fail --location --retry 3 "$base/$name.stl?download=true" -o "$DEST/$name.stl"
+            actual=$(wc -c < "$DEST/$name.stl" | tr -d ' ')
+            test "$actual" = "$expected" || { echo "::error::$name byte mismatch"; exit 1; }
+          done <<'FILES'
+          CALCANEUS_LEFT 2437884
+          CUBOID_LEFT 676284
+          INTERMEDIATE_CUNEIFORM_LEFT 335684
+          LATERAL_CUNEIFORM_LEFT 376484
+          MEDIAL_CUNEIFORM_LEFT 563884
+          METATARSAL_1_LEFT 1011484
+          METATARSAL_2_LEFT 683084
+          METATARSAL_3_LEFT 623484
+          METATARSAL_4_LEFT 592084
+          METATARSAL_5_LEFT 628884
+          NAVICULAR_LEFT 649484
+          PHALANGE_FOOT_1_LEFT 777284
+          PHALANGE_FOOT_2_LEFT 372284
+          PHALANGE_FOOT_3_LEFT 297284
+          PHALANGE_FOOT_4_LEFT 261284
+          PHALANGE_FOOT_5_LEFT 266884
+          TALUS_LEFT 1568684
+          FILES
+      - name: Download female atlas manifest and geometry chunk
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ runner.temp }}/atlas"
+          base='https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/docs/female-left-foot-pilot/public/models'
+          curl --fail --location "$base/atlas-female.json" -o "${{ runner.temp }}/atlas/atlas-female.json"
+          curl --fail --location "$base/female-12.bin" -o "${{ runner.temp }}/atlas/female-12.bin"
+      - name: Estimate one global source-to-atlas transform
+        run: |
+          python scripts/estimate-female-foot-registration.py \
+            --stl-dir "${{ runner.temp }}/FOOT_LEFT" \
+            --manifest "${{ runner.temp }}/atlas/atlas-female.json" \
+            --chunk "${{ runner.temp }}/atlas/female-12.bin" \
+            --out "${{ runner.temp }}/female-foot-registration-preflight.json"
+      - name: Upload registration preflight report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-foot-registration-preflight
+          path: ${{ runner.temp }}/female-foot-registration-preflight.json
+          if-no-files-found: warn
+          retention-days: 14
