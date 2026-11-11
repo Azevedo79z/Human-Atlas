@@ -56,8 +56,7 @@ async function getChunk(atlas, part, label, cache, remoteBase) {
     buffer = await response.arrayBuffer();
   } else {
     const filename = meta.url.split("/").pop();
-    buffer = fs.readFileSync(new URL(filename, HOST_DIR)).buffer;
-    // Buffer may expose a larger pooled ArrayBuffer; copy the exact view below.
+    // Copy the exact Buffer view; its backing ArrayBuffer may be larger or pooled.
     const view = fs.readFileSync(new URL(filename, HOST_DIR));
     buffer = view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength);
   }
