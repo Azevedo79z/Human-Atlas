@@ -1,0 +1,41 @@
+name: Female muscle bilateral symmetry audit
+
+on:
+  push:
+    branches:
+      - audit/female-muscle-bilateral-symmetry
+    paths:
+      - "scripts/audit-female-muscle-bilateral-symmetry.mjs"
+      - ".github/workflows/female-muscle-bilateral-symmetry.yml"
+  pull_request:
+    branches:
+      - audit/female-muscle-triangle-surface-distance
+    paths:
+      - "scripts/audit-female-muscle-bilateral-symmetry.mjs"
+      - ".github/workflows/female-muscle-bilateral-symmetry.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint audit script
+        run: deno lint scripts/audit-female-muscle-bilateral-symmetry.mjs
+      - name: Type-check audit script
+        run: deno check scripts/audit-female-muscle-bilateral-symmetry.mjs
+      - name: Run read-only bilateral geometry audit
+        run: deno run --allow-net=raw.githubusercontent.com --allow-read scripts/audit-female-muscle-bilateral-symmetry.mjs > female-muscle-bilateral-symmetry.json
+      - name: Upload bilateral geometry report
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-muscle-bilateral-symmetry
+          path: female-muscle-bilateral-symmetry.json
+          if-no-files-found: error
+          retention-days: 14
