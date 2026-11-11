@@ -1,6 +1,12 @@
 name: Female muscle triangle-surface distance audit
 
 on:
+  push:
+    branches:
+      - audit/female-muscle-triangle-surface-distance
+    paths:
+      - "scripts/screen-female-muscle-triangle-surface-distance.mjs"
+      - ".github/workflows/female-muscle-triangle-surface-distance.yml"
   pull_request:
     branches:
       - audit/female-muscle-native-skeleton-proximity
