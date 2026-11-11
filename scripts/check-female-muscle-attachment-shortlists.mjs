@@ -35,7 +35,7 @@ const results = reference.muscles.map((muscle) => {
         role,
         expectedSite: site.site,
         bonePatterns: site.bonePatterns,
-        status: matched.length ? "candidate_found_in_shortlist" : "not_found_in_top_8_inconclusive",
+        status: matched.length ? "candidate_found_in_shortlist" : "not_found_in_top_12_inconclusive",
         matchedCandidates: matched,
       });
     }
@@ -53,7 +53,7 @@ const summary = {
   referenceMuscles: reference.muscles.length,
   attachmentsChecked: all.length,
   attachmentsWithCandidateInShortlist: all.filter((x) => x.status === "candidate_found_in_shortlist").length,
-  attachmentsNotFoundInTop8Inconclusive: all.filter((x) => x.status === "not_found_in_top_8_inconclusive").length,
+  attachmentsNotFoundInTop8Inconclusive: all.filter((x) => x.status === "not_found_in_top_12_inconclusive").length,
   interpretation: "Shortlist presence is a geometric clue only; absence is inconclusive. Neither result validates anatomical attachment or permits automatic mesh snapping.",
 };
 console.log(JSON.stringify({ summary, results }, null, 2));
