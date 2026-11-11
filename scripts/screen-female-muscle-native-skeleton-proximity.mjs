@@ -34,7 +34,6 @@ const bones = skeletalParts.filter(part => BONE_NAME.test(part.name) && !NON_SUR
 if (muscles.length === 0 || bones.length === 0) {
   throw new Error("Expected donor muscular and named skeletal parts were not found.");
 }
-}
 
 function boxGap(a, b) {
   let squared = 0;
