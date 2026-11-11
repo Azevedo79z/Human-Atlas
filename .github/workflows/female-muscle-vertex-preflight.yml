@@ -1,0 +1,32 @@
+name: Female muscle vertex preflight
+
+on:
+  pull_request:
+    paths:
+      - "scripts/inspect-female-muscle-donor.mjs"
+      - ".github/workflows/female-muscle-vertex-preflight.yml"
+  push:
+    branches: ["feat/female-muscle-vertex-preflight"]
+    paths:
+      - "scripts/inspect-female-muscle-donor.mjs"
+      - ".github/workflows/female-muscle-vertex-preflight.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint inspector
+        run: deno lint scripts/inspect-female-muscle-donor.mjs
+      - name: Type-check inspector
+        run: deno check scripts/inspect-female-muscle-donor.mjs
+      - name: Inspect pinned manifests
+        run: deno run --allow-net=raw.githubusercontent.com scripts/inspect-female-muscle-donor.mjs
