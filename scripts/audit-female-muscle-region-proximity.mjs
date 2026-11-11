@@ -13,7 +13,8 @@ const CANDIDATE =
 const HOST =
   "https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/main/public/models/atlas-female.json";
 
-const UPPER_BODY = /pectoralis|deltoid|biceps brachii|triceps brachii|brachialis|coracobrachialis|trapezius|latissimus|rhomboid|serratus|subclavius|supraspinatus|infraspinatus|teres|subscapularis|sternocleidomastoid|scalene|levator scapulae|pronator|supinator|flexor carpi|extensor carpi|palmaris|anconeus|interosseous|lumbrical|thenar|hypothenar|abductor pollicis|adductor pollicis|opponens/i;\nconst LOWER_LIMB = /foot|pedis|plantar|hallux|toe|calcaneal|fibular|peroneal|tibial|gastrocnemius|soleus/i;
+const UPPER_BODY = /pectoralis|deltoid|biceps brachii|triceps brachii|brachialis|coracobrachialis|trapezius|latissimus|rhomboid|serratus|subclavius|supraspinatus|infraspinatus|teres|subscapularis|sternocleidomastoid|scalene|levator scapulae|pronator|supinator|flexor carpi|extensor carpi|palmaris|anconeus|interosseous|lumbrical|thenar|hypothenar|abductor pollicis|adductor pollicis|opponens/i;
+const LOWER_LIMB = /foot|pedis|plantar|hallux|toe|calcaneal|fibular|peroneal|tibial|gastrocnemius|soleus/i;
 
 const ANCHORS = [
   "Left clavicle", "Right clavicle",
