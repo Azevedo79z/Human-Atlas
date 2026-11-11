@@ -29,4 +29,24 @@ jobs:
       - name: Type-check screening script
         run: deno check scripts/screen-female-muscle-full-bone-surface.mjs
       - name: Run read-only geometric screening
-        run: deno run --allow-net=raw.githubusercontent.com scripts/screen-female-muscle-full-bone-surface.mjs
+        run: deno run --allow-net=raw.githubusercontent.com scripts/screen-female-muscle-full-bone-surface.mjs | tee screening-report.json
+      - name: Add report to workflow summary
+        if: always()
+        run: |
+          if [ -f screening-report.json ]; then
+            echo "## Female muscle / host bone screening report" >> "$GITHUB_STEP_SUMMARY"
+            echo "Generated from read-only geometric screening; measurements are approximate and do not prove anatomical attachment." >> "$GITHUB_STEP_SUMMARY"
+            echo "\`\`\`json" >> "$GITHUB_STEP_SUMMARY"
+            cat screening-report.json >> "$GITHUB_STEP_SUMMARY"
+            echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Screening report was not generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload screening report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-muscle-full-bone-screening-report
+          path: screening-report.json
+          if-no-files-found: warn
+          retention-days: 14
