@@ -80,3 +80,31 @@ The donor ECU records required two source chunks; the six female anchors were al
 **Important limit:** this is binary integrity validation, not visual or anatomical correspondence. Donor ECU coordinates and female borrowed-bone coordinates have not been compared. The next gate is to reconstruct the arm-region scale/translation and posture correction used by the borrowing pipeline, then validate those transforms independently before any surface-distance analysis.
 
 The workflow artifact is named `ecu-female-anchor-geometry-preflight` and is retained for 14 days.
+
+## Arm transform reconstruction result
+
+Workflow: [ECU arm transform reconstruction audit #43123916075](https://github.com/Azevedo79z/Human-Atlas/actions/runs/43123916075)  
+Commit: `64a260a13ed19b55f21ea2279cc41f50bb4e8270`  
+Result: **success** — lint, type-check, transform reconstruction, metadata comparison, and artifact upload completed.
+
+The audit independently reproduced the arm-region transform from the seven shared anchors (thoracic vertebrae 1–5, manubrium, sternum):
+
+- Uniform scale: **0.92727**, exactly matching the stored borrowing metadata.
+- Translation: reconstructed from the same least-squares fit (full vector is in the workflow artifact).
+- Maximum anchor residual: **22.024 mm**, versus the stored rounded value of **22.0 mm**.
+- Anchor RMS residual: **6.614 mm**.
+
+The bilateral posture reconstruction also matched the stored metadata:
+
+| Side | Surface samples (donor / host) | Rotation | Reach scale |
+|---|---:|---:|---:|
+| Left | 3,034 / 3,952 | 21.4° | 0.984 |
+| Right | 2,991 / 2,887 | 23.4° | 0.954 |
+
+All three comparisons passed: arm transform, left posture, and right posture.
+
+**Interpretation limit:** this establishes that the transform and posture values in the current female manifest are reproducible from the current donor/host anchor and skin geometry using the borrowing algorithm. It does not establish that the ECU donor muscle is anatomically attached correctly after transformation, nor does it validate tendon footprints or tissue fit.
+
+Next gate: apply the independently reconstructed arm transform and the side-specific posture operation to ECU vertices in memory only, then compare the transformed ECU surface against the corresponding female borrowed ulna, humerus, and fifth metacarpal surfaces. Preserve separate left/right analysis and keep the result diagnostic; no mesh write-back.
+
+The workflow artifact is named `ecu-arm-transform-reconstruction` and is retained for 14 days.
