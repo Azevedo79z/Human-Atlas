@@ -19,7 +19,7 @@ const TARGETS = [
   ["Flexor carpi ulnaris", /flexor carpi ulnaris/i],
   ["Extensor carpi ulnaris", /extensor carpi ulnaris/i],
 ];
-const SAMPLE_LIMIT = 300;
+const BONE_NAME = /\\b(bone|cartilage|rib|costal|clavicle|sternum|scapula|humerus|radius|ulna|carpal|metacarpal|phalanx|phalanges|vertebr|sacrum|coccyx|ilium|ischium|pubis|femur|patella|tibia|fibula|talus|calcaneus|tarsal|metatarsal|mandible|maxilla|zygomatic|frontal|parietal|temporal|occipital|sphenoid|ethmoid|nasal|lacrimal|palatine|vomer|hyoid|mastoid|condyle|trochanter|epicondyle|olecranon|acromion|coracoid|glenoid|tubercle|process)\\b/i;\nconst NON_SURFACE_TISSUE = /\\b(compact|spongy|cancellous) bone tissue\\b/i;\nconst SAMPLE_LIMIT = 300;
 const NEAREST_BONE_LIMIT = 8;
 
 const manifestResponse = await fetch(RAW_BASE + "models/atlas.json");
@@ -29,7 +29,7 @@ const muscles = TARGETS.flatMap(([target, pattern]) =>
   atlas.parts.filter(part => part.system === "muscular" && pattern.test(part.name))
     .map(part => ({ target, part }))
 );
-const bones = atlas.parts.filter(part => part.system === "skeletal");
+const skeletalParts = atlas.parts.filter(part => part.system === "skeletal");\nconst bones = skeletalParts.filter(part => BONE_NAME.test(part.name) && !NON_SURFACE_TISSUE.test(part.name));
 if (muscles.length === 0 || bones.length === 0) {
   throw new Error("Expected donor muscular and skeletal parts were not found.");
 }
@@ -134,7 +134,7 @@ const report = {
   donorRevision: REVISION,
   coordinateSpace: "Original female donor atlas coordinates; no transforms applied",
   targetMuscleParts: muscles.length,
-  skeletalPartsAvailable: bones.length,
+  skeletalPartsAvailable: skeletalParts.length,\n  boneSurfaceCandidatesAvailable: bones.length,
   chunksDownloaded: chunkIds,
   chunksDownloadedCount: chunkIds.length,
   sampleLimitPerMesh: SAMPLE_LIMIT,
