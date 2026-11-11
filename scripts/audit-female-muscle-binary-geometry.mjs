@@ -6,7 +6,7 @@
 const REVISION = "b0a20fa3a009ca5f6bfa07b7479312e04c862af2";
 const RAW_BASE = `https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/${REVISION}/public/`;
 const MANIFEST_URL = RAW_BASE + "models/atlas.json";
-const TARGETS: Array<[string, RegExp]> = [
+const TARGETS = /** @type {Array<[string, RegExp]>} */ ([
   ["Pectoralis major", /pectoralis major/i],
   ["Pectoralis minor", /pectoralis minor/i],
   ["Subclavius", /subclavius/i],
@@ -19,7 +19,7 @@ const TARGETS: Array<[string, RegExp]> = [
   ["Pronator teres", /pronator teres/i],
   ["Flexor carpi ulnaris", /flexor carpi ulnaris/i],
   ["Extensor carpi ulnaris", /extensor carpi ulnaris/i],
-];
+]);
 
 const manifestResponse = await fetch(MANIFEST_URL);
 if (!manifestResponse.ok) throw new Error(`Manifest HTTP ${manifestResponse.status}`);
