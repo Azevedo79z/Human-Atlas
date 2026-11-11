@@ -1,0 +1,44 @@
+name: Female donor native muscle-to-skeleton proximity screen
+
+on:
+  push:
+    branches: [audit/female-muscle-native-skeleton-proximity]
+  pull_request:
+    branches: [audit/female-muscle-binary-geometry]
+
+permissions:
+  contents: read
+
+jobs:
+  native-proximity-screen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint screen script
+        run: deno lint scripts/screen-female-muscle-native-skeleton-proximity.mjs
+      - name: Type-check screen script
+        run: deno check scripts/screen-female-muscle-native-skeleton-proximity.mjs
+      - name: Screen native donor geometry
+        run: deno run --allow-net=raw.githubusercontent.com scripts/screen-female-muscle-native-skeleton-proximity.mjs | tee female-muscle-native-skeleton-proximity.json
+      - name: Add report to workflow summary
+        if: always()
+        run: |
+          if [ -f female-muscle-native-skeleton-proximity.json ]; then
+            echo "## Female donor native muscle-to-skeleton proximity screen" >> "$GITHUB_STEP_SUMMARY"
+            echo "Approximate vertex sampling in original donor coordinates; not attachment validation." >> "$GITHUB_STEP_SUMMARY"
+            echo '###json-start' >> "$GITHUB_STEP_SUMMARY"
+            cat female-muscle-native-skeleton-proximity.json >> "$GITHUB_STEP_SUMMARY"
+            echo '###json-end' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No proximity report was generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: female-muscle-native-skeleton-proximity
+          path: female-muscle-native-skeleton-proximity.json
+          if-no-files-found: warn
+          retention-days: 14
