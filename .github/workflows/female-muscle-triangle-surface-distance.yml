@@ -1,0 +1,35 @@
+name: Female muscle triangle-surface distance audit
+
+on:
+  pull_request:
+    branches:
+      - audit/female-muscle-native-skeleton-proximity
+    paths:
+      - "scripts/screen-female-muscle-triangle-surface-distance.mjs"
+      - ".github/workflows/female-muscle-triangle-surface-distance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint audit
+        run: deno lint scripts/screen-female-muscle-triangle-surface-distance.mjs
+      - name: Type-check audit
+        run: deno check scripts/screen-female-muscle-triangle-surface-distance.mjs
+      - name: Run read-only geometry screen
+        run: deno run --allow-net=raw.githubusercontent.com scripts/screen-female-muscle-triangle-surface-distance.mjs > female-muscle-triangle-surface-distance.json
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-muscle-triangle-surface-distance
+          path: female-muscle-triangle-surface-distance.json
+          if-no-files-found: error
+          retention-days: 14
