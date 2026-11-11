@@ -6,6 +6,7 @@ on:
       - audit/female-muscle-bilateral-symmetry
     paths:
       - "scripts/audit-ecu-triangle-surface-distance.mjs"
+      - "docs/audits/ecu-triangle-surface-audit.md"
       - ".github/workflows/ecu-triangle-surface-audit.yml"
   workflow_dispatch:
 
