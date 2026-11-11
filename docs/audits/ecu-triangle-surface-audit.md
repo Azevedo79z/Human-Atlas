@@ -85,3 +85,19 @@ The metadata audit therefore checks that every mesh record resolves to a concept
 The first metadata-validation workflow run was marked successful by GitHub Actions even though the Deno audit threw an exception. The cause was a shell pipeline using `deno run ... | tee ...` without `pipefail`, allowing the successful exit code from `tee` to mask the Deno failure. The workflow now enables `set -euo pipefail` before the pipeline, so an audit failure fails the job and prevents an empty report from being treated as a successful artifact.
 
 **Disposition:** the previous green run is not accepted as a valid metadata-audit pass. The corrected script and workflow require a fresh successful run before the metadata stage can be considered passed.
+
+
+## Metadata validation result — corrected run
+
+The corrected run completed successfully on commit `4d0ce7eee56ee001b0e50d6eda7ee3d0f71d189e`. All four records resolve to the expected right/left ECU concept. The two records on each side share a concept ID; only the canonical `FJ1472` / `FJ1472M` records are listed in the concept `elements` arrays, while `FJ1517` / `FJ1517M` are additional mesh records associated with those concepts.
+
+| Mesh record | Concept | Canonical element | Shared mesh records | Classification |
+|---|---|---|---|---|
+| `BP3D_FJ1472` | `FMA38507` Right ECU | `BP3D_FJ1472` | FJ1472, FJ1517 | Canonical |
+| `BP3D_FJ1517` | `FMA38507` Right ECU | `BP3D_FJ1472` | FJ1472, FJ1517 | Alternate mesh record |
+| `BP3D_FJ1472M` | `FMA38508` Left ECU | `BP3D_FJ1472M` | FJ1472M, FJ1517M | Canonical |
+| `BP3D_FJ1517M` | `FMA38508` Left ECU | `BP3D_FJ1517M` | FJ1472M, FJ1517M | Alternate mesh record |
+
+The metadata and binary-range checks passed for all four records, including concept resolution, canonical-record resolution, bounds validation, offset alignment, and chunk-range containment. Geometry decoding also validated finite vertex coordinates and triangle indices. The report artifact was non-empty (12,538 bytes of JSON).
+
+**CI status:** the corrected workflow now uses `set -euo pipefail`; the current successful run is [43118645337](https://github.com/Azevedo79z/Human-Atlas/actions/runs/43118645337). The earlier green run with the masked exception is explicitly not counted as a pass.
