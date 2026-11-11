@@ -28,6 +28,12 @@ const muscles = TARGETS.flatMap(([target, pattern]) =>
 const skeletal = atlas.parts.filter(part => part.system === "skeletal");
 const bones = skeletal.filter(part => BONE_NAME.test(part.name) && !NON_SURFACE_TISSUE.test(part.name));
 if (!muscles.length || !bones.length) throw new Error("Expected donor muscle and named bone meshes.");
+const attachmentReference = JSON.parse(await Deno.readTextFile("data/anatomy/female-upper-limb-attachment-reference.v1.json"));
+const referenceByTarget = new Map(attachmentReference.muscles.map(item => [item.target, item]));
+function nameMatchesPatterns(name, patterns) {
+  const normalized = name.toLowerCase();
+  return patterns.some(pattern => normalized.includes(pattern.toLowerCase()));
+}
 function boundsGap(a, b) {
   let sum = 0;
   for (let k = 0; k < 3; k++) {
@@ -126,11 +132,36 @@ function directed(points, triangles) {
   return {min:distances[0],p10:q(.1),median:q(.5),p90:q(.9),sampledPoints:points.length,sampledTriangles:triangles.length};
 }
 const ranked=new Map();
-for(const item of muscles) ranked.set(item.part.id,bones.map(bone=>({
-  bone,
-  gap:boundsGap(item.part,bone),
-  centerDistance:boundsCenterDistance(item.part,bone),
-})).sort((a,b)=>a.gap-b.gap || a.centerDistance-b.centerDistance).slice(0,CANDIDATE_LIMIT));
+for(const item of muscles) {
+  const geometric = bones.map(bone=>({
+    bone,
+    gap:boundsGap(item.part,bone),
+    centerDistance:boundsCenterDistance(item.part,bone),
+  })).sort((a,b)=>a.gap-b.gap || a.centerDistance-b.centerDistance)
+    .slice(0,CANDIDATE_LIMIT)
+    .map((candidate,index)=>({...candidate,geometricRank:index+1,candidateSource:["geometric_shortlist"]}));
+  const reference = referenceByTarget.get(item.target);
+  const expectedPatterns = reference
+    ? [...reference.origin,...reference.insertion].flatMap(site=>site.bonePatterns)
+    : [];
+  const byId = new Map(geometric.map(candidate=>[candidate.bone.id,candidate]));
+  for(const bone of bones) {
+    if(!nameMatchesPatterns(bone.name,expectedPatterns)) continue;
+    const existing = byId.get(bone.id);
+    if(existing) {
+      if(!existing.candidateSource.includes("anatomical_reference_probe")) existing.candidateSource.push("anatomical_reference_probe");
+    } else {
+      byId.set(bone.id,{
+        bone,
+        gap:boundsGap(item.part,bone),
+        centerDistance:boundsCenterDistance(item.part,bone),
+        geometricRank:null,
+        candidateSource:["anatomical_reference_probe"],
+      });
+    }
+  }
+  ranked.set(item.part.id,[...byId.values()]);
+}
 const needed=new Map();
 for(const item of muscles){needed.set(item.part.id,item.part);for(const c of ranked.get(item.part.id))needed.set(c.bone.id,c.bone);}
 const chunkIds=[...new Set([...needed.values()].map(p=>p.chunk))].sort((a,b)=>a-b);
@@ -146,9 +177,9 @@ const meshes=new Map();
 for(const part of needed.values()) meshes.set(part.id,geometry(buffers.get(part.chunk),part));
 const results=muscles.map(({target,part})=>{
   const source=meshes.get(part.id);
-  const candidates=ranked.get(part.id).map(({bone,gap,centerDistance})=>{
+  const candidates=ranked.get(part.id).map(({bone,gap,centerDistance,geometricRank,candidateSource})=>{
     const dest=meshes.get(bone.id);
-    return {boneId:bone.id,boneName:bone.name,boneConceptId:bone.conceptId,boundsGap:gap,boundsCenterDistance:centerDistance,
+    return {boneId:bone.id,boneName:bone.name,boneConceptId:bone.conceptId,boundsGap:gap,boundsCenterDistance:centerDistance,geometricRank,candidateSource,
       muscleToBone:directed(source.points,dest.triangles),
       boneToMuscle:directed(dest.points,source.triangles)};
   }).sort((a,b)=>a.muscleToBone.median-b.muscleToBone.median);
@@ -157,13 +188,13 @@ const results=muscles.map(({target,part})=>{
 });
 console.log(JSON.stringify({
   donorRevision:REVISION,coordinateSpace:"Original donor coordinates; no transforms applied",
-  method:"For each muscle, shortlist twelve skeletal meshes by AABB gap, breaking overlapping-box ties by AABB center distance; sample up to 240 vertices and 240 triangles per mesh; compute point-to-triangle distances in both directions.",
+  method:"For each muscle, shortlist twelve skeletal meshes by AABB gap with center-distance tie-breaks, then add name-matched reference attachment bone probes; sample up to 240 vertices and 240 triangles per candidate mesh; compute point-to-triangle distances in both directions.",
   targetMuscleParts:muscles.length,skeletalPartsAvailable:skeletal.length,boneCandidatesAvailable:bones.length,
   chunksDownloaded:chunkIds, sampleLimit:SAMPLE_LIMIT, results,
   limitations:[
     "Distances are approximate because vertices and triangles are deterministically subsampled.",
     "This is not full triangle-triangle distance, collision detection, or proof of anatomical origin/insertion.",
-    "Candidate ranking is geometric and may include nearby but anatomically unrelated bones.",
+    "Geometric shortlists are supplemented with name-matched expected attachment bone meshes from the sourced reference matrix; these probes are not evidence of attachment.",
     "Raw donor coordinates are not registered to the host atlas; laterality and visual fit require separate review.",
     "No source geometry, manifest, viewer, Wix integration, or production deployment is modified."
   ],productionChanged:false
