@@ -186,6 +186,12 @@ const report = {
   anchorsChecked: anchorRows.length,
   anchorBoundsMaxDelta: Math.max(...anchorRows.map(row => row.boundsDelta)),
   anchors: anchorRows,
+  regionalAnchorFits: {
+    shoulderGirdle: fitAnchorGroup(anchorRows.filter(row => /clavicle|scapula/i.test(row.name))),
+    upperArms: fitAnchorGroup(anchorRows.filter(row => /humerus/i.test(row.name))),
+    forearms: fitAnchorGroup(anchorRows.filter(row => /radius|ulna/i.test(row.name))),
+    combinedUpperLimb: fitAnchorGroup(anchorRows.filter(row => !/Manubrium/i.test(row.name))),
+  },
   proximityScreen: {
     method: "AABB separation and center-distance ranking",
     exactSurfaceDistance: false,
