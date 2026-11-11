@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "title": "Female upper-limb muscle attachment reference",
+  "purpose": "Read-only anatomical expectation matrix for reviewing geometric proximity candidates. This dataset does not place, deform, snap, or modify meshes.",
+  "laterality": "Apply left/right side matching to each donor muscle part; source references describe standard anatomy.",
+  "sources": [
+    {
+      "id": "NCBI_STATPEARLS_SHOULDER_MUSCLES",
+      "title": "Anatomy, Shoulder and Upper Limb, Muscles",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK482410/",
+      "accessed": "2026-11-11"
+    },
+    {
+      "id": "NCBI_STATPEARLS_FOREARM_MUSCLES",
+      "title": "Anatomy, Shoulder and Upper Limb, Forearm Muscles",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK536975/",
+      "accessed": "2026-11-11"
+    },
+    {
+      "id": "UCSF_ORTHO_ANATOMY_CORE",
+      "title": "UCSF Ortho Anatomy Core",
+      "url": "https://orthosurgery.ucsf.edu/igot/ucsf-ortho-anatomy-core",
+      "accessed": "2026-11-11"
+    }
+  ],
+  "muscles": [
+    {
+      "target": "Pectoralis major",
+      "origin": [
+        { "site": "Medial clavicle (clavicular head)", "bonePatterns": ["clavicle"] },
+        { "site": "Anterior sternum and costal cartilages, principally ribs 1-6 (sternocostal head)", "bonePatterns": ["sternum", "rib", "costal cartilage"] }
+      ],
+      "insertion": [
+        { "site": "Lateral lip of intertubercular groove of humerus", "bonePatterns": ["humerus"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES", "UCSF_ORTHO_ANATOMY_CORE"],
+      "notes": "External oblique aponeurosis is also part of the described origin but is not a bone candidate."
+    },
+    {
+      "target": "Pectoralis minor",
+      "origin": [
+        { "site": "Anterior surfaces of ribs 3-5 near costal cartilages", "bonePatterns": ["rib", "costal cartilage"] }
+      ],
+      "insertion": [
+        { "site": "Coracoid process of scapula", "bonePatterns": ["scapula", "coracoid"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES"],
+      "notes": "Some references describe anatomical variation; standard reference here uses ribs 3-5 to coracoid process."
+    },
+    {
+      "target": "Subclavius",
+      "origin": [
+        { "site": "First rib and its costal cartilage", "bonePatterns": ["first rib", "1st rib", "costal cartilage"] }
+      ],
+      "insertion": [
+        { "site": "Inferior surface of middle clavicle (subclavian groove)", "bonePatterns": ["clavicle"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES"]
+    },
+    {
+      "target": "Serratus anterior",
+      "origin": [
+        { "site": "Lateral surfaces of ribs 1-8 (slips)", "bonePatterns": ["rib"] }
+      ],
+      "insertion": [
+        { "site": "Costal/anterior surface of medial border of scapula", "bonePatterns": ["scapula"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES"],
+      "notes": "The rib count can vary; the reference source describes ribs 1-8."
+    },
+    {
+      "target": "Deltoid",
+      "origin": [
+        { "site": "Lateral clavicle", "bonePatterns": ["clavicle"] },
+        { "site": "Acromion and spine of scapula", "bonePatterns": ["scapula", "acromion"] }
+      ],
+      "insertion": [
+        { "site": "Deltoid tuberosity of humerus", "bonePatterns": ["humerus"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES", "UCSF_ORTHO_ANATOMY_CORE"]
+    },
+    {
+      "target": "Trapezius",
+      "origin": [
+        { "site": "Occipital region, nuchal ligament, and spinous processes C7-T12", "bonePatterns": ["occipital", "vertebra", "cervical", "thoracic"] }
+      ],
+      "insertion": [
+        { "site": "Lateral clavicle, acromion, and spine of scapula", "bonePatterns": ["clavicle", "scapula", "acromion"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES"],
+      "notes": "Nuchal ligament is a non-bony attachment and is not represented in the bone-candidate test."
+    },
+    {
+      "target": "Biceps brachii",
+      "origin": [
+        { "site": "Supraglenoid tubercle (long head) and coracoid process (short head) of scapula", "bonePatterns": ["scapula", "coracoid"] }
+      ],
+      "insertion": [
+        { "site": "Radial tuberosity", "bonePatterns": ["radius"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES", "UCSF_ORTHO_ANATOMY_CORE"]
+    },
+    {
+      "target": "Triceps brachii",
+      "origin": [
+        { "site": "Infraglenoid tubercle of scapula (long head)", "bonePatterns": ["scapula"] },
+        { "site": "Posterior humerus above/below radial groove (lateral and medial heads)", "bonePatterns": ["humerus"] }
+      ],
+      "insertion": [
+        { "site": "Olecranon process of ulna", "bonePatterns": ["ulna"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES", "UCSF_ORTHO_ANATOMY_CORE"]
+    },
+    {
+      "target": "Brachialis",
+      "origin": [
+        { "site": "Distal anterior humerus", "bonePatterns": ["humerus"] }
+      ],
+      "insertion": [
+        { "site": "Coronoid process and ulnar tuberosity", "bonePatterns": ["ulna"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES", "UCSF_ORTHO_ANATOMY_CORE"]
+    },
+    {
+      "target": "Pronator teres",
+      "origin": [
+        { "site": "Medial epicondyle of humerus (humeral head)", "bonePatterns": ["humerus"] },
+        { "site": "Coronoid process of ulna (ulnar head)", "bonePatterns": ["ulna"] }
+      ],
+      "insertion": [
+        { "site": "Lateral surface of middle radius", "bonePatterns": ["radius"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_SHOULDER_MUSCLES", "NCBI_STATPEARLS_FOREARM_MUSCLES", "UCSF_ORTHO_ANATOMY_CORE"]
+    },
+    {
+      "target": "Flexor carpi ulnaris",
+      "origin": [
+        { "site": "Medial epicondyle of humerus (humeral head)", "bonePatterns": ["humerus"] },
+        { "site": "Olecranon and posterior border of ulna (ulnar head)", "bonePatterns": ["ulna"] }
+      ],
+      "insertion": [
+        { "site": "Pisiform, hook of hamate, and base of fifth metacarpal (direct/ligamentous continuity)", "bonePatterns": ["pisiform", "hamate", "fifth metacarpal", "5th metacarpal"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_FOREARM_MUSCLES", "UCSF_ORTHO_ANATOMY_CORE"],
+      "notes": "Pisohamate and pisometacarpal ligaments transmit part of the distal attachment."
+    },
+    {
+      "target": "Extensor carpi ulnaris",
+      "origin": [
+        { "site": "Lateral epicondyle of humerus and posterior ulna", "bonePatterns": ["humerus", "ulna"] }
+      ],
+      "insertion": [
+        { "site": "Base of fifth metacarpal", "bonePatterns": ["fifth metacarpal", "5th metacarpal"] }
+      ],
+      "sourceIds": ["NCBI_STATPEARLS_FOREARM_MUSCLES"]
+    }
+  ],
+  "validationRules": [
+    "A candidate appearing in the shortlist is only a geometric proximity observation, not proof of attachment.",
+    "A missing expected structure from the top-eight shortlist is inconclusive because the geometry screen is subsampled and shortlist-limited.",
+    "Compare origin and insertion independently; do not collapse them into one nearest-bone label.",
+    "Do not snap, deform, retarget, or register meshes using this reference matrix.",
+    "Laterality, tendon paths, non-bony attachments, and anatomical variants require separate review."
+  ]
+}
