@@ -1,0 +1,32 @@
+name: Female muscle regional proximity audit
+
+on:
+  pull_request:
+    paths:
+      - "scripts/audit-female-muscle-region-proximity.mjs"
+      - ".github/workflows/female-muscle-region-proximity-audit.yml"
+  push:
+    branches: ["feat/female-muscle-region-proximity-audit"]
+    paths:
+      - "scripts/audit-female-muscle-region-proximity.mjs"
+      - ".github/workflows/female-muscle-region-proximity-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  regional-proximity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint audit
+        run: deno lint scripts/audit-female-muscle-region-proximity.mjs
+      - name: Type-check audit
+        run: deno check scripts/audit-female-muscle-region-proximity.mjs
+      - name: Run read-only regional proximity audit
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-muscle-region-proximity.mjs
