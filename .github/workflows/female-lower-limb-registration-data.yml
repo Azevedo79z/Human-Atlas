@@ -1,0 +1,87 @@
+name: Package isolated female lower-limb registration meshes
+
+on:
+  push:
+    branches:
+      - feat/female-lower-limb-registration-data
+    paths:
+      - .github/workflows/female-lower-limb-registration-data.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: female-lower-limb-registration-data
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: Download and verify female lower-limb source meshes
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Download five female left-leg registration anchors
+        env:
+          DEST: ${{ runner.temp }}/FEMALE_LEFT/LOWER_EXTREMITY_LEFT
+        run: |
+          set -euo pipefail
+          mkdir -p "$DEST"
+          base='https://huggingface.co/datasets/BoneHub/visible-human-3d-models/resolve/main/visible_human_3d_models/CT/Mesh/02_Female/LOWER_EXTREMITY_LEFT'
+          while IFS=' ' read -r name expected; do
+            curl --fail --location --retry 3 --retry-delay 2 "$base/$name.stl" -o "$DEST/$name.stl"
+            actual=$(wc -c < "$DEST/$name.stl" | tr -d ' ')
+            test "$actual" = "$expected" || { echo "::error::$name size mismatch"; exit 1; }
+          done <<'FILES'
+          FEMUR_LEFT 12512884
+          FIBULA_LEFT 3044284
+          HIP_LEFT 14247084
+          PATELLA_LEFT 995884
+          TIBIA_LEFT 8185284
+          FILES
+
+      - name: Download 17 female left-foot meshes
+        env:
+          DEST: ${{ runner.temp }}/FEMALE_LEFT/FOOT_LEFT
+        run: |
+          set -euo pipefail
+          mkdir -p "$DEST"
+          base='https://huggingface.co/buckets/Azevedo79z/visible-human-3d-models-bucket/resolve/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT'
+          while IFS=' ' read -r name expected; do
+            curl --fail --location --retry 3 --retry-delay 2 "$base/$name.stl?download=true" -o "$DEST/$name.stl"
+            actual=$(wc -c < "$DEST/$name.stl" | tr -d ' ')
+            test "$actual" = "$expected" || { echo "::error::$name size mismatch"; exit 1; }
+          done <<'FILES'
+          CALCANEUS_LEFT 2437884
+          CUBOID_LEFT 676284
+          INTERMEDIATE_CUNEIFORM_LEFT 335684
+          LATERAL_CUNEIFORM_LEFT 376484
+          MEDIAL_CUNEIFORM_LEFT 563884
+          METATARSAL_1_LEFT 1011484
+          METATARSAL_2_LEFT 683084
+          METATARSAL_3_LEFT 623484
+          METATARSAL_4_LEFT 592084
+          METATARSAL_5_LEFT 628884
+          NAVICULAR_LEFT 649484
+          PHALANGE_FOOT_1_LEFT 777284
+          PHALANGE_FOOT_2_LEFT 372284
+          PHALANGE_FOOT_3_LEFT 297284
+          PHALANGE_FOOT_4_LEFT 261284
+          PHALANGE_FOOT_5_LEFT 266884
+          TALUS_LEFT 1568684
+          FILES
+
+      - name: Record package manifest and checksums
+        run: |
+          set -euo pipefail
+          cd "${{ runner.temp }}/FEMALE_LEFT"
+          find . -type f -name '*.stl' -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
+          printf 'source=BoneHub Visible-Human-3D-Models\nsubject=02_Female\nside=LEFT\ncontents=5 lower-limb anchors + 17 foot meshes\n' > SOURCE-MANIFEST.txt
+
+      - name: Upload isolated source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-left-lower-limb-source-meshes
+          path: ${{ runner.temp }}/FEMALE_LEFT/
+          if-no-files-found: error
+          retention-days: 7
