@@ -17,7 +17,7 @@ const TARGETS = [
 const BONE_NAME = /\b(bone|cartilage|rib|costal|clavicle|sternum|scapula|humerus|radius|ulna|carpal|metacarpal|phalanx|phalanges|vertebr|sacrum|coccyx|ilium|ischium|pubis|femur|patella|tibia|fibula|talus|calcaneus|tarsal|metatarsal|mandible|maxilla|zygomatic|frontal|parietal|temporal|occipital|sphenoid|ethmoid|nasal|lacrimal|palatine|vomer|hyoid|mastoid|condyle|trochanter|epicondyle|olecranon|acromion|coracoid|glenoid|tubercle|process)\b/i;
 const NON_SURFACE_TISSUE = /\b(trabecular|compact|spongy|cancellous|cortical) bone tissue\b/i;
 const SAMPLE_LIMIT = 240;
-const CANDIDATE_LIMIT = 8;
+const CANDIDATE_LIMIT = 12;
 const manifestResponse = await fetch(RAW_BASE + "models/atlas.json");
 if (!manifestResponse.ok) throw new Error(`Manifest HTTP ${manifestResponse.status}`);
 const atlas = await manifestResponse.json();
@@ -157,7 +157,7 @@ const results=muscles.map(({target,part})=>{
 });
 console.log(JSON.stringify({
   donorRevision:REVISION,coordinateSpace:"Original donor coordinates; no transforms applied",
-  method:"For each muscle, shortlist eight skeletal meshes by AABB gap, breaking overlapping-box ties by AABB center distance; sample up to 240 vertices and 240 triangles per mesh; compute point-to-triangle distances in both directions.",
+  method:"For each muscle, shortlist twelve skeletal meshes by AABB gap, breaking overlapping-box ties by AABB center distance; sample up to 240 vertices and 240 triangles per mesh; compute point-to-triangle distances in both directions.",
   targetMuscleParts:muscles.length,skeletalPartsAvailable:skeletal.length,boneCandidatesAvailable:bones.length,
   chunksDownloaded:chunkIds, sampleLimit:SAMPLE_LIMIT, results,
   limitations:[
