@@ -25,9 +25,18 @@ const conceptsById = new Map((atlas.concepts ?? []).map(concept => [concept.id, 
 const metadataChecks = parts.map(part => {
   const concept = conceptsById.get(part.conceptId);
   if (!part.conceptId || !concept) throw new Error(`Missing concept mapping for ${part.id}`);
-  if (!Array.isArray(concept.elements) || !concept.elements.includes(part.id)) {
-    throw new Error(`Concept ${part.conceptId} does not map back to ${part.id}`);
+  if (!Array.isArray(concept.elements) || concept.elements.length === 0) {
+    throw new Error(`Concept ${part.conceptId} has no canonical element mapping`);
   }
+  const canonicalRecords = concept.elements
+    .map(elementId => atlas.parts.find(candidate => candidate.id === elementId))
+    .filter(candidate => candidate?.conceptId === part.conceptId);
+  if (canonicalRecords.length === 0) {
+    throw new Error(`Concept ${part.conceptId} has no resolvable canonical part record`);
+  }
+  const sharedConceptRecords = atlas.parts
+    .filter(candidate => candidate.conceptId === part.conceptId)
+    .map(candidate => candidate.id);
   if (!Array.isArray(part.bounds) || part.bounds.length !== 2 ||
       part.bounds.some(axis => !Array.isArray(axis) || axis.length !== 3 || !axis.every(Number.isFinite))) {
     throw new Error(`Invalid bounds metadata for ${part.id}`);
@@ -43,7 +52,10 @@ const metadataChecks = parts.map(part => {
     system: part.system,
     conceptId: part.conceptId,
     conceptName: concept.name ?? null,
-    conceptMapsBackToPart: concept.elements.includes(part.id),
+    canonicalElementIds: concept.elements,
+    directCanonicalElement: concept.elements.includes(part.id),
+    canonicalRecords: canonicalRecords.map(candidate => candidate.id),
+    recordsSharingConcept: sharedConceptRecords,
     chunk: part.chunk,
     offsets: { positions: part.positions, normals: part.normals, indices: part.indices },
     counts: { vertices: part.vertexCount, indices: part.indexCount, triangles: part.indexCount / 3 },
