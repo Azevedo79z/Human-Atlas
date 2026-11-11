@@ -124,7 +124,7 @@ const chunkIds=[...new Set([...needed.values()].map(p=>p.chunk))].sort((a,b)=>a-
 const buffers=new Map();
 for(const id of chunkIds){
   const chunk=atlas.chunks[id]; if(!chunk) throw new Error(`Missing chunk ${id}`);
-  const url=new URL(chunk.url.replace(/^\\/+/, ""),RAW_BASE);
+  const url=new URL(chunk.url.replace(/^\/+/, ""),RAW_BASE);
   const response=await fetch(url); if(!response.ok) throw new Error(`Chunk ${id} HTTP ${response.status}`);
   const buffer=await response.arrayBuffer(); if(buffer.byteLength!==chunk.bytes) throw new Error(`Chunk ${id} byte mismatch`);
   buffers.set(id,buffer);
