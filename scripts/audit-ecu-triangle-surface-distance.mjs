@@ -25,7 +25,7 @@ const chunks = new Map();
 for (const chunkId of [...new Set(parts.map(part => part.chunk))]) {
   const chunk = atlas.chunks[chunkId];
   if (!chunk) throw new Error(`Missing chunk metadata ${chunkId}`);
-  const url = new URL(chunk.url.replace(/^\\/+/, ""), RAW_BASE);
+  const url = new URL(chunk.url.replace(/^\/+/, ""), RAW_BASE);
   const result = await fetch(url);
   if (!result.ok) throw new Error(`Chunk ${chunkId} HTTP ${result.status}`);
   const buffer = await result.arrayBuffer();
