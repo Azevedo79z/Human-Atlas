@@ -13,7 +13,7 @@ const CANDIDATE =
 const HOST =
   "https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/main/public/models/atlas-female.json";
 
-const UPPER_BODY = /pectoralis|deltoid|biceps brachii|triceps brachii|brachialis|coracobrachialis|trapezius|latissimus|rhomboid|serratus|subclavius|supraspinatus|infraspinatus|teres|subscapularis|sternocleidomastoid|scalene|levator scapulae|pronator|supinator|flexor carpi|extensor carpi|palmaris|anconeus|interosseous|lumbrical|thenar|hypothenar|abductor pollicis|adductor pollicis|opponens/i;
+const UPPER_BODY = /pectoralis|deltoid|biceps brachii|triceps brachii|brachialis|coracobrachialis|trapezius|latissimus|rhomboid|serratus|subclavius|supraspinatus|infraspinatus|teres|subscapularis|sternocleidomastoid|scalene|levator scapulae|pronator|supinator|flexor carpi|extensor carpi|palmaris|anconeus|interosseous|lumbrical|thenar|hypothenar|abductor pollicis|adductor pollicis|opponens/i;\nconst LOWER_LIMB = /foot|pedis|plantar|hallux|toe|calcaneal|fibular|peroneal|tibial|gastrocnemius|soleus/i;
 
 const ANCHORS = [
   "Left clavicle", "Right clavicle",
@@ -65,8 +65,79 @@ if (candidateAnchors.some(part => !part) || hostAnchors.some(part => !part)) {
   throw new Error("Required upper-body bone anchors are missing from one of the manifests.");
 }
 
-const muscles = candidate.parts.filter(part =>
-  part.system === "muscular" && UPPER_BODY.test(part.name) &&
+
+function parity(permutation) {
+  let inversions = 0;
+  for (let i = 0; i < 3; i++) {
+    for (let j = i + 1; j < 3; j++) {
+      if (permutation[i] > permutation[j]) inversions++;
+    }
+  }
+  return inversions % 2 === 0 ? 1 : -1;
+}
+
+function fitAnchorGroup(rows) {
+  if (rows.length < 2) return { anchors: rows.length, fit: "insufficient anchors" };
+  const permutations = [
+    [0, 1, 2], [0, 2, 1], [1, 0, 2],
+    [1, 2, 0], [2, 0, 1], [2, 1, 0],
+  ];
+  const source = rows.map(row => center(row.candidateBounds));
+  const target = rows.map(row => center(row.hostBounds));
+  let best = null;
+
+  for (const permutation of permutations) {
+    for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) {
+      const signs = [sx, sy, sz];
+      if (parity(permutation) * sx * sy * sz !== 1) continue;
+      const rotated = source.map(point =>
+        signs.map((sign, axis) => sign * point[permutation[axis]])
+      );
+      const meanSource = [0, 1, 2].map(axis =>
+        rotated.reduce((sum, point) => sum + point[axis], 0) / rotated.length
+      );
+      const meanTarget = [0, 1, 2].map(axis =>
+        target.reduce((sum, point) => sum + point[axis], 0) / target.length
+      );
+      let numerator = 0;
+      let denominator = 0;
+      for (let i = 0; i < rotated.length; i++) {
+        for (let axis = 0; axis < 3; axis++) {
+          numerator += (rotated[i][axis] - meanSource[axis]) *
+            (target[i][axis] - meanTarget[axis]);
+          denominator += (rotated[i][axis] - meanSource[axis]) ** 2;
+        }
+      }
+      const scale = numerator / denominator;
+      if (!Number.isFinite(scale) || scale <= 0) continue;
+      const translation = meanTarget.map((value, axis) =>
+        value - scale * meanSource[axis]
+      );
+      const errors = rotated.map((point, index) =>
+        Math.hypot(...point.map((value, axis) =>
+          scale * value + translation[axis] - target[index][axis]
+        ))
+      );
+      const rms = Math.sqrt(errors.reduce((sum, value) => sum + value ** 2, 0) / errors.length);
+      if (!best || rms < best.rms) {
+        best = { rms, max: Math.max(...errors), scale, permutation, signs, translation };
+      }
+    }
+  }
+
+  if (!best) return { anchors: rows.length, fit: "no positive-scale fit" };
+  return {
+    anchors: rows.length,
+    scale: +best.scale.toFixed(5),
+    axisPermutation: best.permutation,
+    axisSigns: best.signs,
+    translation: best.translation.map(value => +value.toFixed(5)),
+    rmsMm: +(best.rms * 1000).toFixed(1),
+    maxMm: +(best.max * 1000).toFixed(1),
+  };
+}
+\nconst muscles = candidate.parts.filter(part =>
+  part.system === "muscular" && UPPER_BODY.test(part.name) && !LOWER_LIMB.test(part.name) &&
   Array.isArray(part.bounds) && part.bounds.length === 2
 );
 
