@@ -1,0 +1,32 @@
+name: Package female atlas lower-limb reference chunks
+
+on:
+  push:
+    branches:
+      - feat/female-lower-limb-registration-data
+    paths:
+      - .github/workflows/female-atlas-lower-limb-reference.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage only atlas manifest and lower-limb chunks
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ runner.temp }}/atlas-reference"
+          cp public/models/atlas-female.json "${{ runner.temp }}/atlas-reference/"
+          cp public/models/female-11.bin public/models/female-12.bin "${{ runner.temp }}/atlas-reference/"
+          sha256sum "${{ runner.temp }}"/atlas-reference/* > "${{ runner.temp }}/atlas-reference/SHA256SUMS.txt"
+      - name: Upload isolated atlas reference package
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-atlas-lower-limb-reference
+          path: ${{ runner.temp }}/atlas-reference/
+          if-no-files-found: error
+          retention-days: 7
