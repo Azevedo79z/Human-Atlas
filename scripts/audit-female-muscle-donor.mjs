@@ -28,7 +28,7 @@ const own=JSON.parse(fs.readFileSync(ownPath,'utf8'));
 const candidate=JSON.parse(fs.readFileSync(candidatePath,'utf8'));
 if(!Array.isArray(own.parts)||!Array.isArray(candidate.parts))throw new Error('Both manifests must contain a parts array.');
 
-const normalize=s=>s.toLowerCase().replace(/[()]/g,'').replace(/\\s+/g,' ').trim();
+const normalize=s=>s.toLowerCase().replace(/[()]/g,'').replace(/\s+/g,' ').trim();
 const centre=p=>p.bounds[0].map((v,i)=>(v+p.bounds[1][i])/2);
 const find=(atlas,name,systems)=>atlas.parts.find(p=>
  normalize(p.name)===normalize(name)&&(!systems||systems.includes(p.system)));
