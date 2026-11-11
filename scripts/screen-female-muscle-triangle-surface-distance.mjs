@@ -36,6 +36,15 @@ function boundsGap(a, b) {
   }
   return Math.sqrt(sum);
 }
+function boundsCenterDistance(a, b) {
+  let sum = 0;
+  for (let k = 0; k < 3; k++) {
+    const ac = (a.bounds[0][k] + a.bounds[1][k]) / 2;
+    const bc = (b.bounds[0][k] + b.bounds[1][k]) / 2;
+    sum += (ac - bc) ** 2;
+  }
+  return Math.sqrt(sum);
+}
 function pointSegmentDistance2(p, a, b) {
   const ab = [b[0]-a[0], b[1]-a[1], b[2]-a[2]];
   const ap = [p[0]-a[0], p[1]-a[1], p[2]-a[2]];
@@ -117,7 +126,11 @@ function directed(points, triangles) {
   return {min:distances[0],p10:q(.1),median:q(.5),p90:q(.9),sampledPoints:points.length,sampledTriangles:triangles.length};
 }
 const ranked=new Map();
-for(const item of muscles) ranked.set(item.part.id,bones.map(bone=>({bone,gap:boundsGap(item.part,bone)})).sort((a,b)=>a.gap-b.gap).slice(0,CANDIDATE_LIMIT));
+for(const item of muscles) ranked.set(item.part.id,bones.map(bone=>({
+  bone,
+  gap:boundsGap(item.part,bone),
+  centerDistance:boundsCenterDistance(item.part,bone),
+})).sort((a,b)=>a.gap-b.gap || a.centerDistance-b.centerDistance).slice(0,CANDIDATE_LIMIT));
 const needed=new Map();
 for(const item of muscles){needed.set(item.part.id,item.part);for(const c of ranked.get(item.part.id))needed.set(c.bone.id,c.bone);}
 const chunkIds=[...new Set([...needed.values()].map(p=>p.chunk))].sort((a,b)=>a-b);
@@ -133,9 +146,9 @@ const meshes=new Map();
 for(const part of needed.values()) meshes.set(part.id,geometry(buffers.get(part.chunk),part));
 const results=muscles.map(({target,part})=>{
   const source=meshes.get(part.id);
-  const candidates=ranked.get(part.id).map(({bone,gap})=>{
+  const candidates=ranked.get(part.id).map(({bone,gap,centerDistance})=>{
     const dest=meshes.get(bone.id);
-    return {boneId:bone.id,boneName:bone.name,boneConceptId:bone.conceptId,boundsGap:gap,
+    return {boneId:bone.id,boneName:bone.name,boneConceptId:bone.conceptId,boundsGap:gap,boundsCenterDistance:centerDistance,
       muscleToBone:directed(source.points,dest.triangles),
       boneToMuscle:directed(dest.points,source.triangles)};
   }).sort((a,b)=>a.muscleToBone.median-b.muscleToBone.median);
@@ -144,7 +157,7 @@ const results=muscles.map(({target,part})=>{
 });
 console.log(JSON.stringify({
   donorRevision:REVISION,coordinateSpace:"Original donor coordinates; no transforms applied",
-  method:"For each muscle, shortlist eight skeletal meshes by AABB gap; sample up to 240 vertices and 240 triangles per mesh; compute point-to-triangle distances in both directions.",
+  method:"For each muscle, shortlist eight skeletal meshes by AABB gap, breaking overlapping-box ties by AABB center distance; sample up to 240 vertices and 240 triangles per mesh; compute point-to-triangle distances in both directions.",
   targetMuscleParts:muscles.length,skeletalPartsAvailable:skeletal.length,boneCandidatesAvailable:bones.length,
   chunksDownloaded:chunkIds, sampleLimit:SAMPLE_LIMIT, results,
   limitations:[
