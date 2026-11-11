@@ -1,9 +1,10 @@
 /** Interface language. Anatomical names and descriptions are translated
  * separately, in `terms-ar.json` and `anatomy-ar.ts`, because they come from
  * sources with their own provenance rather than from this file. */
-export type Language = 'en'|'ar';
+export type Language = 'en'|'pt'|'ar';
 export const LANGUAGES:{id:Language;label:string;direction:'ltr'|'rtl'}[] = [
  {id:'en',label:'English',direction:'ltr'},
+ {id:'pt',label:'Português (Brasil)',direction:'ltr'},
  {id:'ar',label:'العربية',direction:'rtl'},
 ];
 export const direction = (language:Language) => LANGUAGES.find(l=>l.id===language)?.direction ?? 'ltr';
@@ -101,12 +102,13 @@ const TEXT = {
 } as const;
 
 export type Phrase = keyof typeof TEXT;
-export const say = (language:Language, phrase:Phrase) => TEXT[phrase][language];
+export const say = (language:Language, phrase:Phrase) => (TEXT[phrase] as Record<Language,string>)[language] ?? (TEXT[phrase] as Record<string,string>).en;
 
 /** Arabic writes several letters more than one way and marks vowels optionally,
  * so a search has to compare stripped forms or it misses obvious matches. */
 export const fold = (text:string) => text
  .toLowerCase()
+ .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
  .replace(/[ً-ْٰـ]/g,'')
  .replace(/[أإآٱ]/g,'ا')
  .replace(/ى/g,'ي')
