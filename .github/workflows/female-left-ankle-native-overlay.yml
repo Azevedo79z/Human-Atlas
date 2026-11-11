@@ -1,0 +1,118 @@
+name: Female left ankle native overlay review
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/female-left-ankle-native-overlay
+    paths:
+      - .github/workflows/female-left-ankle-native-overlay.yml
+      - scripts/build-female-left-ankle-native-overlay.py
+      - scripts/analyze-female-left-ankle-proximity.py
+      - scripts/estimate-female-foot-registration.py
+      - scripts/build-female-foot-overlay.py
+  pull_request:
+    branches:
+      - feat/female-foot-joint-proximity
+    paths:
+      - .github/workflows/female-left-ankle-native-overlay.yml
+      - scripts/build-female-left-ankle-native-overlay.py
+      - scripts/analyze-female-left-ankle-proximity.py
+
+permissions:
+  contents: read
+
+concurrency:
+  group: female-left-ankle-native-overlay
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated geometry dependencies
+        run: python -m pip install --disable-pip-version-check numpy scipy trimesh
+      - name: Download the 17 female left-foot STL files
+        env:
+          DEST: ${{ runner.temp }}/FOOT_LEFT
+        run: |
+          set -euo pipefail
+          mkdir -p "$DEST"
+          base='https://huggingface.co/buckets/Azevedo79z/visible-human-3d-models-bucket/resolve/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT'
+          while IFS=' ' read -r name expected; do
+            [ -n "$name" ] || continue
+            curl --fail --location --retry 3 "$base/$name.stl?download=true" -o "$DEST/$name.stl"
+            actual=$(wc -c < "$DEST/$name.stl" | tr -d ' ')
+            test "$actual" = "$expected" || { echo "::error::$name byte mismatch"; exit 1; }
+          done <<'FILES'
+          CALCANEUS_LEFT 2437884
+          CUBOID_LEFT 676284
+          INTERMEDIATE_CUNEIFORM_LEFT 335684
+          LATERAL_CUNEIFORM_LEFT 376484
+          MEDIAL_CUNEIFORM_LEFT 563884
+          METATARSAL_1_LEFT 1011484
+          METATARSAL_2_LEFT 683084
+          METATARSAL_3_LEFT 623484
+          METATARSAL_4_LEFT 592084
+          METATARSAL_5_LEFT 628884
+          NAVICULAR_LEFT 649484
+          PHALANGE_FOOT_1_LEFT 777284
+          PHALANGE_FOOT_2_LEFT 372284
+          PHALANGE_FOOT_3_LEFT 297284
+          PHALANGE_FOOT_4_LEFT 261284
+          PHALANGE_FOOT_5_LEFT 266884
+          TALUS_LEFT 1568684
+          FILES
+      - name: Download the exact female atlas manifest and review chunks
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ runner.temp }}/atlas"
+          base='https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/feat/atlas-visible-skin-layer/public/models'
+          curl --fail --location "$base/atlas-female.json" -o "${{ runner.temp }}/atlas/atlas-female.json"
+          curl --fail --location "$base/female-11.bin" -o "${{ runner.temp }}/atlas/female-11.bin"
+          curl --fail --location "$base/female-12.bin" -o "${{ runner.temp }}/atlas/female-12.bin"
+      - name: Estimate the isolated left-foot registration
+        run: |
+          python scripts/estimate-female-foot-registration.py \
+            --stl-dir "${{ runner.temp }}/FOOT_LEFT" \
+            --manifest "${{ runner.temp }}/atlas/atlas-female.json" \
+            --chunk "${{ runner.temp }}/atlas/female-12.bin" \
+            --out "${{ runner.temp }}/female-foot-registration-preflight.json"
+      - name: Build the separate foot candidate overlay
+        run: |
+          python scripts/build-female-foot-overlay.py \
+            --stl-dir "${{ runner.temp }}/FOOT_LEFT" \
+            --manifest "${{ runner.temp }}/atlas/atlas-female.json" \
+            --chunk "${{ runner.temp }}/atlas/female-12.bin" \
+            --registration "${{ runner.temp }}/female-foot-registration-preflight.json" \
+            --out "${{ runner.temp }}/female-left-foot-overlay.glb" \
+            --report "${{ runner.temp }}/female-left-foot-overlay-report.json"
+      - name: Add native female atlas tibia and fibula to the review GLB
+        run: |
+          python scripts/build-female-left-ankle-native-overlay.py \
+            --glb "${{ runner.temp }}/female-left-foot-overlay.glb" \
+            --manifest "${{ runner.temp }}/atlas/atlas-female.json" \
+            --chunk "${{ runner.temp }}/atlas/female-11.bin" \
+            --out "${{ runner.temp }}/female-left-ankle-native-overlay.glb" \
+            --report "${{ runner.temp }}/female-left-ankle-native-overlay-report.json"
+      - name: Screen ankle-neighbourhood proximity
+        run: |
+          python scripts/analyze-female-left-ankle-proximity.py \
+            --glb "${{ runner.temp }}/female-left-ankle-native-overlay.glb" \
+            --out "${{ runner.temp }}/female-left-ankle-proximity.json"
+      - name: Upload isolated ankle review package
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-left-ankle-native-overlay-review
+          path: |
+            ${{ runner.temp }}/female-left-ankle-native-overlay.glb
+            ${{ runner.temp }}/female-left-ankle-native-overlay-report.json
+            ${{ runner.temp }}/female-left-ankle-proximity.json
+            ${{ runner.temp }}/female-foot-registration-preflight.json
+          if-no-files-found: error
+          retention-days: 14
