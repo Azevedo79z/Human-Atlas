@@ -137,7 +137,8 @@ function fitAnchorGroup(rows) {
     maxMm: +(best.max * 1000).toFixed(1),
   };
 }
-\nconst muscles = candidate.parts.filter(part =>
+
+const muscles = candidate.parts.filter(part =>
   part.system === "muscular" && UPPER_BODY.test(part.name) && !LOWER_LIMB.test(part.name) &&
   Array.isArray(part.bounds) && part.bounds.length === 2
 );
