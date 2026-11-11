@@ -36,9 +36,9 @@ jobs:
           if [ -f female-muscle-subpart-inventory.json ]; then
             echo "## Female donor muscle subpart inventory" >> "$GITHUB_STEP_SUMMARY"
             echo "Read-only manifest inventory; part counts do not prove anatomical completeness or correct registration." >> "$GITHUB_STEP_SUMMARY"
-            echo '\`\`\`json' >> "$GITHUB_STEP_SUMMARY"
+            echo '###json-start' >> "$GITHUB_STEP_SUMMARY"
             cat female-muscle-subpart-inventory.json >> "$GITHUB_STEP_SUMMARY"
-            echo '\`\`\`' >> "$GITHUB_STEP_SUMMARY"
+            echo '###json-end' >> "$GITHUB_STEP_SUMMARY"
           else
             echo "Inventory report was not generated." >> "$GITHUB_STEP_SUMMARY"
           fi
