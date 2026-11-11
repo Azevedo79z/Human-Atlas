@@ -1,0 +1,32 @@
+name: Female muscle full-bone surface screening
+
+on:
+  pull_request:
+    paths:
+      - "scripts/screen-female-muscle-full-bone-surface.mjs"
+      - ".github/workflows/female-muscle-full-bone-surface-screen.yml"
+  push:
+    branches: ["feat/female-muscle-full-bone-surface-screen"]
+    paths:
+      - "scripts/screen-female-muscle-full-bone-surface.mjs"
+      - ".github/workflows/female-muscle-full-bone-surface-screen.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  full-bone-surface-screen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint screening script
+        run: deno lint scripts/screen-female-muscle-full-bone-surface.mjs
+      - name: Type-check screening script
+        run: deno check scripts/screen-female-muscle-full-bone-surface.mjs
+      - name: Run read-only geometric screening
+        run: deno run --allow-net=raw.githubusercontent.com scripts/screen-female-muscle-full-bone-surface.mjs
