@@ -1,0 +1,52 @@
+name: Female donor muscle binary geometry audit
+
+on:
+  pull_request:
+    paths:
+      - "scripts/audit-female-muscle-binary-geometry.mjs"
+      - ".github/workflows/female-muscle-binary-geometry-audit.yml"
+  push:
+    branches: ["audit/female-muscle-binary-geometry"]
+    paths:
+      - "scripts/audit-female-muscle-binary-geometry.mjs"
+      - ".github/workflows/female-muscle-binary-geometry-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-binary-geometry-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint audit script
+        run: deno lint scripts/audit-female-muscle-binary-geometry.mjs
+      - name: Type-check audit script
+        run: deno check scripts/audit-female-muscle-binary-geometry.mjs
+      - name: Audit donor geometry buffers (read-only)
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-muscle-binary-geometry.mjs | tee female-muscle-binary-geometry-report.json
+      - name: Add report to workflow summary
+        if: always()
+        run: |
+          if [ -f female-muscle-binary-geometry-report.json ]; then
+            echo "## Female donor muscle binary geometry audit" >> "$GITHUB_STEP_SUMMARY"
+            echo "Read-only donor coordinate and buffer audit. Raw coordinates are not host-aligned." >> "$GITHUB_STEP_SUMMARY"
+            echo '###json-start' >> "$GITHUB_STEP_SUMMARY"
+            cat female-muscle-binary-geometry-report.json >> "$GITHUB_STEP_SUMMARY"
+            echo '###json-end' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Binary geometry report was not generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload geometry report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-muscle-binary-geometry-audit
+          path: female-muscle-binary-geometry-report.json
+          if-no-files-found: warn
+          retention-days: 14
