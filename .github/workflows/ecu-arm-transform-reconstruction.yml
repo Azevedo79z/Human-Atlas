@@ -1,0 +1,42 @@
+name: ECU arm transform reconstruction audit
+
+on:
+  push:
+    branches:
+      - audit/ecu-female-anchor-inventory
+    paths:
+      - "scripts/audit-ecu-arm-transform-reconstruction.mjs"
+      - "scripts/borrow-anatomy.mjs"
+      - "public/models/atlas.json"
+      - "public/models/atlas-female.json"
+      - "public/models/*.bin"
+      - ".github/workflows/ecu-arm-transform-reconstruction.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint reconstruction audit
+        run: deno lint scripts/audit-ecu-arm-transform-reconstruction.mjs
+      - name: Type-check reconstruction audit
+        run: deno check scripts/audit-ecu-arm-transform-reconstruction.mjs
+      - name: Reconstruct arm transform and posture
+        shell: bash
+        run: |
+          set -euo pipefail
+          deno run --allow-read scripts/audit-ecu-arm-transform-reconstruction.mjs | tee ecu-arm-transform-reconstruction.json
+      - name: Upload reconstruction report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecu-arm-transform-reconstruction
+          path: ecu-arm-transform-reconstruction.json
+          if-no-files-found: error
+          retention-days: 14
