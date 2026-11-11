@@ -15,8 +15,10 @@ import {LANGUAGES,direction,fold,say,type Language} from './i18n';
 const initial=(sex:Sex):SceneState=>({explode:0,visible:defaultVisible(sex),selected:[],isolate:false,view:'three-quarter',rotate:false,reset:0});
 export default function Home(){
  const detailTitle=useRef<HTMLHeadingElement>(null);
+ const languageRef=useRef<Language>('pt');
  const [sex,setSex]=useState<Sex>('male');
  const [language,setLanguage]=useState<Language>('pt');
+ languageRef.current=language;
  const t=(phrase:Parameters<typeof say>[1])=>say(language,phrase);
  const name=(text:string)=>term(text,language);
  const rtl=direction(language)==='rtl';
@@ -26,7 +28,7 @@ export default function Home(){
  useEffect(()=>{document.documentElement.lang=language==='pt'?'pt-BR':language;document.documentElement.dir=direction(language);},[language]);
  const [atlas,setAtlas]=useState<Atlas|null>(null),[state,setState]=useState(()=>initial('male')),[progress,setProgress]=useState(0),[error,setError]=useState(''),[panel,setPanel]=useState<'layers'|'search'|null>(null),[details,setDetails]=useState(false),[about,setAbout]=useState(false),[query,setQuery]=useState(''),[chosen,setChosen]=useState<Concept|null>(null);
  const source=edition_(sex,language);
- useEffect(()=>{const abort=new AbortController();setProgress(0);setError('');setAtlas(null);setChosen(null);setDetails(false);setPanel(null);setQuery('');setState(initial(sex));fetch(edition(sex).manifest,{signal:abort.signal}).then(r=>{if(!r.ok)throw new Error(say(language,'catalogueError'));return r.json();}).then(data=>setAtlas(data as Atlas)).catch(e=>{if(e.name!=='AbortError')setError(e.message);});return()=>abort.abort();},[sex,language]);
+ useEffect(()=>{const abort=new AbortController();setProgress(0);setError('');setAtlas(null);setChosen(null);setDetails(false);setPanel(null);setQuery('');setState(initial(sex));fetch(edition(sex).manifest,{signal:abort.signal}).then(r=>{if(!r.ok)throw new Error(say(languageRef.current,'catalogueError'));return r.json();}).then(data=>setAtlas(data as Atlas)).catch(e=>{if(e.name!=='AbortError')setError(e.message);});return()=>abort.abort();},[sex]);
  useEffect(()=>{const key=(e:KeyboardEvent)=>{if(e.key==='/'&&!(e.target instanceof HTMLInputElement)&&!(e.target instanceof HTMLTextAreaElement)){e.preventDefault();setPanel('search');setDetails(false);}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);},[]);
  const parts=useMemo(()=>new Map(atlas?.parts.map(p=>[p.id,p])),[atlas]);
  const counts=useMemo(()=>Object.fromEntries(SYSTEMS.map(s=>[s.id,atlas?.parts.filter(p=>p.system===s.id).length??0])),[atlas]);
