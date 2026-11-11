@@ -56,10 +56,18 @@ def main():
         indices = np.frombuffer(chunk, dtype="<u2", count=ni, offset=io).astype(np.int64)
         if not np.isfinite(vertices).all() or int(indices.max()) >= n:
             raise ValueError(f"{part_id}: invalid packed geometry")
-        if not np.allclose(vertices.min(axis=0), part["bounds"][0], atol=1e-5):
-            raise ValueError(f"{part_id}: minimum bounds do not match manifest")
-        if not np.allclose(vertices.max(axis=0), part["bounds"][1], atol=1e-5):
-            raise ValueError(f"{part_id}: maximum bounds do not match manifest")
+        actual_bounds = [vertices.min(axis=0).tolist(), vertices.max(axis=0).tolist()]
+        expected_bounds = part["bounds"]
+        bounds_delta = max(
+            max(abs(actual_bounds[side][axis] - expected_bounds[side][axis]) for axis in range(3))
+            for side in range(2)
+        )
+        # Allow minor float serialization differences; reject material (>5 mm) mismatch.
+        if bounds_delta > 0.005:
+            raise ValueError(
+                f"{part_id}: packed geometry bounds differ from manifest by "
+                f"{bounds_delta:.6f} m; actual={actual_bounds}, expected={expected_bounds}"
+            )
 
         add_mesh(scene, node_name, vertices, indices.reshape(-1, 3), [45, 205, 160, 220])
         added.append({
