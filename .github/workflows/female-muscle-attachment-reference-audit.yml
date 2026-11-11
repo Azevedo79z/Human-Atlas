@@ -31,4 +31,4 @@ jobs:
       - name: Type-check audit
         run: deno check scripts/audit-female-muscle-attachment-references.mjs
       - name: Run read-only reference audit
-        run: deno run scripts/audit-female-muscle-attachment-references.mjs
+        run: deno run --allow-read=public/models/atlas-female.json scripts/audit-female-muscle-attachment-references.mjs
