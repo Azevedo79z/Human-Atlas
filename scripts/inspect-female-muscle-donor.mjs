@@ -5,8 +5,8 @@
  * Run:
  *   deno run --allow-net=raw.githubusercontent.com scripts/inspect-female-muscle-donor.mjs
  *
- * It fetches manifests only. It does not fetch geometry chunks, import meshes,
- * or modify repository files or the deployed viewer.
+ * It fetches manifests and selected geometry chunks only. It does not import
+ * meshes or modify repository files or the deployed viewer.
  */
 const CANDIDATE =
   "https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/b0a20fa3a009ca5f6bfa07b7479312e04c862af2/public/models/atlas.json";
@@ -133,8 +133,8 @@ const hostAnchors = upperBodyAnchors.map(name =>
   findPart(host, name, ["borrowed"])
 );
 if (candidateAnchors.some(part => !part) || hostAnchors.some(part => !part)) {
-  const missingCandidate = upperBodyAnchors.filter((name, i) => !candidateAnchors[i]);
-  const missingHost = upperBodyAnchors.filter((name, i) => !hostAnchors[i]);
+  const missingCandidate = upperBodyAnchors.filter((_, i) => !candidateAnchors[i]);
+  const missingHost = upperBodyAnchors.filter((_, i) => !hostAnchors[i]);
   throw new Error(`Missing upper-body anchor parts. Candidate: ${missingCandidate.join(", ")}; host: ${missingHost.join(", ")}`);
 }
 const candidateMuscleSamples = candidate.parts.filter(part =>
