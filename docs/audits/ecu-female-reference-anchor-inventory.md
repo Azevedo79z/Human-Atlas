@@ -57,3 +57,26 @@ Decode the six listed anchor meshes from their manifest chunks and inspect them 
 ## Safety boundary
 
 This inventory changes documentation only. It does not modify source geometry, the female atlas manifest, the production viewer, Wix, or the deployed site.
+
+## Binary geometry preflight result
+
+Workflow: [ECU female anchor geometry preflight #43123646196](https://github.com/Azevedo79z/Human-Atlas/actions/runs/43123646196)  
+Commit: `6d92a682d2933fd4a570a65bcd5d8c62b10cd294`  
+Result: **success** (lint, type-check, binary decode, and artifact upload all completed).
+
+The preflight decoded and checked all four donor ECU records:
+
+| Donor record | Side | Vertices | Triangles | Decoded bounds |
+|---|---:|---:|---:|---|
+| `BP3D_FJ1472` | Right | 2,167 | 1,136 | Match |
+| `BP3D_FJ1472M` | Left | 2,185 | 1,152 | Match |
+| `BP3D_FJ1517` | Right | 662 | 504 | Match |
+| `BP3D_FJ1517M` | Left | 666 | 508 | Match |
+
+It also decoded and checked the six female borrowed-bone anchors listed above. All source and host chunks matched their declared byte lengths; every decoded position set matched its manifest bounds within the configured 0.0002 tolerance; and every triangle index was within its part's vertex range.
+
+The donor ECU records required two source chunks; the six female anchors were all in host chunk 12.
+
+**Important limit:** this is binary integrity validation, not visual or anatomical correspondence. Donor ECU coordinates and female borrowed-bone coordinates have not been compared. The next gate is to reconstruct the arm-region scale/translation and posture correction used by the borrowing pipeline, then validate those transforms independently before any surface-distance analysis.
+
+The workflow artifact is named `ecu-female-anchor-geometry-preflight` and is retained for 14 days.
