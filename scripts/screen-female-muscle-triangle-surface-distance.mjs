@@ -36,10 +36,32 @@ function boundsGap(a, b) {
   }
   return Math.sqrt(sum);
 }
+function pointSegmentDistance2(p, a, b) {
+  const ab = [b[0]-a[0], b[1]-a[1], b[2]-a[2]];
+  const ap = [p[0]-a[0], p[1]-a[1], p[2]-a[2]];
+  const length2 = ab[0]**2 + ab[1]**2 + ab[2]**2;
+  const t = length2 > 0
+    ? Math.max(0, Math.min(1, (ap[0]*ab[0] + ap[1]*ab[1] + ap[2]*ab[2]) / length2))
+    : 0;
+  const dx = p[0] - (a[0] + t*ab[0]);
+  const dy = p[1] - (a[1] + t*ab[1]);
+  const dz = p[2] - (a[2] + t*ab[2]);
+  return dx*dx + dy*dy + dz*dz;
+}
 function pointTriangleDistance2(p, a, b, c) {
   const sub = (x, y) => [x[0]-y[0], x[1]-y[1], x[2]-y[2]];
   const dot = (x,y) => x[0]*y[0]+x[1]*y[1]+x[2]*y[2];
   const ab=sub(b,a), ac=sub(c,a), ap=sub(p,a);
+  const cross = [ab[1]*ac[2]-ab[2]*ac[1], ab[2]*ac[0]-ab[0]*ac[2], ab[0]*ac[1]-ab[1]*ac[0]];
+  const area2 = dot(cross,cross);
+  const edgeScale = Math.max(dot(ab,ab), dot(ac,ac), dot(sub(c,b),sub(c,b)));
+  if (area2 <= Number.EPSILON * edgeScale * edgeScale) {
+    return Math.min(
+      pointSegmentDistance2(p,a,b),
+      pointSegmentDistance2(p,b,c),
+      pointSegmentDistance2(p,c,a),
+    );
+  }
   const d1=dot(ab,ap), d2=dot(ac,ap);
   if (d1<=0 && d2<=0) return dot(ap,ap);
   const bp=sub(p,b), d3=dot(ab,bp), d4=dot(ac,bp);
@@ -65,7 +87,9 @@ function pointTriangleDistance2(p, a, b, c) {
 function geometry(buffer, part) {
   const positions = new Float32Array(buffer, part.positions, part.vertexCount*3);
   const indices = new Uint32Array(buffer, part.indices, part.indexCount);
-  if (part.indexCount % 3) throw new Error(`Non-triangular index count: ${part.id}`);
+  if (!part.vertexCount || !part.indexCount || part.indexCount % 3) {
+    throw new Error(`Invalid triangle geometry counts: ${part.id}`);
+  }
   for (const index of indices) if (index >= part.vertexCount) throw new Error(`Invalid index in ${part.id}`);
   const points = [];
   const pointCount = Math.min(SAMPLE_LIMIT, part.vertexCount);
