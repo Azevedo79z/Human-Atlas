@@ -1,4 +1,4 @@
-name: Package female atlas muscle chunk
+name: Package female atlas muscle chunks
 
 on:
   push:
@@ -21,12 +21,12 @@ jobs:
           set -euo pipefail
           mkdir -p "${{ runner.temp }}/female-muscles"
           cp public/models/atlas-female.json "${{ runner.temp }}/female-muscles/"
-          cp public/models/female-13.bin "${{ runner.temp }}/female-muscles/"
+          cp public/models/female-13.bin public/models/female-14.bin "${{ runner.temp }}/female-muscles/"
           sha256sum "${{ runner.temp }}"/female-muscles/* > "${{ runner.temp }}/female-muscles/SHA256SUMS.txt"
       - name: Upload isolated muscle geometry package
         uses: actions/upload-artifact@v4
         with:
-          name: female-atlas-muscle-chunk-13
+          name: female-atlas-muscle-chunks-13-14
           path: ${{ runner.temp }}/female-muscles/
           if-no-files-found: error
           retention-days: 7
