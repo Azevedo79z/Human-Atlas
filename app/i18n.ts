@@ -30,6 +30,9 @@ const TEXT = {
  pieces_plural:{en:'pieces',ar:'قطعة'},
 
  systems:{en:'Systems',ar:'الأجهزة'},
+ skinLayer:{en:'Skin',ar:'الجلد'},
+ showSkinLayer:{en:'Show skin layer',ar:'إظهار طبقة الجلد'},
+ hideSkinLayer:{en:'Hide skin layer',ar:'إخفاء طبقة الجلد'},
  anatomicalLayers:{en:'Anatomical layers',ar:'الطبقات التشريحية'},
  openLayers:{en:'Open system layers',ar:'فتح طبقات الأجهزة'},
  closeSystems:{en:'Close systems',ar:'إغلاق الأجهزة'},

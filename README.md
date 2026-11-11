@@ -22,7 +22,7 @@ Built with React, Three.js, and shadcn/ui. No API keys, no accounts, no backend:
 - **Search by name or source identifier**, in either language.
 - Compact controls and detail panels on phones, in portrait and landscape.
 
-The body surface and the reproductive system start switched off on both bodies. They stay listed and turn on in one tap, and searching for a structure shows it whatever its system is set to.
+The body surface starts on as a lightly translucent outer layer on both bodies, so internal structures remain visible beneath it. Switch it off to inspect deeper anatomy without the skin. The reproductive system starts switched off; it stays listed and turns on in one tap, and searching for a structure shows it whatever its system is set to.
 
 ## Run locally
 
