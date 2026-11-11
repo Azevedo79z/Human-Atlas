@@ -44,7 +44,7 @@ function center(bounds) {
 }
 
 function boxGap(a, b) {
-  const gaps = a[0].map((value, axis) =>
+  const gaps = a[0].map((_, axis) =>
     Math.max(0, b[0][axis] - a[1][axis], a[0][axis] - b[1][axis])
   );
   return Math.hypot(...gaps);
