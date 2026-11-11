@@ -124,13 +124,13 @@ async function validateVertices(atlas, base, label, selectedParts) {
 const upperBodyAnchors = [
   "Left clavicle", "Left scapula", "Left humerus", "Left radius", "Left ulna",
   "Right clavicle", "Right scapula", "Right humerus", "Right radius", "Right ulna",
-  "Sternum", "Manubrium",
+  "Manubrium",
 ];
 const candidateAnchors = upperBodyAnchors.map(name =>
   findPart(candidate, name, ["skeletal"])
 );
 const hostAnchors = upperBodyAnchors.map(name =>
-  findPart(host, name, ["borrowed"])
+  findPart(host, name, ["borrowed", "skeletal"])
 );
 if (candidateAnchors.some(part => !part) || hostAnchors.some(part => !part)) {
   const missingCandidate = upperBodyAnchors.filter((_, i) => !candidateAnchors[i]);
