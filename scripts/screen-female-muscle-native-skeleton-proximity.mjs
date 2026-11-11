@@ -34,7 +34,6 @@ const bones = skeletalParts.filter(part => BONE_NAME.test(part.name) && !NON_SUR
 if (muscles.length === 0 || bones.length === 0) {
   throw new Error("Expected donor muscular and named skeletal parts were not found.");
 }
-  throw new Error("Expected donor muscular and skeletal parts were not found.");
 }
 
 function boxGap(a, b) {
@@ -137,7 +136,8 @@ const report = {
   donorRevision: REVISION,
   coordinateSpace: "Original female donor atlas coordinates; no transforms applied",
   targetMuscleParts: muscles.length,
-  skeletalPartsAvailable: skeletalParts.length,\n  boneSurfaceCandidatesAvailable: bones.length,
+  skeletalPartsAvailable: skeletalParts.length,
+  boneSurfaceCandidatesAvailable: bones.length,
   chunksDownloaded: chunkIds,
   chunksDownloadedCount: chunkIds.length,
   sampleLimitPerMesh: SAMPLE_LIMIT,
