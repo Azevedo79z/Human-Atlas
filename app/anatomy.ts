@@ -1,6 +1,9 @@
 import {SYSTEMS_AR,EDITIONS_AR} from './anatomy-ar';
 import {EXPLANATIONS_AR} from './explanations-ar';
 import TERMS_AR from './terms-ar.json';
+import TERMS_PT from './terms-pt.json';
+import {SYSTEMS_PT,EDITIONS_PT} from './anatomy-pt';
+import {EXPLANATIONS_PT} from './explanations-pt';
 import type {Language} from './i18n';
 
 export type SystemId = 'skeletal'|'muscular'|'arterial'|'venous'|'nervous'|'digestive'|'respiratory'|'urinary'|'reproductive'|'lymphatic'|'endocrine'|'integumentary'|'connective'|'sensory'|'cardiac'|'pregnancy'|'brain'|'borrowed'|'donor-muscle';
@@ -350,15 +353,27 @@ const qualified = (name:string) => KEYS_BY_LENGTH.find(key=>name.startsWith(`${k
 /** The Arabic name of a structure, where the vocabulary has one. Names not
  * covered stay in English: that is normal in Arabic medical teaching, and a
  * guessed anatomical term is worse than an English one. */
+
+const portugueseTerm=(raw:string)=>{
+ const key=raw.toLowerCase().trim();
+ const exact=(TERMS_PT as Record<string,string>)[key];if(exact)return exact;
+ const suffix=key.match(/\s*\((left|right)\)$/),prefix=key.match(/^(left|right)\s+/);
+ const side=suffix?.[1]??prefix?.[1];const base=key.replace(/\s*\((left|right)\)$/,'').replace(/^(left|right)\s+/, '');
+ const translated=(TERMS_PT as Record<string,string>)[base];
+ if(translated&&side)return translated+(side==='left'?' esquerdo':' direito');
+ const sideWords:Record<string,string>={left:'esquerdo',right:'direito'};
+ return exact??(side&&translated?translated+' '+sideWords[side]:raw);
+};
+
 export const term = (name:string, language:Language) =>
- language==='ar' ? (TERMS_AR as Record<string,string>)[name.toLowerCase().trim()] ?? name : name;
+ language==='ar' ? (TERMS_AR as Record<string,string>)[name.toLowerCase().trim()] ?? name : language==='pt' ? portugueseTerm(name) : name;
 /** True when the Arabic vocabulary actually covers this name. */
-export const translated = (name:string) => (TERMS_AR as Record<string,string>)[name.toLowerCase().trim()]!==undefined;
+export const translated = (name:string) => (TERMS_AR as Record<string,string>)[name.toLowerCase().trim()]!==undefined || portugueseTerm(name)!==name;
 export const systemName = (id:SystemId, language:Language) =>
- (language==='ar' ? SYSTEMS_AR[id]?.name : undefined) ?? SYSTEMS.find(s=>s.id===id)?.name ?? '';
+ (language==='ar' ? SYSTEMS_AR[id]?.name : language==='pt' ? SYSTEMS_PT[id]?.name : undefined) ?? SYSTEMS.find(s=>s.id===id)?.name ?? '';
 export const edition_ = (sex:Sex, language:Language) => {
  const base=edition(sex);
- return language==='ar' ? {...base,...EDITIONS_AR[sex]} : base;
+ return language==='ar' ? {...base,...EDITIONS_AR[sex]} : language==='pt' ? {...base,...EDITIONS_PT[sex]} : base;
 };
 
 const entryFor = (name:string) => {
@@ -375,6 +390,12 @@ const arabicFor = (name:string) => {
  return EXPLANATIONS_AR[key] ?? EXPLANATIONS_AR[base] ?? EXPLANATIONS_AR[qualified(base) ?? ''];
 };
 export function explanation(name:string,system:SystemId,sex:Sex='male',language:Language='en'){
+ if(language==='pt'){
+  const key=name.toLowerCase().trim(),base=shared(key),own=EXPLANATIONS_PT[key] ?? EXPLANATIONS_PT[base] ?? EXPLANATIONS_PT[qualified(base) ?? ''];
+  if(own)return own;
+  const note=SYSTEMS_PT[system]?.description;
+  if(note&&!entryFor(name))return note;
+ }
  if(language==='ar'){
   const own=arabicFor(name);
   if(own)return own;
