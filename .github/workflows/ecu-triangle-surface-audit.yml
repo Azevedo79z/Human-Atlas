@@ -1,0 +1,39 @@
+name: ECU triangle surface audit
+
+on:
+  pull_request:
+    branches:
+      - audit/female-muscle-bilateral-symmetry
+    paths:
+      - "scripts/audit-ecu-triangle-surface-distance.mjs"
+      - "docs/audits/ecu-triangle-surface-audit.md"
+      - ".github/workflows/ecu-triangle-surface-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint audit script
+        run: deno lint scripts/audit-ecu-triangle-surface-distance.mjs
+      - name: Type-check audit script
+        run: deno check scripts/audit-ecu-triangle-surface-distance.mjs
+      - name: Run read-only ECU triangle surface audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          deno run --allow-net=raw.githubusercontent.com --allow-read scripts/audit-ecu-triangle-surface-distance.mjs | tee ecu-triangle-surface-audit.json
+      - name: Upload ECU triangle surface report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecu-triangle-surface-audit
+          path: ecu-triangle-surface-audit.json
+          if-no-files-found: error
+          retention-days: 14
