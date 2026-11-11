@@ -1,0 +1,42 @@
+name: Female donor ECU repeated-name investigation
+
+on:
+  push:
+    branches: [audit/female-ecu-duplicate-investigation]
+  pull_request:
+    branches: [audit/female-muscle-native-skeleton-proximity]
+
+permissions:
+  contents: read
+
+jobs:
+  ecu-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint ECU audit
+        run: deno lint scripts/audit-female-ecu-duplicates.mjs
+      - name: Type-check ECU audit
+        run: deno check scripts/audit-female-ecu-duplicates.mjs
+      - name: Run ECU audit
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-ecu-duplicates.mjs | tee female-ecu-duplicate-audit.json
+      - name: Add report to workflow summary
+        if: always()
+        run: |
+          if [ -f female-ecu-duplicate-audit.json ]; then
+            echo "## Female donor ECU repeated-name investigation" >> "$GITHUB_STEP_SUMMARY"
+            echo "Raw-coordinate geometry metadata and fingerprints; not anatomical validation." >> "$GITHUB_STEP_SUMMARY"
+            cat female-ecu-duplicate-audit.json >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No ECU audit report was generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: female-ecu-duplicate-audit
+          path: female-ecu-duplicate-audit.json
+          if-no-files-found: warn
+          retention-days: 14
