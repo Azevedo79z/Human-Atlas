@@ -15,7 +15,7 @@ const TARGETS = [
   ["Extensor carpi ulnaris", /extensor carpi ulnaris/i],
 ];
 const BONE_NAME = /\b(bone|cartilage|rib|costal|clavicle|sternum|scapula|humerus|radius|ulna|carpal|metacarpal|phalanx|phalanges|vertebr|sacrum|coccyx|ilium|ischium|pubis|femur|patella|tibia|fibula|talus|calcaneus|tarsal|metatarsal|mandible|maxilla|zygomatic|frontal|parietal|temporal|occipital|sphenoid|ethmoid|nasal|lacrimal|palatine|vomer|hyoid|mastoid|condyle|trochanter|epicondyle|olecranon|acromion|coracoid|glenoid|tubercle|process)\b/i;
-const NON_SURFACE_TISSUE = /\b(compact|spongy|cancellous) bone tissue\b/i;
+const NON_SURFACE_TISSUE = /\b(trabecular|compact|spongy|cancellous|cortical) bone tissue\b/i;
 const SAMPLE_LIMIT = 240;
 const CANDIDATE_LIMIT = 8;
 const manifestResponse = await fetch(RAW_BASE + "models/atlas.json");
