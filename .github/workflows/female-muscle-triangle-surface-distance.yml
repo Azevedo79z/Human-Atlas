@@ -1,0 +1,49 @@
+name: Female muscle triangle-surface distance audit
+
+on:
+  push:
+    branches:
+      - audit/female-muscle-triangle-surface-distance
+    paths:
+      - "scripts/screen-female-muscle-triangle-surface-distance.mjs"
+      - "scripts/check-female-muscle-attachment-shortlists.mjs"
+      - "data/anatomy/female-upper-limb-attachment-reference.v1.json"
+      - ".github/workflows/female-muscle-triangle-surface-distance.yml"
+  pull_request:
+    branches:
+      - audit/female-muscle-native-skeleton-proximity
+    paths:
+      - "scripts/screen-female-muscle-triangle-surface-distance.mjs"
+      - "scripts/check-female-muscle-attachment-shortlists.mjs"
+      - "data/anatomy/female-upper-limb-attachment-reference.v1.json"
+      - ".github/workflows/female-muscle-triangle-surface-distance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint audit scripts
+        run: deno lint scripts/screen-female-muscle-triangle-surface-distance.mjs scripts/check-female-muscle-attachment-shortlists.mjs
+      - name: Type-check audit scripts
+        run: deno check scripts/screen-female-muscle-triangle-surface-distance.mjs scripts/check-female-muscle-attachment-shortlists.mjs
+      - name: Run read-only geometry screen
+        run: deno run --allow-net=raw.githubusercontent.com --allow-read=data/anatomy/female-upper-limb-attachment-reference.v1.json scripts/screen-female-muscle-triangle-surface-distance.mjs > female-muscle-triangle-surface-distance.json
+      - name: Compare candidates with anatomical attachment reference
+        run: deno run --allow-read=data/anatomy/female-upper-limb-attachment-reference.v1.json,female-muscle-triangle-surface-distance.json scripts/check-female-muscle-attachment-shortlists.mjs > female-muscle-attachment-shortlist-review.json
+      - name: Upload geometry and attachment review reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-muscle-geometry-and-attachment-review
+          path: |
+            female-muscle-triangle-surface-distance.json
+            female-muscle-attachment-shortlist-review.json
+          if-no-files-found: error
+          retention-days: 14
