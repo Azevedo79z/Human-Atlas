@@ -23,7 +23,7 @@ export default function Home(){
  const numberLocale=language==='pt'?'pt-BR':'en';
  // The document carries the language so the browser hyphenates, aligns and
  // orders punctuation correctly, and so `dir`-based styling applies.
- useEffect(()=>{document.documentElement.lang=language;document.documentElement.dir=direction(language);},[language]);
+ useEffect(()=>{document.documentElement.lang=language==='pt'?'pt-BR':language;document.documentElement.dir=direction(language);},[language]);
  const [atlas,setAtlas]=useState<Atlas|null>(null),[state,setState]=useState(()=>initial('male')),[progress,setProgress]=useState(0),[error,setError]=useState(''),[panel,setPanel]=useState<'layers'|'search'|null>(null),[details,setDetails]=useState(false),[about,setAbout]=useState(false),[query,setQuery]=useState(''),[chosen,setChosen]=useState<Concept|null>(null);
  const source=edition_(sex,language);
  useEffect(()=>{const abort=new AbortController();setProgress(0);setError('');setAtlas(null);setChosen(null);setDetails(false);setPanel(null);setQuery('');setState(initial(sex));fetch(edition(sex).manifest,{signal:abort.signal}).then(r=>{if(!r.ok)throw new Error(say(language,'catalogueError'));return r.json();}).then(data=>setAtlas(data as Atlas)).catch(e=>{if(e.name!=='AbortError')setError(e.message);});return()=>abort.abort();},[sex,language]);
