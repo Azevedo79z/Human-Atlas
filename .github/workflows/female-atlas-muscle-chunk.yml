@@ -22,7 +22,8 @@ jobs:
           mkdir -p "${{ runner.temp }}/female-muscles"
           cp public/models/atlas-female.json "${{ runner.temp }}/female-muscles/"
           cp public/models/female-13.bin public/models/female-14.bin "${{ runner.temp }}/female-muscles/"
-          sha256sum "${{ runner.temp }}"/female-muscles/* > "${{ runner.temp }}/female-muscles/SHA256SUMS.txt"
+          cd "${{ runner.temp }}/female-muscles"
+          sha256sum atlas-female.json female-13.bin female-14.bin > SHA256SUMS.txt
       - name: Upload isolated muscle geometry package
         uses: actions/upload-artifact@v4
         with:
