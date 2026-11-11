@@ -1,0 +1,52 @@
+name: Female donor muscle subpart inventory
+
+on:
+  pull_request:
+    paths:
+      - "scripts/audit-female-muscle-subparts.mjs"
+      - ".github/workflows/female-muscle-subpart-inventory.yml"
+  push:
+    branches: ["audit/female-muscle-subpart-inventory"]
+    paths:
+      - "scripts/audit-female-muscle-subparts.mjs"
+      - ".github/workflows/female-muscle-subpart-inventory.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  donor-muscle-subpart-inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint inventory script
+        run: deno lint scripts/audit-female-muscle-subparts.mjs
+      - name: Type-check inventory script
+        run: deno check scripts/audit-female-muscle-subparts.mjs
+      - name: Run read-only donor inventory
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-muscle-subparts.mjs | tee female-muscle-subpart-inventory.json
+      - name: Add report to workflow summary
+        if: always()
+        run: |
+          if [ -f female-muscle-subpart-inventory.json ]; then
+            echo "## Female donor muscle subpart inventory" >> "$GITHUB_STEP_SUMMARY"
+            echo "Read-only manifest inventory; part counts do not prove anatomical completeness or correct registration." >> "$GITHUB_STEP_SUMMARY"
+            echo '\`\`\`json' >> "$GITHUB_STEP_SUMMARY"
+            cat female-muscle-subpart-inventory.json >> "$GITHUB_STEP_SUMMARY"
+            echo '\`\`\`' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Inventory report was not generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload inventory report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-muscle-subpart-inventory
+          path: female-muscle-subpart-inventory.json
+          if-no-files-found: warn
+          retention-days: 14
