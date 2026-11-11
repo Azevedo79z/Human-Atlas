@@ -31,6 +31,9 @@ const muscles = TARGETS.flatMap(([target, pattern]) =>
 );
 const skeletalParts = atlas.parts.filter(part => part.system === "skeletal");
 const bones = skeletalParts.filter(part => BONE_NAME.test(part.name) && !NON_SURFACE_TISSUE.test(part.name));
+if (muscles.length === 0 || bones.length === 0) {
+  throw new Error("Expected donor muscular and named skeletal parts were not found.");
+}
   throw new Error("Expected donor muscular and skeletal parts were not found.");
 }
 
