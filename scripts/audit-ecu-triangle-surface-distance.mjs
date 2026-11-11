@@ -83,6 +83,28 @@ function pointTriangleDistanceSquared(p, a, b, c) {
   const q=[a[0]+ab[0]*v+ac[0]*w,a[1]+ab[1]*v+ac[1]*w,a[2]+ab[2]*v+ac[2]*w];
   const diff=sub(p,q); return dot(diff,diff);
 }
+function directedDenseSurfaceSamples(source,target) {
+  const samples = [...source.centroids];
+  for (const [a,b,c] of source.triangles) {
+    samples.push(a,b,c);
+    samples.push(
+      [(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2],
+      [(b[0]+c[0])/2,(b[1]+c[1])/2,(b[2]+c[2])/2],
+      [(c[0]+a[0])/2,(c[1]+a[1])/2,(c[2]+a[2])/2]
+    );
+  }
+  const distances=samples.map(point => {
+    const reflected=[-point[0],point[1],point[2]];
+    let best=Infinity;
+    for (const [a,b,c] of target.triangles) {
+      best=Math.min(best,pointTriangleDistanceSquared(reflected,a,b,c));
+    }
+    return Math.sqrt(best);
+  });
+  return { samples:distances.length, min:quantile(distances,0), p50:quantile(distances,.5),
+    p90:quantile(distances,.9), p95:quantile(distances,.95), max:quantile(distances,1),
+    sampling:"Triangle centroids, all triangle vertices, and all three edge midpoints; vertices/edges may be repeated across adjacent triangles" };
+}
 function quantile(values,q) {
   const sorted=[...values].sort((a,b)=>a-b);
   return sorted[Math.floor((sorted.length-1)*q)];
@@ -111,7 +133,9 @@ for (const rightId of right) for (const leftId of left) {
     sameChunk:r.chunk===l.chunk,
     reflectedRightToLeft:directedSurfaceSamples(r,l),
     reflectedLeftToRight:directedSurfaceSamples(l,r),
-    method:"All source triangle centroids reflected across X; exact closest point against every target triangle"
+    denseRightToLeft:directedDenseSurfaceSamples(r,l),
+    denseLeftToRight:directedDenseSurfaceSamples(l,r),
+    method:"Centroid baseline plus dense samples (triangle vertices and edge midpoints) reflected across X; exact closest point against every target triangle"
   });
 }
 console.log(JSON.stringify({
