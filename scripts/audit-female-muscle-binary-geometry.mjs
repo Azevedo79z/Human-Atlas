@@ -6,7 +6,7 @@
 const REVISION = "b0a20fa3a009ca5f6bfa07b7479312e04c862af2";
 const RAW_BASE = `https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/${REVISION}/public/`;
 const MANIFEST_URL = RAW_BASE + "models/atlas.json";
-const TARGETS = [
+const TARGETS: Array<[string, RegExp]> = [
   ["Pectoralis major", /pectoralis major/i],
   ["Pectoralis minor", /pectoralis minor/i],
   ["Subclavius", /subclavius/i],
