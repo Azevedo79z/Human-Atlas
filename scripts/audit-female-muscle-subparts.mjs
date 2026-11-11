@@ -15,7 +15,8 @@ const TARGETS = [
   { label: "Trapezius", pattern: /trapezius/i },
   { label: "Biceps brachii", pattern: /biceps brachii/i },
   { label: "Triceps brachii", pattern: /triceps brachii/i },
-  { label: "Brachialis", pattern: /brachialis/i },
+  // Match the standalone muscle name; do not absorb coracobrachialis.
+  { label: "Brachialis", pattern: /(?:^|\\s)brachialis$/i },
   { label: "Pronator teres", pattern: /pronator teres/i },
   { label: "Flexor carpi ulnaris", pattern: /flexor carpi ulnaris/i },
   { label: "Extensor carpi ulnaris", pattern: /extensor carpi ulnaris/i },
@@ -56,8 +57,8 @@ const report = {
   missingTargets: results.filter(result => result.matchCount === 0).map(result => result.target),
   results,
   limitations: [
-    "Manifest part count does not prove a complete anatomical muscle or correct laterality.",
-    "Multiple named parts may be subdivisions, bilateral structures, or separate regions; they require visual/anatomical review.",
+    "Manifest part count does not prove anatomical completeness or correct laterality.",
+    "Multiple named parts may be subdivisions, bilateral structures, or separate regions; they require anatomical review.",
     "This inventory does not transform, register, combine, or import any mesh.",
     "No host geometry, manifest, viewer code, Wix integration, or production deployment is changed."
   ],
