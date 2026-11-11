@@ -26,7 +26,10 @@ jobs:
       - name: Type-check audit script
         run: deno check scripts/audit-ecu-triangle-surface-distance.mjs
       - name: Run read-only ECU triangle surface audit
-        run: deno run --allow-net=raw.githubusercontent.com --allow-read scripts/audit-ecu-triangle-surface-distance.mjs | tee ecu-triangle-surface-audit.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          deno run --allow-net=raw.githubusercontent.com --allow-read scripts/audit-ecu-triangle-surface-distance.mjs | tee ecu-triangle-surface-audit.json
       - name: Upload ECU triangle surface report
         uses: actions/upload-artifact@v4
         with:
