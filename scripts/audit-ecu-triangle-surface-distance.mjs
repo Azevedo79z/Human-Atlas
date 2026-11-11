@@ -21,6 +21,35 @@ const parts = TARGET_IDS.map(id => {
   }
   return part;
 });
+const conceptsById = new Map((atlas.concepts ?? []).map(concept => [concept.id, concept]));
+const metadataChecks = parts.map(part => {
+  const concept = conceptsById.get(part.conceptId);
+  if (!part.conceptId || !concept) throw new Error(`Missing concept mapping for ${part.id}`);
+  if (!Array.isArray(concept.elements) || !concept.elements.includes(part.id)) {
+    throw new Error(`Concept ${part.conceptId} does not map back to ${part.id}`);
+  }
+  if (!Array.isArray(part.bounds) || part.bounds.length !== 2 ||
+      part.bounds.some(axis => !Array.isArray(axis) || axis.length !== 3 || !axis.every(Number.isFinite))) {
+    throw new Error(`Invalid bounds metadata for ${part.id}`);
+  }
+  for (const [field, alignment] of [["positions",4],["normals",2],["indices",4]]) {
+    if (!Number.isInteger(part[field]) || part[field] < 0 || part[field] % alignment !== 0) {
+      throw new Error(`Invalid ${field} offset for ${part.id}`);
+    }
+  }
+  return {
+    id: part.id,
+    name: part.name,
+    system: part.system,
+    conceptId: part.conceptId,
+    conceptName: concept.name ?? null,
+    conceptMapsBackToPart: concept.elements.includes(part.id),
+    chunk: part.chunk,
+    offsets: { positions: part.positions, normals: part.normals, indices: part.indices },
+    counts: { vertices: part.vertexCount, indices: part.indexCount, triangles: part.indexCount / 3 },
+    bounds: part.bounds,
+  };
+});
 const chunks = new Map();
 for (const chunkId of [...new Set(parts.map(part => part.chunk))]) {
   const chunk = atlas.chunks[chunkId];
@@ -30,6 +59,18 @@ for (const chunkId of [...new Set(parts.map(part => part.chunk))]) {
   if (!result.ok) throw new Error(`Chunk ${chunkId} HTTP ${result.status}`);
   const buffer = await result.arrayBuffer();
   if (buffer.byteLength !== chunk.bytes) throw new Error(`Chunk ${chunkId} byte length mismatch`);
+  for (const part of parts.filter(item => item.chunk === chunkId)) {
+    const ranges = [
+      ["positions", part.positions, part.vertexCount * 12],
+      ["normals", part.normals, part.vertexCount * 6],
+      ["indices", part.indices, part.indexCount * 4],
+    ];
+    for (const [label, offset, length] of ranges) {
+      if (offset + length > buffer.byteLength) {
+        throw new Error(`${part.id}: ${label} range exceeds chunk ${chunkId}`);
+      }
+    }
+  }
   chunks.set(chunkId, buffer);
 }
 function geometry(part) {
@@ -143,6 +184,14 @@ console.log(JSON.stringify({
   target:"Extensor carpi ulnaris",
   coordinateSpace:"Original donor coordinates; X reflection only; no transforms applied",
   records:parts.map(p=>({id:p.id,name:p.name,chunk:p.chunk,vertexCount:p.vertexCount,triangleCount:p.indexCount/3})),
+  sourceMetadata: {
+    checks: metadataChecks,
+    validation: [
+      "Each target part resolves to a source concept and the concept maps back to the part ID.",
+      "Position, normal, and index offsets are aligned and their byte ranges fit inside the declared chunk.",
+      "Bounds are present as finite min/max XYZ triples."
+    ]
+  },
   comparisons,
   interpretation:[
     "Triangle-centroid to target-triangle distances are a denser surface-proximity diagnostic than vertex-to-vertex sampling, but remain a one-sided sampled approximation.",
