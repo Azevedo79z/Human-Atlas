@@ -96,8 +96,13 @@ The corrected run completed successfully on commit `4d0ce7eee56ee001b0e50d6eda7e
 | `BP3D_FJ1472` | `FMA38507` Right ECU | `BP3D_FJ1472` | FJ1472, FJ1517 | Canonical |
 | `BP3D_FJ1517` | `FMA38507` Right ECU | `BP3D_FJ1472` | FJ1472, FJ1517 | Alternate mesh record |
 | `BP3D_FJ1472M` | `FMA38508` Left ECU | `BP3D_FJ1472M` | FJ1472M, FJ1517M | Canonical |
-| `BP3D_FJ1517M` | `FMA38508` Left ECU | `BP3D_FJ1517M` | FJ1472M, FJ1517M | Alternate mesh record |
+| `BP3D_FJ1517M` | `FMA38508` Left ECU | `BP3D_FJ1472M` | FJ1472M, FJ1517M | Alternate mesh record |
 
 The metadata and binary-range checks passed for all four records, including concept resolution, canonical-record resolution, bounds validation, offset alignment, and chunk-range containment. Geometry decoding also validated finite vertex coordinates and triangle indices. The report artifact was non-empty (12,538 bytes of JSON).
 
 **CI status:** the corrected workflow now uses `set -euo pipefail`; the current successful run is [43118645337](https://github.com/Azevedo79z/Human-Atlas/actions/runs/43118645337). The earlier green run with the masked exception is explicitly not counted as a pass.
+
+
+## Documentation correction
+
+The table above intentionally maps both left-side records to canonical element `BP3D_FJ1472M`. `BP3D_FJ1517M` is an alternate mesh record sharing concept `FMA38508`; it is not the canonical element.
