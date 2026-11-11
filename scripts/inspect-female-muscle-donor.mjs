@@ -77,7 +77,8 @@ async function validateVertices(atlas, base, label, selectedParts) {
     if (!chunk) throw new Error(`${label}: missing chunk ${part.chunk} for ${part.name}`);
     let buffer = chunks.get(part.chunk);
     if (!buffer) {
-      const url = new URL(chunk.url.replace(/^\\/+/, ""), base);
+      const chunkPath = chunk.url.startsWith("/") ? chunk.url.slice(1) : chunk.url;
+      const url = new URL(chunkPath, base);
       const response = await fetch(url);
       if (!response.ok) throw new Error(`${label}: chunk fetch failed (${response.status}): ${url}`);
       buffer = await response.arrayBuffer();
