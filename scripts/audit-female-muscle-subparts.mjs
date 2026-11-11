@@ -16,7 +16,7 @@ const TARGETS = [
   { label: "Biceps brachii", pattern: /biceps brachii/i },
   { label: "Triceps brachii", pattern: /triceps brachii/i },
   // Match the standalone muscle name; do not absorb coracobrachialis.
-  { label: "Brachialis", pattern: /(?:^|\\s)brachialis$/i },
+  { label: "Brachialis", pattern: / brachialis$/i },
   { label: "Pronator teres", pattern: /pronator teres/i },
   { label: "Flexor carpi ulnaris", pattern: /flexor carpi ulnaris/i },
   { label: "Extensor carpi ulnaris", pattern: /extensor carpi ulnaris/i },
