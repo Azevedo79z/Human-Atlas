@@ -1,0 +1,32 @@
+name: Female muscle vertex point-cloud prototype
+
+on:
+  pull_request:
+    paths:
+      - "scripts/prototype-female-muscle-vertex-proximity.mjs"
+      - ".github/workflows/female-muscle-vertex-proximity.yml"
+  push:
+    branches: ["feat/female-muscle-vertex-proximity-prototype"]
+    paths:
+      - "scripts/prototype-female-muscle-vertex-proximity.mjs"
+      - ".github/workflows/female-muscle-vertex-proximity.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  vertex-point-cloud:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint prototype
+        run: deno lint scripts/prototype-female-muscle-vertex-proximity.mjs
+      - name: Type-check prototype
+        run: deno check scripts/prototype-female-muscle-vertex-proximity.mjs
+      - name: Run read-only point-cloud prototype
+        run: deno run --allow-net=raw.githubusercontent.com scripts/prototype-female-muscle-vertex-proximity.mjs
