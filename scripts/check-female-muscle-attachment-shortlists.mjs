@@ -20,31 +20,35 @@ const results = reference.muscles.map((muscle) => {
     for (const site of muscle[role]) {
       const matched = [];
       for (const part of parts) {
-        for (const [index, candidate] of part.candidates.entries()) {
+        for (const candidate of part.candidates) {
           if (site.bonePatterns.some((pattern) => matchesPattern(candidate.boneName, pattern))) {
             matched.push({
               musclePart: part.muscleName,
-              candidateRank: index + 1,
+              geometricShortlistRank: candidate.geometricRank,
+              candidateSource: candidate.candidateSource,
               candidateBone: candidate.boneName,
               medianMuscleToBoneDistance: candidate.muscleToBone.median,
+              p10MuscleToBoneDistance: candidate.muscleToBone.p10,
             });
           }
         }
       }
+      const inShortlist = matched.some((item) => item.candidateSource.includes("geometric_shortlist"));
+      const probed = matched.some((item) => item.candidateSource.includes("anatomical_reference_probe"));
       attachments.push({
         role,
         expectedSite: site.site,
         bonePatterns: site.bonePatterns,
-        status: matched.length ? "candidate_found_in_shortlist" : "not_found_in_top_12_inconclusive",
+        status: inShortlist
+          ? "candidate_in_geometric_shortlist"
+          : probed
+            ? "expected_bone_probed_outside_geometric_shortlist"
+            : "no_matching_named_bone_mesh_in_manifest",
         matchedCandidates: matched,
       });
     }
   }
-  return {
-    target: muscle.target,
-    donorPartsFound: parts.length,
-    attachments,
-  };
+  return { target: muscle.target, donorPartsFound: parts.length, attachments };
 });
 const all = results.flatMap((item) => item.attachments);
 const summary = {
@@ -52,8 +56,9 @@ const summary = {
   reportTargetParts: report.targetMuscleParts,
   referenceMuscles: reference.muscles.length,
   attachmentsChecked: all.length,
-  attachmentsWithCandidateInShortlist: all.filter((x) => x.status === "candidate_found_in_shortlist").length,
-  attachmentsNotFoundInTop8Inconclusive: all.filter((x) => x.status === "not_found_in_top_12_inconclusive").length,
-  interpretation: "Shortlist presence is a geometric clue only; absence is inconclusive. Neither result validates anatomical attachment or permits automatic mesh snapping.",
+  candidatesInGeometricShortlist: all.filter((x) => x.status === "candidate_in_geometric_shortlist").length,
+  expectedBonesProbedOutsideShortlist: all.filter((x) => x.status === "expected_bone_probed_outside_geometric_shortlist").length,
+  noMatchingNamedBoneMesh: all.filter((x) => x.status === "no_matching_named_bone_mesh_in_manifest").length,
+  interpretation: "Geometric shortlist membership and targeted expected-bone probes are proximity observations only. They do not validate anatomical attachment; absent named meshes are inconclusive.",
 };
 console.log(JSON.stringify({ summary, results }, null, 2));
