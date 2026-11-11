@@ -1,0 +1,85 @@
+name: Validate female left-foot STL pilot
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - docs/female-left-foot-pilot
+    paths:
+      - .github/workflows/female-left-foot-pilot.yml
+      - scripts/validate-female-left-foot.mjs
+      - docs/FEMALE-LEFT-FOOT-PILOT-INVENTORY.md
+
+permissions:
+  contents: read
+
+concurrency:
+  group: female-left-foot-pilot
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Download and validate 17 female left-foot STL meshes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out pilot branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check validator syntax
+        run: node --check scripts/validate-female-left-foot.mjs
+
+      - name: Download only the 17 FOOT_LEFT source files
+        env:
+          DEST: ${{ runner.temp }}/FOOT_LEFT
+        run: |
+          set -euo pipefail
+          mkdir -p "$DEST"
+          base='https://huggingface.co/buckets/Azevedo79z/visible-human-3d-models-bucket/resolve/visible_human_3d_models/CT/Mesh/02_Female/FOOT_LEFT'
+          while IFS=' ' read -r name expected; do
+            [ -n "$name" ] || continue
+            curl --fail --location --retry 3 --retry-delay 2 \
+              "$base/$name.stl?download=true" -o "$DEST/$name.stl"
+            actual=$(wc -c < "$DEST/$name.stl" | tr -d ' ')
+            test "$actual" = "$expected" || {
+              echo "::error::$name byte count mismatch: expected $expected, got $actual"
+              exit 1
+            }
+          done <<'FILES'
+          CALCANEUS_LEFT 2437884
+          CUBOID_LEFT 676284
+          INTERMEDIATE_CUNEIFORM_LEFT 335684
+          LATERAL_CUNEIFORM_LEFT 376484
+          MEDIAL_CUNEIFORM_LEFT 563884
+          METATARSAL_1_LEFT 1011484
+          METATARSAL_2_LEFT 683084
+          METATARSAL_3_LEFT 623484
+          METATARSAL_4_LEFT 592084
+          METATARSAL_5_LEFT 628884
+          NAVICULAR_LEFT 649484
+          PHALANGE_FOOT_1_LEFT 777284
+          PHALANGE_FOOT_2_LEFT 372284
+          PHALANGE_FOOT_3_LEFT 297284
+          PHALANGE_FOOT_4_LEFT 261284
+          PHALANGE_FOOT_5_LEFT 266884
+          TALUS_LEFT 1568684
+          FILES
+
+      - name: Parse STL meshes and write validation report
+        run: node scripts/validate-female-left-foot.mjs "${{ runner.temp }}/FOOT_LEFT" --out "${{ runner.temp }}/female-left-foot-validation.json"
+
+      - name: Upload source meshes and validation report for offline geometric comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: female-left-foot-geometry-review
+          path: |
+            ${{ runner.temp }}/FOOT_LEFT/
+            ${{ runner.temp }}/female-left-foot-validation.json
+          if-no-files-found: warn
+          retention-days: 14
