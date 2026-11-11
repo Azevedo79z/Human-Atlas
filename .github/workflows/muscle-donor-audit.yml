@@ -1,0 +1,30 @@
+name: Female muscle donor audit
+
+on:
+  pull_request:
+    paths:
+      - "scripts/audit-female-muscle-donor.mjs"
+      - ".github/workflows/muscle-donor-audit.yml"
+  push:
+    branches: ["feat/female-muscle-donor-audit"]
+    paths:
+      - "scripts/audit-female-muscle-donor.mjs"
+      - ".github/workflows/muscle-donor-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
+        with:
+          deno-version: v1.x
+      - name: Lint audit script
+        run: deno lint scripts/audit-female-muscle-donor.mjs
+      - name: Type-check audit script
+        run: deno check scripts/audit-female-muscle-donor.mjs
