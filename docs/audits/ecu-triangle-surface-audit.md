@@ -72,3 +72,16 @@ The denser pass preserves the same ranking pattern: same-chunk pairings have nea
 - No donor geometry, manifest, viewer, Wix integration, or production deployment is modified by this audit.
 
 **Disposition:** retain `FJ1472 ↔ FJ1472M` and `FJ1517 ↔ FJ1517M` as the strongest *geometric hypotheses* for the next validation stage. Do not automatically relabel, replace, or publish either record based on this audit alone.
+
+
+## Source concept mapping clarification
+
+The four ECU mesh records do not each appear as separate entries in the concept's canonical `elements` array. The two right-side records share concept `FMA38507`, whose canonical element is `BP3D_FJ1472`; the two left-side records share `FMA38508`, whose canonical element is `BP3D_FJ1472M`. The `FJ1517` records are additional mesh records associated with those same concepts, not separate canonical concept elements.
+
+The metadata audit therefore checks that every mesh record resolves to a concept, that the concept has a resolvable canonical part record with the same concept ID, and reports both canonical elements and all mesh records sharing the concept. It does not incorrectly require every alternate mesh record to appear in the canonical `elements` list.
+
+## CI failure-propagation correction
+
+The first metadata-validation workflow run was marked successful by GitHub Actions even though the Deno audit threw an exception. The cause was a shell pipeline using `deno run ... | tee ...` without `pipefail`, allowing the successful exit code from `tee` to mask the Deno failure. The workflow now enables `set -euo pipefail` before the pipeline, so an audit failure fails the job and prevents an empty report from being treated as a successful artifact.
+
+**Disposition:** the previous green run is not accepted as a valid metadata-audit pass. The corrected script and workflow require a fresh successful run before the metadata stage can be considered passed.
