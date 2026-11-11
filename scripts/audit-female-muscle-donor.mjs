@@ -2,7 +2,7 @@
  * Audit a candidate full-body muscle atlas against the current female reference.
  *
  * Usage:
- *   node scripts/audit-female-muscle-donor.mjs PATH_TO_CANDIDATE_ATLAS_JSON
+ *   deno run --allow-read scripts/audit-female-muscle-donor.mjs PATH_TO_CANDIDATE_ATLAS_JSON
  *
  * This is a metadata-only preflight. It compares named bone bounding-box centres
  * and estimates a uniform scale/translation under the 24 proper axis rotations.
@@ -16,16 +16,14 @@
  * remain clearly labelled as reference/donor geometry unless a genuinely
  * female-specific source is independently verified.
  */
-import fs from 'node:fs';
-
-const candidatePath=process.argv[2];
+const candidatePath = Deno.args[0];
 if(!candidatePath){
- console.error('Usage: node scripts/audit-female-muscle-donor.mjs PATH_TO_CANDIDATE_ATLAS_JSON');
- process.exit(1);
+ console.error('Usage: deno run --allow-read scripts/audit-female-muscle-donor.mjs PATH_TO_CANDIDATE_ATLAS_JSON');
+ Deno.exit(1);
 }
 const ownPath=new URL('../public/models/atlas-female.json',import.meta.url);
-const own=JSON.parse(fs.readFileSync(ownPath,'utf8'));
-const candidate=JSON.parse(fs.readFileSync(candidatePath,'utf8'));
+const own = JSON.parse(Deno.readTextFileSync(ownPath));
+const candidate = JSON.parse(Deno.readTextFileSync(candidatePath));
 if(!Array.isArray(own.parts)||!Array.isArray(candidate.parts))throw new Error('Both manifests must contain a parts array.');
 
 const normalize=s=>s.toLowerCase().replace(/[()]/g,'').replace(/\s+/g,' ').trim();
