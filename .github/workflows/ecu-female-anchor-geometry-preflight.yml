@@ -1,0 +1,40 @@
+name: ECU female anchor geometry preflight
+
+on:
+  push:
+    branches:
+      - audit/ecu-female-anchor-inventory
+    paths:
+      - "scripts/inspect-ecu-female-anchor-geometry.mjs"
+      - "public/models/atlas-female.json"
+      - "public/models/*.bin"
+      - ".github/workflows/ecu-female-anchor-geometry-preflight.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint preflight script
+        run: deno lint scripts/inspect-ecu-female-anchor-geometry.mjs
+      - name: Type-check preflight script
+        run: deno check scripts/inspect-ecu-female-anchor-geometry.mjs
+      - name: Decode and validate ECU and female anchor geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          deno run --allow-net=raw.githubusercontent.com --allow-read scripts/inspect-ecu-female-anchor-geometry.mjs | tee ecu-female-anchor-geometry-preflight.json
+      - name: Upload geometry preflight report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecu-female-anchor-geometry-preflight
+          path: ecu-female-anchor-geometry-preflight.json
+          if-no-files-found: error
+          retention-days: 14
