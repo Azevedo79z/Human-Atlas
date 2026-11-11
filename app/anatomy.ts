@@ -360,7 +360,7 @@ const portugueseTerm=(raw:string)=>{
  const suffix=key.match(/\s*\((left|right)\)$/),prefix=key.match(/^(left|right)\s+/);
  const side=suffix?.[1]??prefix?.[1];const base=key.replace(/\s*\((left|right)\)$/,'').replace(/^(left|right)\s+/, '');
  const translated=(TERMS_PT as Record<string,string>)[base];
- if(translated&&side)return translated+(side==='left'?' esquerdo':' direito');
+ if(translated&&side){const feminine=/a$/.test(translated);return translated+(side==='left'?(feminine?' esquerda':' esquerdo'):(feminine?' direita':' direito'));}
  const sideWords:Record<string,string>={left:'esquerdo',right:'direito'};
  return exact??(side&&translated?translated+' '+sideWords[side]:raw);
 };
