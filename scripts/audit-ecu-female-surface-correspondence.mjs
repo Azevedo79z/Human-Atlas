@@ -323,3 +323,53 @@ const report={
  filesChanged:false,geometryChanged:false,manifestChanged:false,viewerChanged:false,productionChanged:false
 };
 console.log(JSON.stringify(report,null,2));
+
+function writeObj(filename,objects){
+ const materials=[
+  ["ecu_right","0.95 0.32 0.12"],["ecu_left","0.95 0.62 0.12"],
+  ["humerus","0.82 0.78 0.68"],["ulna","0.35 0.72 0.92"],["fifth_metacarpal","0.38 0.82 0.55"]
+ ];
+ const mtl=materials.map(([name,color])=>`newmtl ${name}\nKa 0.08 0.08 0.08\nKd ${color}\nKs 0.18 0.18 0.18\nNs 24\n`).join("\n");
+ const lines=["# Read-only ECU anatomical overlay; diagnostic geometry only","mtllib ecu-overlay.mtl"];
+ let offset=1;
+ for(const obj of objects){
+  lines.push(`o ${obj.name}`,`g ${obj.name}`,`usemtl ${obj.material}`);
+  for(const p of obj.points)lines.push(`v ${p[0]} ${p[1]} ${p[2]}`);
+  for(let i=0;i<obj.indices.length;i+=3)lines.push(`f ${obj.indices[i]+offset} ${obj.indices[i+1]+offset} ${obj.indices[i+2]+offset}`);
+  offset+=obj.points.length;
+ }
+ fs.writeFileSync(filename,lines.join("\n")+"\n");
+ fs.writeFileSync(new URL("ecu-overlay.mtl",new URL("./",new URL(filename,"file:///"))),mtl);
+}
+const overlayDir=new URL("../ecu-overlay/",import.meta.url);
+fs.mkdirSync(overlayDir,{recursive:true});
+for(const side of ["left","right"]){
+ const objects=[];
+ for(const id of donorIds.filter(x=>(x.endsWith("M")?"left":"right")===side)){
+  const p=find(donor,id),source=await mesh(donor,p,true);
+  objects.push({name:id,material:side==="left"?"ecu_left":"ecu_right",points:transformEcu(source.points,side),indices:source.indices});
+ }
+ for(const [boneId,label] of sideMap[side]){
+  const b=boneMeshes[boneId];
+  objects.push({name:boneId+"_"+label,material:label,points:b.points,indices:b.indices});
+ }
+ const base=new URL(side+"-ecu-bone-overlay.obj",overlayDir);
+ const objectsText=["# Read-only ECU and same-side bone overlay","mtllib ecu-overlay.mtl"];
+ let offset=1;
+ for(const obj of objects){
+  objectsText.push(`o ${obj.name}`,`g ${obj.name}`,`usemtl ${obj.material}`);
+  for(const p of obj.points)objectsText.push(`v ${p[0]} ${p[1]} ${p[2]}`);
+  for(let i=0;i<obj.indices.length;i+=3)objectsText.push(`f ${obj.indices[i]+offset} ${obj.indices[i+1]+offset} ${obj.indices[i+2]+offset}`);
+  offset+=obj.points.length;
+ }
+ fs.writeFileSync(base,objectsText.join("\n")+"\n");
+}
+fs.writeFileSync(new URL("ecu-overlay.mtl",overlayDir),[
+ "newmtl ecu_right","Kd 0.95 0.32 0.12","Ka 0.08 0.08 0.08","",
+ "newmtl ecu_left","Kd 0.95 0.62 0.12","Ka 0.08 0.08 0.08","",
+ "newmtl humerus","Kd 0.82 0.78 0.68","Ka 0.08 0.08 0.08","",
+ "newmtl ulna","Kd 0.35 0.72 0.92","Ka 0.08 0.08 0.08","",
+ "newmtl fifth_metacarpal","Kd 0.38 0.82 0.55","Ka 0.08 0.08 0.08",""
+].join("\n"));
+console.log(JSON.stringify({overlayFiles:["ecu-overlay/left-ecu-bone-overlay.obj","ecu-overlay/right-ecu-bone-overlay.obj","ecu-overlay/ecu-overlay.mtl"],diagnosticOnly:true},null,2));
+
