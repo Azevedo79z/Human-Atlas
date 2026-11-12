@@ -28,7 +28,7 @@ jobs:
         run: deno lint scripts/audit-ecu-female-surface-correspondence.mjs
       - name: Type-check correspondence audit
         run: deno check scripts/audit-ecu-female-surface-correspondence.mjs
-      - name: Reconstruct and compare bilateral ECU meshes
+      - name: Reconstruct, compare surfaces, and test triangle-pair collisions
         shell: bash
         run: |
           set -euo pipefail
