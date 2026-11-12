@@ -157,6 +157,10 @@ No model geometry, female manifest, viewer, production site, or Wix integration 
 
 ## Bilateral triangle-pair collision preflight
 
+The workflow is also configured to export two diagnostic Wavefront OBJ scenes, one per side. Each scene keeps the two ECU records and the humerus, ulna, and fifth metacarpal as separate named objects, with a companion MTL palette. These are transformed in-memory diagnostic copies for inspection only; they are not imported into the production viewer or source manifests. The export is configured but remains unverified until a workflow run uploads the artifact.
+
+
+
 The read-only surface audit now adds a broad-phase BVH traversal over overlapping triangle AABBs, followed by a 3D separating-axis test for candidate triangle pairs. Results are reported independently for each ECU record and same-side bone.
 
 The report distinguishes:
