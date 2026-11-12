@@ -185,7 +185,8 @@ const report={
  metricDefinition:"Nearest Euclidean distance between decoded mesh vertices in each direction; AABB gap is broad-phase only. Distances are sampled vertex-to-vertex, not exact point-to-triangle surface distance.",
  interpretationLimits:[
   "Small vertex distances indicate geometric proximity only, not anatomical attachment or a validated tendon footprint.",
-  "The donor ECU is male-derived and the female arm bones are borrowed; this audit does not establish sex-specific anatomical fidelity.",\n  "The coordinate bridge uses seven shared anchor bounding boxes; residuals must be reviewed before interpreting the resulting proximity metrics.",
+  "The donor ECU is male-derived and the female arm bones are borrowed; this audit does not establish sex-specific anatomical fidelity.",
+  "The coordinate bridge uses seven shared anchor bounding boxes; residuals must be reviewed before interpreting the resulting proximity metrics.",
   "No triangle-surface intersection, continuous Hausdorff distance, tissue collision, or tendon insertion analysis is claimed.",
   "The two ECU records per side are reported separately; left and right are never mixed."
  ],
