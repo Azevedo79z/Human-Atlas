@@ -155,6 +155,18 @@ No model geometry, female manifest, viewer, production site, or Wix integration 
 **Next gate:** compute point-to-triangle surface distances in both directions and a robust mesh-intersection/collision diagnostic, preserving the same donor-frame bridge and bilateral separation. Only after that should a visual overlay be considered.
 
 
+## Bilateral triangle-pair collision preflight
+
+The read-only surface audit now adds a broad-phase BVH traversal over overlapping triangle AABBs, followed by a 3D separating-axis test for candidate triangle pairs. Results are reported independently for each ECU record and same-side bone.
+
+The report distinguishes:
+- non-coplanar triangle intersections detected by the SAT test;
+- coplanar candidate pairs, deliberately classified as unresolved rather than forced into a positive/negative result;
+- degenerate triangle pairs;
+- broad-phase AABB candidate counts.
+
+This is a bounded diagnostic, not a proof of continuous mesh collision freedom. Numerical tolerance, degenerate geometry, and coplanar overlap remain limitations. A zero count must be read as “none detected by the tested cases,” not as a guarantee that all possible contacts or intersections are absent. No source mesh, manifest, viewer, deployed site, or Wix integration is modified.
+
 ## Bilateral point-to-triangle surface-distance preflight
 
 Workflows:
