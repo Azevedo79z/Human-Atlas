@@ -1,0 +1,47 @@
+name: Female host-donor coordinate registration screen
+
+on:
+  push:
+    branches:
+      - audit/female-host-donor-registration
+    paths:
+      - "scripts/audit-female-host-donor-registration.mjs"
+      - ".github/workflows/female-host-donor-registration.yml"
+  pull_request:
+    branches:
+      - audit/female-muscle-integration-readiness
+    paths:
+      - "scripts/audit-female-host-donor-registration.mjs"
+      - ".github/workflows/female-host-donor-registration.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  registration-screen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint registration screen
+        run: deno lint scripts/audit-female-host-donor-registration.mjs
+      - name: Type-check registration screen
+        run: deno check scripts/audit-female-host-donor-registration.mjs
+      - name: Compare source-mapped skeletal landmarks
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-host-donor-registration.mjs > female-host-donor-registration.json
+      - name: Summarize read-only registration evidence
+        run: |
+          echo "## Female host-donor coordinate registration screen" >> "$GITHUB_STEP_SUMMARY"
+          echo "Source-ID matched bone landmarks and axis-aligned bounding-box center fit. Diagnostic only; no transform applied." >> "$GITHUB_STEP_SUMMARY"
+          echo '###json-start' >> "$GITHUB_STEP_SUMMARY"
+          cat female-host-donor-registration.json >> "$GITHUB_STEP_SUMMARY"
+          echo '###json-end' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-host-donor-registration
+          path: female-host-donor-registration.json
+          if-no-files-found: error
+          retention-days: 14
