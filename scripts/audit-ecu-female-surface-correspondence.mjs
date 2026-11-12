@@ -2,7 +2,7 @@
  * Read-only ECU-to-female-bone correspondence audit.
  * Reconstructs the exact arm transform and soft-tissue posture operation from
  * borrow-anatomy.mjs, applies it to donor ECU vertices in memory, then reports
- * sampled vertex-to-vertex distances to same-side female borrowed bones.
+ * sampled point-to-triangle distances and triangle-pair intersection candidates to same-side female borrowed bones.
  * This is a proximity diagnostic, NOT a tendon-footprint or attachment test.
  *
  * Run: deno run --allow-read --allow-net=raw.githubusercontent.com scripts/audit-ecu-female-surface-correspondence.mjs
@@ -221,6 +221,55 @@ function pointTriangleSummary(samples,targetTree){
  return {sampledVertices:samples.vertices,sampledTriangleCentroids:samples.triangleCentroids,totalSamples:ds.length,targetTriangles:targetTree.triangleCount,min:ds[0],median:quantile(ds,.5),p95:quantile(ds,.95),max:ds[ds.length-1],nearContactSamplesAt1eMinus5:ds.filter(d=>d<=1e-5).length};
 }
 
+
+function overlapsAabb(a,b,eps=1e-10){
+ return a.lo.every((v,k)=>v<=b.hi[k]+eps&&b.lo[k]<=a.hi[k]+eps);
+}
+function triangleIntersection(a,b,eps=1e-9){
+ const ea=[sub(a.b,a.a),sub(a.c,a.b),sub(a.a,a.c)];
+ const eb=[sub(b.b,b.a),sub(b.c,b.b),sub(b.a,b.c)];
+ const na=cross(ea[0],sub(a.c,a.a)),nb=cross(eb[0],sub(b.c,b.a));
+ const la=Math.hypot(...na),lb=Math.hypot(...nb);
+ if(la<eps||lb<eps)return "degenerate";
+ const axes=[na,nb];
+ for(const x of ea)for(const y of eb)axes.push(cross(x,y));
+ for(const x of ea)axes.push(cross(na,x));
+ for(const x of eb)axes.push(cross(nb,x));
+ let coplanar=true;
+ const unitA=na.map(v=>v/la);
+ if(Math.hypot(...cross(na,nb))/(la*lb)>1e-7)coplanar=false;
+ if(Math.abs(dot(unitA,sub(b.a,a.a)))>eps*10)coplanar=false;
+ for(const axis of axes){
+  const l=Math.hypot(...axis);if(l<eps)continue;
+  const p=axis.map(v=>v/l);
+  const pa=[dot(a.a,p),dot(a.b,p),dot(a.c,p)],pb=[dot(b.a,p),dot(b.b,p),dot(b.c,p)];
+  if(Math.max(...pa)<Math.min(...pb)-eps||Math.max(...pb)<Math.min(...pa)-eps)return "separate";
+ }
+ return coplanar?"coplanar-unresolved":"intersect";
+}
+function trianglePairAudit(treeA,treeB){
+ let broadPhasePairs=0,confirmedIntersections=0,coplanarUnresolvedPairs=0,degeneratePairs=0;
+ function visit(a,b){
+  if(!overlapsAabb(a,b))return;
+  if(a.items&&b.items){
+   for(const x of a.items)for(const y of b.items){
+    if(!overlapsAabb(x,y))continue;
+    broadPhasePairs++;
+    const result=triangleIntersection(x,y);
+    if(result==="intersect")confirmedIntersections++;
+    else if(result==="coplanar-unresolved")coplanarUnresolvedPairs++;
+    else if(result==="degenerate")degeneratePairs++;
+   }
+   return;
+  }
+  if(a.items){visit(a,b.left);visit(a,b.right);return;}
+  if(b.items){visit(a.left,b);visit(a.right,b);return;}
+  visit(a.left,b.left);visit(a.left,b.right);visit(a.right,b.left);visit(a.right,b.right);
+ }
+ visit(treeA.root,treeB.root);
+ return {broadPhaseAabbCandidatePairs:broadPhasePairs,confirmedNonCoplanarTriangleIntersections:confirmedIntersections,coplanarUnresolvedPairs,degeneratePairs,algorithm:"BVH AABB pair pruning + 3D triangle SAT; coplanar pairs are deliberately unresolved",toleranceModelUnits:1e-9};
+}
+
 const sideMap={
  left:[["BM0078","humerus"],["BM0087","ulna"],["BM0075","fifthMetacarpal"]],
  right:[["BM0115","humerus"],["BM0123","ulna"],["BM0111","fifthMetacarpal"]]
@@ -242,6 +291,7 @@ for(const id of donorIds){
  for(const [boneId,label] of sideMap[side]){
   const target=boneMeshes[boneId],targetTree=buildTriangleTree(target.points,target.indices);
   const targetSamples=surfaceSamples(target.points,target.indices);
+  const triangleCollision=trianglePairAudit(ecuTree,targetTree);
   const ecuToBone=pointTriangleSummary(ecuSamples,targetTree);
   const boneToEcu=pointTriangleSummary(targetSamples,ecuTree);
   const threshold=1e-5;
@@ -250,7 +300,8 @@ for(const id of donorIds){
    ecuToBoneSurfaceDistances:ecuToBone,boneToEcuSurfaceDistances:boneToEcu,
    aabbGap:aabbGap(bb,bounds(target.points)),
    sampledNearContact:{thresholdModelUnits:threshold,ecuSamplesWithinThreshold:ecuToBone.nearContactSamplesAt1eMinus5,boneSamplesWithinThreshold:boneToEcu.nearContactSamplesAt1eMinus5},
-   intersectionStatus:"not-tested-exactly; sampled proximity only"
+   triangleCollision,
+   intersectionStatus:triangleCollision.confirmedNonCoplanarTriangleIntersections>0?"non-coplanar triangle intersections detected":triangleCollision.coplanarUnresolvedPairs>0?"coplanar candidates unresolved":triangleCollision.degeneratePairs>0?"degenerate triangle pairs present":"no intersections detected by tested SAT cases"
   });
  }
  reports.push({donorPartId:id,side,sourceVertices:source.points.length,triangles:source.indices.length/3,transformedBounds:bb,comparisons});
@@ -266,7 +317,7 @@ const report={
   "Small vertex distances indicate geometric proximity only, not anatomical attachment or a validated tendon footprint.",
   "The donor ECU is male-derived and the female arm bones are borrowed; this audit does not establish sex-specific anatomical fidelity.",
   "The coordinate bridge uses seven shared anchor bounding boxes; residuals must be reviewed before interpreting the resulting proximity metrics.",
-  "Triangle-triangle intersection is not tested exactly; near-zero sampled point-to-triangle distances are contact candidates only. Continuous Hausdorff distance, tissue collision, and tendon insertion analysis are not claimed.",
+  "Triangle pairs are broad-phase filtered by AABB and tested with a 3D separating-axis test. Non-coplanar intersections are reported; coplanar and degenerate pairs remain explicitly unresolved. This is not a continuous collision proof, signed-distance field, tissue simulation, or tendon insertion analysis.",
   "The two ECU records per side are reported separately; left and right are never mixed."
  ],
  filesChanged:false,geometryChanged:false,manifestChanged:false,viewerChanged:false,productionChanged:false
