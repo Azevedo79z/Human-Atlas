@@ -237,8 +237,11 @@ function triangleIntersection(a,b,eps=1e-9){
  if(Math.abs(dot(unitA,sub(b.a,a.a)))>eps*10)coplanar=false;
  const axes=[na,nb];
  for(const x of ea)for(const y of eb)axes.push(cross(x,y));
- // In-plane edge-normal axes are valid for coplanar triangles only.
- if(coplanar)for(const x of ea)axes.push(cross(na,x));
+ // In-plane edge-normal axes from both triangles are required for coplanar SAT.
+ if(coplanar){
+  for(const x of ea)axes.push(cross(na,x));
+  for(const x of eb)axes.push(cross(na,x));
+ }
  for(const axis of axes){
   const l=Math.hypot(...axis);if(l<eps)continue;
   const p=axis.map(v=>v/l);
@@ -255,6 +258,7 @@ function runTriangleIntersectionSelfTests(){
   ['separated-noncoplanar',tri([3,0,-1],[3,0,1],[4,0,0]),'separate'],
   ['overlapping-coplanar',tri([.2,.2,0],[.8,.2,0],[.2,.8,0]),'coplanar-unresolved'],
   ['separated-coplanar',tri([3,0,0],[4,0,0],[3,1,0]),'separate'],
+  ['separated-coplanar-rotated',tri([.36713592,2.34649522,0],[-.19562969,3.17311175,0],[-.4594806,1.78372962,0]),'separate'],
   ['degenerate',tri([0,0,0],[1,0,0],[2,0,0]),'degenerate']
  ];
  const results=cases.map(([name,other,expected])=>{
