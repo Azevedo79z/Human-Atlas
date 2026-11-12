@@ -157,7 +157,7 @@ No model geometry, female manifest, viewer, production site, or Wix integration 
 
 ## Bilateral triangle-pair collision preflight
 
-A deterministic startup self-test now exercises five cases before processing the anatomical meshes: non-coplanar crossing, non-coplanar separation, coplanar overlap candidate, coplanar separation, and a degenerate triangle. Each case is also checked with the triangle order reversed. The report records the self-test results; any unexpected classification stops the audit before anatomical results are emitted.
+A deterministic startup self-test now exercises five cases before processing the anatomical meshes: non-coplanar crossing, non-coplanar separation, coplanar overlap candidate, axis-aligned and rotated coplanar separation, and a degenerate triangle. Each case is also checked with the triangle order reversed. The report records the self-test results; any unexpected classification stops the audit before anatomical results are emitted.
 
 
 
@@ -165,7 +165,7 @@ The workflow is also configured to export two diagnostic Wavefront OBJ scenes, o
 
 
 
-The read-only surface audit now adds a broad-phase BVH traversal over overlapping triangle AABBs, followed by a 3D separating-axis test for candidate triangle pairs. Results are reported independently for each ECU record and same-side bone.
+The read-only surface audit now adds a broad-phase BVH traversal over overlapping triangle AABBs, followed by a 3D separating-axis test for candidate triangle pairs. For coplanar candidates, in-plane edge-normal axes are collected from both triangles; a rotated separated-triangle regression case guards against missing a separating axis. Results are reported independently for each ECU record and same-side bone.
 
 The report distinguishes:
 - non-coplanar triangle intersections detected by the SAT test;
