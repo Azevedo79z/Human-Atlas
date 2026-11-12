@@ -157,6 +157,10 @@ No model geometry, female manifest, viewer, production site, or Wix integration 
 
 ## Bilateral triangle-pair collision preflight
 
+A deterministic startup self-test now exercises five cases before processing the anatomical meshes: non-coplanar crossing, non-coplanar separation, coplanar overlap candidate, coplanar separation, and a degenerate triangle. Each case is also checked with the triangle order reversed. The report records the self-test results; any unexpected classification stops the audit before anatomical results are emitted.
+
+
+
 The workflow is also configured to export two diagnostic Wavefront OBJ scenes, one per side. Each scene keeps the two ECU records and the humerus, ulna, and fifth metacarpal as separate named objects, with a companion MTL palette. These are transformed in-memory diagnostic copies for inspection only; they are not imported into the production viewer or source manifests. The export is configured but remains unverified until a workflow run uploads the artifact.
 
 
