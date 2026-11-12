@@ -132,7 +132,8 @@ for(const side of ["left","right"]){
 function transformEcu(points,side){
  const b=posture[side];
  return points.map(q=>{
-  const maleFrame=q.map((x,k)=>x*sourceFrameBridge.scale+sourceFrameBridge.offset[k]);\n  const v=maleFrame.map((x,k)=>x*armTransform.scale+armTransform.offset[k]);
+  const maleFrame=q.map((x,k)=>x*sourceFrameBridge.scale+sourceFrameBridge.offset[k]);
+  const v=maleFrame.map((x,k)=>x*armTransform.scale+armTransform.offset[k]);
   const arm=sub(v,b.pivot),r=Math.hypot(...arm),w=Math.min(1,r/b.blend),rot=turn(arm,b.spin,b.angle*w),grow=1+w*(b.reachScale-1);
   return b.pivot.map((x,k)=>x+rot[k]*grow);
  });
