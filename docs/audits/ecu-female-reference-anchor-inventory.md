@@ -215,6 +215,10 @@ The ECU-to-ulna sampled surface distances are consistently smaller than the corr
 - A BVH-filtered triangle-pair SAT diagnostic is now implemented, but its execution on this branch has not yet been verified. Coplanar overlap candidates and degenerate pairs are explicitly unresolved; this is not a complete continuous collision proof.
 - No continuous signed-distance field, tissue collision test, tendon-path validation, or insertion-footprint validation has been performed.
 
+### CI status note
+
+The most recent observed failed workflow run checked commit `80d018e` and stopped at Deno lint because an unused `nearestSummary` helper remained in that earlier revision. The current audit script no longer contains that helper. This is a code-state correction, not a passing CI result: no workflow run has yet validated the current branch head or produced the updated OBJ artifact.
+
 ### Interpretation and next gate
 
 The next technically justified stage is to execute and inspect the SAT diagnostic and OBJ overlays, then evaluate any unresolved pairs visually or with an independently validated signed-distance/collision method before anyone considers anatomical retargeting. The ECU donor is male-derived and the female bones remain borrowed reference geometry, so a successful proximity audit must not be represented as female-specific anatomical validation.
