@@ -324,23 +324,6 @@ const report={
 };
 console.log(JSON.stringify(report,null,2));
 
-function writeObj(filename,objects){
- const materials=[
-  ["ecu_right","0.95 0.32 0.12"],["ecu_left","0.95 0.62 0.12"],
-  ["humerus","0.82 0.78 0.68"],["ulna","0.35 0.72 0.92"],["fifth_metacarpal","0.38 0.82 0.55"]
- ];
- const mtl=materials.map(([name,color])=>`newmtl ${name}\nKa 0.08 0.08 0.08\nKd ${color}\nKs 0.18 0.18 0.18\nNs 24\n`).join("\n");
- const lines=["# Read-only ECU anatomical overlay; diagnostic geometry only","mtllib ecu-overlay.mtl"];
- let offset=1;
- for(const obj of objects){
-  lines.push(`o ${obj.name}`,`g ${obj.name}`,`usemtl ${obj.material}`);
-  for(const p of obj.points)lines.push(`v ${p[0]} ${p[1]} ${p[2]}`);
-  for(let i=0;i<obj.indices.length;i+=3)lines.push(`f ${obj.indices[i]+offset} ${obj.indices[i+1]+offset} ${obj.indices[i+2]+offset}`);
-  offset+=obj.points.length;
- }
- fs.writeFileSync(filename,lines.join("\n")+"\n");
- fs.writeFileSync(new URL("ecu-overlay.mtl",new URL("./",new URL(filename,"file:///"))),mtl);
-}
 const overlayDir=new URL("../ecu-overlay/",import.meta.url);
 fs.mkdirSync(overlayDir,{recursive:true});
 for(const side of ["left","right"]){
