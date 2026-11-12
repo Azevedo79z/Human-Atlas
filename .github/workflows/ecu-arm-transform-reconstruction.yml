@@ -1,4 +1,5 @@
 name: ECU arm transform reconstruction audit
+# Includes a read-only ECU donor-frame bridge and bilateral surface correspondence gate.
 
 on:
   push:
