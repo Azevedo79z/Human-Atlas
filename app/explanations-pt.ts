@@ -36,7 +36,7 @@ export const EXPLANATIONS_PT:Record<string,string>={
   "tibia": "Osso medial da perna, responsável por transmitir a maior parte do peso do joelho ao tornozelo.",
   "fibula": "Osso delgado localizado lateralmente à tíbia. Ajuda a estabilizar o tornozelo e serve de ponto de fixação muscular.",
   "patella": "Osso situado à frente do joelho. Atua como uma proteção e aumenta a eficiência mecânica do quadríceps durante a extensão.",
-  "vertebral column": "Conjunto de vértebras que se estende do pescoço à pelve. Sustenta o tronco, permite movimentos da coluna e protege a medula espinal."
+  "vertebral column": "Conjunto de vértebras que se estende do pescoço à pelve. Sustenta o tronco, permite movimentos da coluna e protege a medula espinal.",
   "aorta": "A maior artéria do corpo. Conduz o sangue que sai do ventrículo esquerdo e o distribui para a circulação sistêmica.",
   "ascending aorta": "Primeiro segmento da aorta, que emerge do ventrículo esquerdo e dá origem às artérias coronárias.",
   "arch of aorta": "Curva da aorta situada no mediastino superior. Dela partem grandes artérias que irrigam a cabeça, o pescoço e os membros superiores.",
