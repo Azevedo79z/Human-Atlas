@@ -64,7 +64,7 @@ function linearFit(points, axis) {
 function family(name) {
   const n = name.toLowerCase();
   if (/clavicle/.test(n)) return "clavicle";
-  if (/scapula/.test(n)) return "scapula";
+  if (/\\bscapula\\b/.test(n)) return "scapula";
   if (/humerus/.test(n)) return "humerus";
   if (/radius/.test(n)) return "radius";
   if (/ulna/.test(n)) return "ulna";
@@ -114,6 +114,18 @@ const upperLimbFamilies = upperLimb.reduce((counts, item) => {
   counts[item.family] = (counts[item.family] ?? 0) + 1;
   return counts;
 }, {});
+const familySummary = Object.fromEntries([...new Set(matches.map(item => item.family))].map(name => {
+  const items = matches.filter(item => item.family === name);
+  const median = values => {
+    const sorted = [...values].sort((a, b) => a - b);
+    return sorted.length ? sorted[Math.floor((sorted.length - 1) / 2)] : null;
+  };
+  return [name, {
+    count: items.length,
+    medianCenterDelta: [0, 1, 2].map(axis => median(items.map(item => item.centerDelta[axis]))),
+    medianExtentRatio: [0, 1, 2].map(axis => median(items.map(item => item.extentRatio[axis]).filter(value => value !== null))),
+  }];
+}));
 const missingHostSourceIds = host.parts
   .filter(part => part.system === "borrowed" && part.conceptId?.startsWith("BORROWED:FJ"))
   .filter(part => !donorById.has(`BP3D_${part.conceptId.slice("BORROWED:".length)}`))
@@ -132,7 +144,7 @@ const report = {
   hostBorrowedBoneParts: host.parts.filter(part => part.system === "borrowed").length,
   donorSkeletalParts: donor.parts.filter(part => part.system === "skeletal").length,
   sourceIdMatchedLandmarks: matches.length,
-  matchedLandmarksByFamily: familyCounts,
+  matchedLandmarksByFamily: familyCounts,\n  familyGeometrySummary: familySummary,
   upperLimbLandmarkCount: upperLimb.length,
   upperLimbLandmarksByFamily: upperLimbFamilies,
   axisAlignedCenterFit: fits,
