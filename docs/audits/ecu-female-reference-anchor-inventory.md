@@ -153,3 +153,49 @@ The ECU records show their smallest sampled vertex distances to the same-side ul
 No model geometry, female manifest, viewer, production site, or Wix integration was changed. The workflow artifact `ecu-female-surface-correspondence` is retained for 14 days.
 
 **Next gate:** compute point-to-triangle surface distances in both directions and a robust mesh-intersection/collision diagnostic, preserving the same donor-frame bridge and bilateral separation. Only after that should a visual overlay be considered.
+
+
+## Bilateral point-to-triangle surface-distance preflight
+
+Workflows:
+- [ECU female surface correspondence audit #43124844913](https://github.com/Azevedo79z/Human-Atlas/actions/runs/43124844913)
+- [Combined ECU arm transform reconstruction audit #43124844879](https://github.com/Azevedo79z/Human-Atlas/actions/runs/43124844879)
+
+Validated script commit: `43a4c89930f639373f4d2ec70ad9cac7ca20a50a`  
+Result: **success** — lint, type-check, transform reconstruction, point-to-triangle queries, and artifact upload completed in both workflows.
+
+### Method
+
+- Decoded triangle indices for all four ECU records and six same-side female bone meshes.
+- Applied the same pinned donor-frame bridge, male-to-female arm transform, and side-specific posture correction used in the previous preflight.
+- Built a triangle bounding-volume hierarchy (BVH) for each target mesh.
+- For each direction, queried every mesh vertex and every triangle centroid against the target triangle surface using a closest-point-on-triangle calculation.
+- Reported minimum, median, 95th percentile, maximum, and sampled near-contact counts. Left/right comparisons remain isolated.
+
+These are bidirectional sampled point-to-triangle surface distances. They are more informative than vertex-to-vertex distances, but they are not continuous Hausdorff distances and do not test triangle-triangle intersections exactly.
+
+### Key results
+
+Distances are model units. Each cell is median / 95th percentile.
+
+| ECU record | Side | Ulna | Fifth metacarpal | Humerus |
+|---|---|---:|---:|---:|
+| `BP3D_FJ1472` | Right | 0.01492 / 0.04138 | 0.11537 / 0.23732 | 0.10971 / 0.24419 |
+| `BP3D_FJ1472M` | Left | 0.01537 / 0.04258 | 0.11916 / 0.24502 | 0.11322 / 0.25211 |
+| `BP3D_FJ1517` | Right | 0.01357 / 0.04192 | 0.09189 / 0.15079 | 0.13323 / 0.24453 |
+| `BP3D_FJ1517M` | Left | 0.01436 / 0.04315 | 0.09492 / 0.15566 | 0.13721 / 0.25247 |
+
+The ECU-to-ulna sampled surface distances are consistently smaller than the corresponding humerus and fifth-metacarpal distances. This supports a geometric proximity observation only; it does not verify the ECU's anatomical origin or insertion.
+
+### Contact and intersection caution
+
+- At the diagnostic near-contact threshold of **0.00001 model units**, no sampled ECU vertex or triangle centroid fell within the threshold of a target bone surface in any of the 12 comparisons.
+- One sampled right-ulna point in the reverse direction (bone samples against `BP3D_FJ1472`) fell within that threshold. This isolated sample is not evidence of a mesh intersection.
+- Several axis-aligned bounding boxes overlap (AABB gap zero), but AABB overlap is only a broad-phase condition and does not establish surface collision.
+- No exact triangle-triangle intersection test, continuous signed distance field, tissue collision test, tendon path, or insertion-footprint validation has been performed.
+
+### Interpretation and next gate
+
+The next technically justified stage is a visual diagnostic overlay and a dedicated triangle-triangle intersection test (or signed-distance/collision method) before anyone considers anatomical retargeting. The ECU donor is male-derived and the female bones remain borrowed reference geometry, so a successful proximity audit must not be represented as female-specific anatomical validation.
+
+No source geometry, female manifest, viewer, deployed site, or Wix integration was modified. The diagnostic artifact `ecu-female-surface-correspondence` is retained for 14 days.
