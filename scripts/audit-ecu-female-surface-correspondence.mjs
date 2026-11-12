@@ -231,14 +231,14 @@ function triangleIntersection(a,b,eps=1e-9){
  const na=cross(ea[0],sub(a.c,a.a)),nb=cross(eb[0],sub(b.c,b.a));
  const la=Math.hypot(...na),lb=Math.hypot(...nb);
  if(la<eps||lb<eps)return "degenerate";
- const axes=[na,nb];
- for(const x of ea)for(const y of eb)axes.push(cross(x,y));
- for(const x of ea)axes.push(cross(na,x));
- for(const x of eb)axes.push(cross(nb,x));
  let coplanar=true;
  const unitA=na.map(v=>v/la);
  if(Math.hypot(...cross(na,nb))/(la*lb)>1e-7)coplanar=false;
  if(Math.abs(dot(unitA,sub(b.a,a.a)))>eps*10)coplanar=false;
+ const axes=[na,nb];
+ for(const x of ea)for(const y of eb)axes.push(cross(x,y));
+ // In-plane edge-normal axes are valid for coplanar triangles only.
+ if(coplanar)for(const x of ea)axes.push(cross(na,x));
  for(const axis of axes){
   const l=Math.hypot(...axis);if(l<eps)continue;
   const p=axis.map(v=>v/l);
@@ -333,7 +333,7 @@ const report={
  host:{version:host.version??null},
  transform:{sourceFrameBridge:{scale:sourceFrameBridge.scale,offset:sourceFrameBridge.offset,maxAnchorResidual:sourceFrameBridge.maxResidual,rmsAnchorResidual:sourceFrameBridge.rmsResidual},maleToFemaleArm:{scale:armTransform.scale,offset:armTransform.offset,maxAnchorResidual:armTransform.maxResidual,rmsAnchorResidual:armTransform.rmsResidual},posture:Object.fromEntries(Object.entries(posture).map(([k,v])=>[k,{turnDegrees:v.angle*180/Math.PI,reachScale:v.reachScale,blend:v.blend,donorSkinSamples:v.donorSkinSamples,hostSkinSamples:v.hostSkinSamples}]))},
  meshes:reports,
- metricDefinition:"For each mesh, query all vertices and all triangle centroids against a target triangle BVH using exact point-to-triangle closest-point distance. Run in both directions. This is a denser sampled surface diagnostic, not continuous Hausdorff distance or exact triangle-triangle collision detection. AABB gap is broad-phase only.",
+ metricDefinition:"The proximity component queries all vertices and triangle centroids against a target triangle BVH in both directions; it is sampled, not continuous Hausdorff distance. The collision component uses BVH-filtered triangle-pair SAT: non-coplanar intersection candidates are classified, while coplanar overlaps and degenerate pairs remain unresolved. It is not a complete continuous collision proof. AABB gap is broad-phase only.",
  interpretationLimits:[
   "Small vertex distances indicate geometric proximity only, not anatomical attachment or a validated tendon footprint.",
   "The donor ECU is male-derived and the female arm bones are borrowed; this audit does not establish sex-specific anatomical fidelity.",
