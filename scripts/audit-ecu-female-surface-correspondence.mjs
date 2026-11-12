@@ -47,6 +47,19 @@ function readPositions(bytes,part){
  return out;
 }
 async function positions(atlas,part,remote){return readPositions(await chunk(atlas,part,remote,part.id),part);}
+function readIndices(bytes,part){
+ const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+ if(part.indices+part.indexCount*4>bytes.byteLength)throw new Error(part.id+": indices exceed chunk");
+ const out=new Uint32Array(part.indexCount);
+ for(let i=0;i<out.length;i++){out[i]=view.getUint32(part.indices+i*4,true);if(out[i]>=part.vertexCount)throw new Error(part.id+": triangle index outside vertex range");}
+ if(out.length%3!==0)throw new Error(part.id+": index count is not divisible by three");
+ return out;
+}
+async function mesh(atlas,part,remote){
+ const bytes=await chunk(atlas,part,remote,part.id);
+ return {points:readPositions(bytes,part),indices:readIndices(bytes,part)};
+}
+
 const anchors=[
  ["BM0078","Left humerus"],["BM0087","Left ulna"],["BM0075","Left fifth metacarpal bone"],
  ["BM0115","Right humerus"],["BM0123","Right ulna"],["BM0111","Right fifth metacarpal bone"]
@@ -147,6 +160,67 @@ function aabbGap(a,b){
  return Math.hypot(...a.min.map((_,k)=>Math.max(0,b.min[k]-a.max[k],a.min[k]-b.max[k])));
 }
 function quantile(sorted,q){return sorted[Math.min(sorted.length-1,Math.floor((sorted.length-1)*q))];}
+
+const pointAabbDistance2=(p,lo,hi)=>{
+ let d=0;for(let k=0;k<3;k++){const x=p[k]<lo[k]?lo[k]-p[k]:p[k]>hi[k]?p[k]-hi[k]:0;d+=x*x;}return d;
+};
+function closestPointTriangle(p,a,b,c){
+ const ab=sub(b,a),ac=sub(c,a),ap=sub(p,a),d1=dot(ab,ap),d2=dot(ac,ap);
+ if(d1<=0&&d2<=0)return a;
+ const bp=sub(p,b),d3=dot(ab,bp),d4=dot(ac,bp);
+ if(d3>=0&&d4<=d3)return b;
+ const vc=d1*d4-d3*d2;
+ if(vc<=0&&d1>=0&&d3<=0){const v=d1/(d1-d3);return a.map((x,k)=>x+v*ab[k]);}
+ const cp=sub(p,c),d5=dot(ab,cp),d6=dot(ac,cp);
+ if(d6>=0&&d5<=d6)return c;
+ const vb=d5*d2-d1*d6;
+ if(vb<=0&&d2>=0&&d6<=0){const w=d2/(d2-d6);return a.map((x,k)=>x+w*ac[k]);}
+ const va=d3*d6-d5*d4;
+ if(va<=0&&(d4-d3)>=0&&(d5-d6)>=0){const w=(d4-d3)/((d4-d3)+(d5-d6));return b.map((x,k)=>x+w*(c[k]-b[k]));}
+ const denom=1/(va+vb+vc),v=vb*denom,w=vc*denom;
+ return a.map((x,k)=>x+ab[k]*v+ac[k]*w);
+}
+function buildTriangleTree(points,indices){
+ const tris=[];
+ for(let i=0;i<indices.length;i+=3){
+  const a=points[indices[i]],b=points[indices[i+1]],c=points[indices[i+2]];
+  const lo=[0,1,2].map(k=>Math.min(a[k],b[k],c[k])),hi=[0,1,2].map(k=>Math.max(a[k],b[k],c[k]));
+  tris.push({a,b,c,lo,hi,center:lo.map((v,k)=>(v+hi[k])/2)});
+ }
+ function build(items){
+  const lo=[0,1,2].map(k=>Math.min(...items.map(t=>t.lo[k]))),hi=[0,1,2].map(k=>Math.max(...items.map(t=>t.hi[k])));
+  if(items.length<=8)return {lo,hi,items};
+  const axis=[0,1,2].sort((a,b)=>(hi[b]-lo[b])-(hi[a]-lo[a]))[0];
+  items.sort((a,b)=>a.center[axis]-b.center[axis]);const mid=items.length>>1;
+  return {lo,hi,left:build(items.slice(0,mid)),right:build(items.slice(mid))};
+ }
+ return {root:build(tris),triangleCount:tris.length};
+}
+function nearestPointToTree(p,tree){
+ let best=Infinity;
+ function visit(node){
+  if(pointAabbDistance2(p,node.lo,node.hi)>=best)return;
+  if(node.items){for(const t of node.items){if(pointAabbDistance2(p,t.lo,t.hi)>=best)continue;
+   const q=closestPointTriangle(p,t.a,t.b,t.c),d=sub(p,q),d2=dot(d,d);if(d2<best)best=d2;
+  }return;}
+  const dl=pointAabbDistance2(p,node.left.lo,node.left.hi),dr=pointAabbDistance2(p,node.right.lo,node.right.hi);
+  if(dl<dr){visit(node.left);visit(node.right);}else{visit(node.right);visit(node.left);}
+ }
+ visit(tree.root);return Math.sqrt(best);
+}
+function surfaceSamples(points,indices){
+ const out=[...points],centroids=[];
+ for(let i=0;i<indices.length;i+=3){
+  const a=points[indices[i]],b=points[indices[i+1]],c=points[indices[i+2]];
+  centroids.push(a.map((v,k)=>(v+b[k]+c[k])/3));
+ }
+ return {vertices:points.length,triangleCentroids:centroids.length,points:out.concat(centroids)};
+}
+function pointTriangleSummary(samples,targetTree){
+ const ds=samples.points.map(p=>nearestPointToTree(p,targetTree)).sort((a,b)=>a-b);
+ return {sampledVertices:samples.vertices,sampledTriangleCentroids:samples.triangleCentroids,totalSamples:ds.length,targetTriangles:targetTree.triangleCount,min:ds[0],median:quantile(ds,.5),p95:quantile(ds,.95),max:ds[ds.length-1],nearContactSamplesAt1eMinus5:ds.filter(d=>d<=1e-5).length};
+}
+
 function nearestSummary(source,target){
  const distances=new Array(source.length);
  for(let i=0;i<source.length;i++){
@@ -161,20 +235,35 @@ const sideMap={
  left:[["BM0078","humerus"],["BM0087","ulna"],["BM0075","fifthMetacarpal"]],
  right:[["BM0115","humerus"],["BM0123","ulna"],["BM0111","fifthMetacarpal"]]
 };
-const boneVertices={};
+
+const boneMeshes={};
 for(const [id] of anchors){
- const p=find(host,id);boneVertices[id]=await positions(host,p,false);
+ const p=find(host,id);boneMeshes[id]=await mesh(host,p,false);
 }
 const reports=[];
 for(const id of donorIds){
  const p=find(donor,id),side=id.endsWith("M")?"left":"right";
  if(!/extensor carpi ulnaris/i.test(p.name))throw new Error("Unexpected donor ECU name "+id);
- const source=await positions(donor,p,true),placed=transformEcu(source,side),bb=bounds(placed);
- const comparisons=sideMap[side].map(([boneId,label])=>{
-  const target=boneVertices[boneId],targetBounds=bounds(target);
-  return {target:label,targetPartId:boneId,ecuToBoneVertexDistances:nearestSummary(placed,target),boneToEcuVertexDistances:nearestSummary(target,placed),aabbGap:aabbGap(bb,targetBounds)};
- });
- reports.push({donorPartId:id,side,sourceVertices:source.length,triangles:p.indexCount/3,transformedBounds:bb,comparisons});
+ const source=await mesh(donor,p,true),placedPoints=transformEcu(source.points,side),bb=bounds(placedPoints);
+ const placedMesh={points:placedPoints,indices:source.indices};
+ const ecuTree=buildTriangleTree(placedMesh.points,placedMesh.indices);
+ const ecuSamples=surfaceSamples(placedMesh.points,placedMesh.indices);
+ const comparisons=[];
+ for(const [boneId,label] of sideMap[side]){
+  const target=boneMeshes[boneId],targetTree=buildTriangleTree(target.points,target.indices);
+  const targetSamples=surfaceSamples(target.points,target.indices);
+  const ecuToBone=pointTriangleSummary(ecuSamples,targetTree);
+  const boneToEcu=pointTriangleSummary(targetSamples,ecuTree);
+  const threshold=1e-5;
+  comparisons.push({
+   target:label,targetPartId:boneId,
+   ecuToBoneSurfaceDistances:ecuToBone,boneToEcuSurfaceDistances:boneToEcu,
+   aabbGap:aabbGap(bb,bounds(target.points)),
+   sampledNearContact:{thresholdModelUnits:threshold,ecuSamplesWithinThreshold:ecuToBone.nearContactSamplesAt1eMinus5,boneSamplesWithinThreshold:boneToEcu.nearContactSamplesAt1eMinus5},
+   intersectionStatus:"not-tested-exactly; sampled proximity only"
+  });
+ }
+ reports.push({donorPartId:id,side,sourceVertices:source.points.length,triangles:source.indices.length/3,transformedBounds:bb,comparisons});
 }
 const report={
  purpose:"In-memory, read-only ECU-to-bone proximity diagnostic after bridging the pinned ECU donor coordinate frame to the repository male atlas, then applying the repository male-to-female arm transform and soft-tissue posture operation.",
@@ -182,12 +271,12 @@ const report={
  host:{version:host.version??null},
  transform:{sourceFrameBridge:{scale:sourceFrameBridge.scale,offset:sourceFrameBridge.offset,maxAnchorResidual:sourceFrameBridge.maxResidual,rmsAnchorResidual:sourceFrameBridge.rmsResidual},maleToFemaleArm:{scale:armTransform.scale,offset:armTransform.offset,maxAnchorResidual:armTransform.maxResidual,rmsAnchorResidual:armTransform.rmsResidual},posture:Object.fromEntries(Object.entries(posture).map(([k,v])=>[k,{turnDegrees:v.angle*180/Math.PI,reachScale:v.reachScale,blend:v.blend,donorSkinSamples:v.donorSkinSamples,hostSkinSamples:v.hostSkinSamples}]))},
  meshes:reports,
- metricDefinition:"Nearest Euclidean distance between decoded mesh vertices in each direction; AABB gap is broad-phase only. Distances are sampled vertex-to-vertex, not exact point-to-triangle surface distance.",
+ metricDefinition:"For each mesh, query all vertices and all triangle centroids against a target triangle BVH using exact point-to-triangle closest-point distance. Run in both directions. This is a denser sampled surface diagnostic, not continuous Hausdorff distance or exact triangle-triangle collision detection. AABB gap is broad-phase only.",
  interpretationLimits:[
   "Small vertex distances indicate geometric proximity only, not anatomical attachment or a validated tendon footprint.",
   "The donor ECU is male-derived and the female arm bones are borrowed; this audit does not establish sex-specific anatomical fidelity.",
   "The coordinate bridge uses seven shared anchor bounding boxes; residuals must be reviewed before interpreting the resulting proximity metrics.",
-  "No triangle-surface intersection, continuous Hausdorff distance, tissue collision, or tendon insertion analysis is claimed.",
+  "Triangle-triangle intersection is not tested exactly; near-zero sampled point-to-triangle distances are contact candidates only. Continuous Hausdorff distance, tissue collision, and tendon insertion analysis are not claimed.",
   "The two ECU records per side are reported separately; left and right are never mixed."
  ],
  filesChanged:false,geometryChanged:false,manifestChanged:false,viewerChanged:false,productionChanged:false
