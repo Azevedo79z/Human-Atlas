@@ -6,6 +6,7 @@ on:
       - audit/ecu-female-anchor-inventory
     paths:
       - "scripts/audit-ecu-arm-transform-reconstruction.mjs"
+      - "scripts/audit-ecu-female-surface-correspondence.mjs"
       - "scripts/borrow-anatomy.mjs"
       - "public/models/atlas.json"
       - "public/models/atlas-female.json"
@@ -38,5 +39,22 @@ jobs:
         with:
           name: ecu-arm-transform-reconstruction
           path: ecu-arm-transform-reconstruction.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Lint bilateral ECU correspondence audit
+        run: deno lint scripts/audit-ecu-female-surface-correspondence.mjs
+      - name: Type-check bilateral ECU correspondence audit
+        run: deno check scripts/audit-ecu-female-surface-correspondence.mjs
+      - name: Compare transformed ECU against same-side female bones
+        shell: bash
+        run: |
+          set -euo pipefail
+          deno run --allow-read --allow-net=raw.githubusercontent.com scripts/audit-ecu-female-surface-correspondence.mjs | tee ecu-female-surface-correspondence.json
+      - name: Upload ECU correspondence report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecu-female-surface-correspondence
+          path: ecu-female-surface-correspondence.json
           if-no-files-found: error
           retention-days: 14
