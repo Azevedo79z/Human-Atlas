@@ -1,6 +1,6 @@
 # ECU female-reference anchor inventory
 
-**Status:** read-only inventory; no mesh placement, retargeting, deformation, or viewer changes.
+**Status:** read-only geometry correspondence audit; no mesh placement, retargeting, deformation, or viewer changes.
 
 ## Purpose
 
@@ -108,3 +108,48 @@ All three comparisons passed: arm transform, left posture, and right posture.
 Next gate: apply the independently reconstructed arm transform and the side-specific posture operation to ECU vertices in memory only, then compare the transformed ECU surface against the corresponding female borrowed ulna, humerus, and fifth metacarpal surfaces. Preserve separate left/right analysis and keep the result diagnostic; no mesh write-back.
 
 The workflow artifact is named `ecu-arm-transform-reconstruction` and is retained for 14 days.
+
+
+## Bilateral ECU-to-bone correspondence preflight
+
+Workflow: [ECU female surface correspondence audit #43124519617](https://github.com/Azevedo79z/Human-Atlas/actions/runs/43124519617)  
+Combined workflow: [ECU arm transform reconstruction audit #43124519567](https://github.com/Azevedo79z/Human-Atlas/actions/runs/43124519567)  
+Commit containing the validated audit script: `9cdc9be78ce0fa402a93762b4e7e76e55dad79d0`  
+Result: **success** — lint, type-check, transform reconstruction, bilateral comparison, and artifact upload completed.
+
+### Coordinate-frame bridge
+
+The ECU meshes come from the pinned external donor revision `b0a20fa3a009ca5f6bfa07b7479312e04c862af2`, while the arm borrowing transform in this repository is based on its local male atlas. The audit therefore fitted the seven shared thoracic/sternal anchor boxes from the external donor frame onto the repository male frame before applying the already-reproduced male-to-female arm transform.
+
+- External ECU donor frame → repository male frame: scale **1.07638**.
+- Coordinate-bridge maximum anchor residual: **0.008382 model units**.
+- Coordinate-bridge RMS anchor residual: **0.003597 model units**.
+- Repository male → female arm transform: scale **0.92727**, matching the stored borrowing metadata.
+- Bilateral posture: left **21.4° / 0.984 reach scale**; right **23.4° / 0.954 reach scale**.
+
+The coordinate bridge is an additional fitted transform, not an exact identity mapping. Its residual must remain part of the interpretation; no physical unit conversion is asserted in this report.
+
+### Sampled vertex proximity
+
+The four donor ECU mesh records were transformed in memory only and compared independently with the corresponding same-side female borrowed bones. Values below are nearest-vertex **median / 95th percentile**, in model units, from ECU vertices to bone vertices. The report also computes the reverse direction and broad AABB gap.
+
+| ECU donor record | Side | Humerus | Ulna | Fifth metacarpal |
+|---|---|---:|---:|---:|
+| `BP3D_FJ1472` | Right | 0.1090 / 0.2442 | 0.0168 / 0.0414 | 0.1160 / 0.2369 |
+| `BP3D_FJ1472M` | Left | 0.1124 / 0.2522 | 0.0165 / 0.0426 | 0.1200 / 0.2450 |
+| `BP3D_FJ1517` | Right | 0.1205 / 0.2450 | 0.0154 / 0.0425 | 0.1051 / 0.1509 |
+| `BP3D_FJ1517M` | Left | 0.1255 / 0.2529 | 0.0155 / 0.0438 | 0.1050 / 0.1558 |
+
+The ECU records show their smallest sampled vertex distances to the same-side ulna. The fifth-metacarpal comparison is more mixed: nearest distances are present, but the ECU-to-bone and bone-to-ECU distributions differ, reflecting uneven mesh sampling and the fact that these are not continuous surface distances. Humerus distances are larger in this coarse vertex comparison.
+
+### What this does and does not establish
+
+- It establishes that the transformed donor ECU meshes and same-side borrowed bone meshes can be compared in a common fitted coordinate frame, with the bridge residual explicitly reported.
+- The distance values are **nearest vertex-to-vertex samples**, not exact point-to-triangle distances, continuous Hausdorff distances, or measurements of anatomical attachment.
+- An AABB gap of zero means the bounding boxes overlap or touch; it does **not** prove that the actual meshes intersect.
+- No tendon footprints, groove fit, tissue collision, or fifth-metacarpal insertion have been validated.
+- The ECU remains male-derived and the female arm bones remain borrowed placeholders.
+
+No model geometry, female manifest, viewer, production site, or Wix integration was changed. The workflow artifact `ecu-female-surface-correspondence` is retained for 14 days.
+
+**Next gate:** compute point-to-triangle surface distances in both directions and a robust mesh-intersection/collision diagnostic, preserving the same donor-frame bridge and bilateral separation. Only after that should a visual overlay be considered.
