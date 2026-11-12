@@ -14,6 +14,7 @@ const BASE=`https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/${R
 const DIR=new URL("../public/models/",import.meta.url);
 const readHost=()=>JSON.parse(fs.readFileSync(new URL("atlas-female.json",DIR),"utf8"));
 const host=readHost();
+const male=JSON.parse(fs.readFileSync(new URL("atlas.json",DIR),"utf8"));
 const donorResponse=await fetch(BASE+"models/atlas.json");
 if(!donorResponse.ok) throw new Error(`Donor manifest HTTP ${donorResponse.status}`);
 const donor=await donorResponse.json();
@@ -67,13 +68,23 @@ function fit(a,b){
 }
 const map={"First thoracic vertebra":"Thoracic vertebra 1","Second thoracic vertebra":"Thoracic vertebra 2","Third thoracic vertebra":"Thoracic vertebra 3","Fourth thoracic vertebra":"Thoracic vertebra 4","Fifth thoracic vertebra":"Thoracic vertebra 5","Body of sternum":"Sternum"};
 const anchorNames=["First thoracic vertebra","Second thoracic vertebra","Third thoracic vertebra","Fourth thoracic vertebra","Fifth thoracic vertebra","Manubrium","Body of sternum"];
-const from=[],onto=[];
-for(const name of anchorNames){
- const a=boxOf(donor,p=>p.name===name),b=boxOf(host,p=>p.name===(map[name]??name));
- if(!a||!b)throw new Error("Missing transform anchor "+name);
- from.push(...corners(a));onto.push(...corners(b));
+function anchorFit(sourceAtlas,targetAtlas,targetNames){
+ const source=[],target=[];
+ for(const name of anchorNames){
+  const a=boxOf(sourceAtlas,p=>p.name===name),b=boxOf(targetAtlas,p=>p.name===(targetNames?.[name]??name));
+  if(!a||!b)throw new Error("Missing coordinate bridge/arm anchor "+name);
+  source.push(...corners(a));target.push(...corners(b));
+ }
+ const result=fit(source,target);let max=0,sum=0,count=0;
+ for(let i=0;i<source.length;i++)for(let k=0;k<3;k++){
+  const d=result.scale*source[i][k]+result.offset[k]-target[i][k];max=Math.max(max,Math.abs(d));sum+=d*d;count++;
+ }
+ return {...result,maxResidual:max,rmsResidual:Math.sqrt(sum/count),anchorPoints:source.length};
 }
-const transform=fit(from,onto);
+// ECU records are read from the pinned external source repository. Bridge that
+// repository's male reference frame onto this project's local male atlas first.
+const sourceFrameBridge=anchorFit(donor,male,{});
+const armTransform=anchorFit(male,host,map);
 const sub=(a,b)=>a.map((v,k)=>v-b[k]);
 const dot=(a,b)=>a.reduce((s,v,k)=>s+v*b[k],0);
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
@@ -95,14 +106,14 @@ function axisOf(points){
  let v=[1,1,1];for(let i=0;i<400;i++){const w=[0,0,0];for(let a=0;a<3;a++)for(let b=0;b<3;b++)w[a]+=cov[a][b]*v[b];v=norm(w);}
  return {axis:v[1]>0?v.map(x=>-x):v};
 }
-const maleSkinPart=donor.parts.find(p=>p.system==="integumentary"&&p.name==="Skin");
+const maleSkinPart=male.parts.find(p=>p.system==="integumentary"&&p.name==="Skin");
 const femaleSkinPart=host.parts.find(p=>p.name==="Skin");
 if(!maleSkinPart||!femaleSkinPart)throw new Error("Missing skin mesh for posture reconstruction");
-const maleSkin=await positions(donor,maleSkinPart,true),femaleSkin=await positions(host,femaleSkinPart,false);
+const maleSkin=await positions(male,maleSkinPart,false),femaleSkin=await positions(host,femaleSkinPart,false);
 const posture={};
 const placedTop=(name)=>{
- const b=boxOf(donor,p=>p.name===name);if(!b)throw new Error("Missing pivot "+name);
- return [(b.lo[0]+b.hi[0])/2*transform.scale+transform.offset[0],b.hi[1]*transform.scale+transform.offset[1],(b.lo[2]+b.hi[2])/2*transform.scale+transform.offset[2]];
+ const b=boxOf(male,p=>p.name===name);if(!b)throw new Error("Missing pivot "+name);
+ return [(b.lo[0]+b.hi[0])/2*armTransform.scale+armTransform.offset[0],b.hi[1]*armTransform.scale+armTransform.offset[1],(b.lo[2]+b.hi[2])/2*armTransform.scale+armTransform.offset[2]];
 };
 const turn=(v,spin,angle)=>{
  const c=Math.cos(angle),s=Math.sin(angle),k=cross(spin,v),d=dot(spin,v)*(1-c);
@@ -114,14 +125,14 @@ for(const side of ["left","right"]){
  const a=axisOf(don).axis,b=axisOf(hostPts).axis,angle=Math.acos(Math.max(-1,Math.min(1,dot(a,b))));
  const rawSpin=cross(a,b),spinLength=Math.hypot(...rawSpin);if(spinLength<1e-6)throw new Error(side+": degenerate posture spin");
  const spin=norm(rawSpin),pivot=placedTop(side==="left"?"Left humerus":"Right humerus");
- const place=q=>q.map((v,k)=>v*transform.scale+transform.offset[k]);
+ const place=q=>{const m=q.map((v,k)=>v*armTransform.scale+armTransform.offset[k]);return m;};
  const reach=(ps,moved)=>ps.reduce((m,q)=>Math.max(m,Math.hypot(...sub(moved?place(q):q,pivot))),0);
  posture[side]={pivot,spin,angle,reachScale:reach(hostPts,false)/reach(don,true),blend:.30,donorSkinSamples:don.length,hostSkinSamples:hostPts.length};
 }
 function transformEcu(points,side){
  const b=posture[side];
  return points.map(q=>{
-  const v=q.map((x,k)=>x*transform.scale+transform.offset[k]);
+  const maleFrame=q.map((x,k)=>x*sourceFrameBridge.scale+sourceFrameBridge.offset[k]);\n  const v=maleFrame.map((x,k)=>x*armTransform.scale+armTransform.offset[k]);
   const arm=sub(v,b.pivot),r=Math.hypot(...arm),w=Math.min(1,r/b.blend),rot=turn(arm,b.spin,b.angle*w),grow=1+w*(b.reachScale-1);
   return b.pivot.map((x,k)=>x+rot[k]*grow);
  });
@@ -165,15 +176,15 @@ for(const id of donorIds){
  reports.push({donorPartId:id,side,sourceVertices:source.length,triangles:p.indexCount/3,transformedBounds:bb,comparisons});
 }
 const report={
- purpose:"In-memory, read-only ECU-to-bone proximity diagnostic after reproducing the repository arm transform and soft-tissue posture operation.",
+ purpose:"In-memory, read-only ECU-to-bone proximity diagnostic after bridging the pinned ECU donor coordinate frame to the repository male atlas, then applying the repository male-to-female arm transform and soft-tissue posture operation.",
  donor:{revision:REVISION,version:donor.version??null},
  host:{version:host.version??null},
- transform:{uniformScale:transform.scale,offset:transform.offset,posture:Object.fromEntries(Object.entries(posture).map(([k,v])=>[k,{turnDegrees:v.angle*180/Math.PI,reachScale:v.reachScale,blend:v.blend,donorSkinSamples:v.donorSkinSamples,hostSkinSamples:v.hostSkinSamples}]))},
+ transform:{sourceFrameBridge:{scale:sourceFrameBridge.scale,offset:sourceFrameBridge.offset,maxAnchorResidual:sourceFrameBridge.maxResidual,rmsAnchorResidual:sourceFrameBridge.rmsResidual},maleToFemaleArm:{scale:armTransform.scale,offset:armTransform.offset,maxAnchorResidual:armTransform.maxResidual,rmsAnchorResidual:armTransform.rmsResidual},posture:Object.fromEntries(Object.entries(posture).map(([k,v])=>[k,{turnDegrees:v.angle*180/Math.PI,reachScale:v.reachScale,blend:v.blend,donorSkinSamples:v.donorSkinSamples,hostSkinSamples:v.hostSkinSamples}]))},
  meshes:reports,
  metricDefinition:"Nearest Euclidean distance between decoded mesh vertices in each direction; AABB gap is broad-phase only. Distances are sampled vertex-to-vertex, not exact point-to-triangle surface distance.",
  interpretationLimits:[
   "Small vertex distances indicate geometric proximity only, not anatomical attachment or a validated tendon footprint.",
-  "The donor ECU is male-derived and the female arm bones are borrowed; this audit does not establish sex-specific anatomical fidelity.",
+  "The donor ECU is male-derived and the female arm bones are borrowed; this audit does not establish sex-specific anatomical fidelity.",\n  "The coordinate bridge uses seven shared anchor bounding boxes; residuals must be reviewed before interpreting the resulting proximity metrics.",
   "No triangle-surface intersection, continuous Hausdorff distance, tissue collision, or tendon insertion analysis is claimed.",
   "The two ECU records per side are reported separately; left and right are never mixed."
  ],
