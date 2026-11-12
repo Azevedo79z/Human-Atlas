@@ -212,10 +212,11 @@ The ECU-to-ulna sampled surface distances are consistently smaller than the corr
 - At the diagnostic near-contact threshold of **0.00001 model units**, no sampled ECU vertex or triangle centroid fell within the threshold of a target bone surface in any of the 12 comparisons.
 - One sampled right-ulna point in the reverse direction (bone samples against `BP3D_FJ1472`) fell within that threshold. This isolated sample is not evidence of a mesh intersection.
 - Several axis-aligned bounding boxes overlap (AABB gap zero), but AABB overlap is only a broad-phase condition and does not establish surface collision.
-- No exact triangle-triangle intersection test, continuous signed distance field, tissue collision test, tendon path, or insertion-footprint validation has been performed.
+- A BVH-filtered triangle-pair SAT diagnostic is now implemented, but its execution on this branch has not yet been verified. Coplanar overlap candidates and degenerate pairs are explicitly unresolved; this is not a complete continuous collision proof.
+- No continuous signed-distance field, tissue collision test, tendon-path validation, or insertion-footprint validation has been performed.
 
 ### Interpretation and next gate
 
-The next technically justified stage is a visual diagnostic overlay and a dedicated triangle-triangle intersection test (or signed-distance/collision method) before anyone considers anatomical retargeting. The ECU donor is male-derived and the female bones remain borrowed reference geometry, so a successful proximity audit must not be represented as female-specific anatomical validation.
+The next technically justified stage is to execute and inspect the SAT diagnostic and OBJ overlays, then evaluate any unresolved pairs visually or with an independently validated signed-distance/collision method before anyone considers anatomical retargeting. The ECU donor is male-derived and the female bones remain borrowed reference geometry, so a successful proximity audit must not be represented as female-specific anatomical validation.
 
 No source geometry, female manifest, viewer, deployed site, or Wix integration was modified. The diagnostic artifact `ecu-female-surface-correspondence` is retained for 14 days.
