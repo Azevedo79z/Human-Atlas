@@ -64,7 +64,7 @@ function linearFit(points, axis) {
 function family(name) {
   const n = name.toLowerCase();
   if (/clavicle/.test(n)) return "clavicle";
-  if (/\\bscapula\\b/.test(n)) return "scapula";
+  if (/\bscapula\b/.test(n)) return "scapula";
   if (/humerus/.test(n)) return "humerus";
   if (/radius/.test(n)) return "radius";
   if (/ulna/.test(n)) return "ulna";
