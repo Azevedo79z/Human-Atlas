@@ -221,16 +221,6 @@ function pointTriangleSummary(samples,targetTree){
  return {sampledVertices:samples.vertices,sampledTriangleCentroids:samples.triangleCentroids,totalSamples:ds.length,targetTriangles:targetTree.triangleCount,min:ds[0],median:quantile(ds,.5),p95:quantile(ds,.95),max:ds[ds.length-1],nearContactSamplesAt1eMinus5:ds.filter(d=>d<=1e-5).length};
 }
 
-function nearestSummary(source,target){
- const distances=new Array(source.length);
- for(let i=0;i<source.length;i++){
-  const p=source[i];let best=Infinity;
-  for(const t of target){const dx=p[0]-t[0],dy=p[1]-t[1],dz=p[2]-t[2],d=dx*dx+dy*dy+dz*dz;if(d<best)best=d;}
-  distances[i]=Math.sqrt(best);
- }
- distances.sort((a,b)=>a-b);
- return {sampledVertices:source.length,targetVertices:target.length,min:distances[0],median:quantile(distances,.5),p95:quantile(distances,.95),max:distances[distances.length-1]};
-}
 const sideMap={
  left:[["BM0078","humerus"],["BM0087","ulna"],["BM0075","fifthMetacarpal"]],
  right:[["BM0115","humerus"],["BM0123","ulna"],["BM0111","fifthMetacarpal"]]
