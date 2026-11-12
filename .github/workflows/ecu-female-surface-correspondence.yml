@@ -36,7 +36,9 @@ jobs:
       - name: Upload diagnostic report
         uses: actions/upload-artifact@v4
         with:
-          name: ecu-female-surface-correspondence
-          path: ecu-female-surface-correspondence.json
+          name: ecu-female-surface-and-overlay-diagnostics
+          path: |
+            ecu-female-surface-correspondence.json
+            ecu-overlay/
           if-no-files-found: error
           retention-days: 14
