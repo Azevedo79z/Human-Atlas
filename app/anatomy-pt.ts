@@ -17,8 +17,7 @@ export const SYSTEMS_PT:Partial<Record<SystemId,{name:string;description:string}
  pregnancy:{name:'Referência de gestação',description:'A placenta, as membranas e o cordão umbilical pertencem a uma referência de gestação e não fazem parte do corpo não gestante. Permanecem ocultos até serem ativados.'},
  integumentary:{name:'Pele e superfície corporal',description:'A superfície corporal oferece uma referência anatômica externa. O sistema tegumentar forma uma barreira protetora e participa da sensibilidade e da regulação da temperatura.'},
  borrowed:{name:'Ossos provenientes do modelo masculino',description:'Estes ossos não pertencem originalmente a este corpo de referência. Foram adaptados de outro modelo para representar regiões que a fonte feminina não disponibiliza.'},
- 'donor-muscle':{name:'Músculos provenientes do modelo complementar',description:'Estes músculos foram obtidos de uma segunda referência anatômica para complementar regiões musculares ausentes no modelo feminino principal.'},
- 'donor-muscle':{name:'Músculos da perna (modelo doador)',description:'Os músculos do quadril, da coxa e da perna foram obtidos de uma segunda referência feminina para complementar regiões musculares ausentes na fonte principal.'},
+  'donor-muscle':{name:'Músculos da perna (modelo doador)',description:'Os músculos do quadril, da coxa e da perna foram obtidos de uma segunda referência feminina para complementar regiões musculares ausentes na fonte principal.'},
  connective:{name:'Tecido conjuntivo',description:'Cartilagens, ligamentos e outros tecidos conjuntivos sustentam, conectam e separam estruturas. Também ajudam a estabilizar articulações e distribuir cargas mecânicas.'}
 };
 export const EDITIONS_PT:Record<Sex,{label:string;caption:string;dataset:string;summary:string;limits:string;credit:string}>={
