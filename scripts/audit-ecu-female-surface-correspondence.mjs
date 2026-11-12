@@ -247,6 +247,26 @@ function triangleIntersection(a,b,eps=1e-9){
  }
  return coplanar?"coplanar-unresolved":"intersect";
 }
+function runTriangleIntersectionSelfTests(){
+ const tri=(a,b,c)=>({a,b,c,lo:[0,1,2].map(k=>Math.min(a[k],b[k],c[k])),hi:[0,1,2].map(k=>Math.max(a[k],b[k],c[k]))});
+ const base=tri([0,0,0],[2,0,0],[0,2,0]);
+ const cases=[
+  ['crossing-noncoplanar',tri([.5,.5,-1],[.5,.5,1],[1.5,.5,0]),'intersect'],
+  ['separated-noncoplanar',tri([3,0,-1],[3,0,1],[4,0,0]),'separate'],
+  ['overlapping-coplanar',tri([.2,.2,0],[.8,.2,0],[.2,.8,0]),'coplanar-unresolved'],
+  ['separated-coplanar',tri([3,0,0],[4,0,0],[3,1,0]),'separate'],
+  ['degenerate',tri([0,0,0],[1,0,0],[2,0,0]),'degenerate']
+ ];
+ const results=cases.map(([name,other,expected])=>{
+  const actual=triangleIntersection(base,other);
+  if(actual!==expected)throw new Error('Triangle SAT self-test '+name+': expected '+expected+', received '+actual);
+  const reverse=triangleIntersection(other,base);
+  if(reverse!==actual)throw new Error('Triangle SAT symmetry self-test '+name+': '+actual+' vs '+reverse);
+  return {name,expected,actual,symmetric:true};
+ });
+ return {passed:results.length,failed:0,results};
+}
+const triangleIntersectionSelfTests=runTriangleIntersectionSelfTests();
 function trianglePairAudit(treeA,treeB){
  let broadPhasePairs=0,confirmedIntersections=0,coplanarUnresolvedPairs=0,degeneratePairs=0;
  function visit(a,b){
@@ -307,6 +327,7 @@ for(const id of donorIds){
  reports.push({donorPartId:id,side,sourceVertices:source.points.length,triangles:source.indices.length/3,transformedBounds:bb,comparisons});
 }
 const report={
+ triangleIntersectionSelfTests,
  purpose:"In-memory, read-only ECU-to-bone proximity diagnostic after bridging the pinned ECU donor coordinate frame to the repository male atlas, then applying the repository male-to-female arm transform and soft-tissue posture operation.",
  donor:{revision:REVISION,version:donor.version??null},
  host:{version:host.version??null},
