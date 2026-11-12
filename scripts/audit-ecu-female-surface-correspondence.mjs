@@ -45,12 +45,6 @@ function readPositions(bytes,part){
  }
  return out;
 }
-function readIndices(bytes,part){
- const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength),out=new Uint32Array(part.indexCount);
- if(part.indices+part.indexCount*4>bytes.byteLength)throw new Error(part.id+": indices exceed chunk");
- for(let i=0;i<out.length;i++){out[i]=view.getUint32(part.indices+i*4,true);if(out[i]>=part.vertexCount)throw new Error(part.id+": invalid triangle index");}
- return out;
-}
 async function positions(atlas,part,remote){return readPositions(await chunk(atlas,part,remote,part.id),part);}
 const anchors=[
  ["BM0078","Left humerus"],["BM0087","Left ulna"],["BM0075","Left fifth metacarpal bone"],
@@ -125,9 +119,9 @@ for(const side of ["left","right"]){
  posture[side]={pivot,spin,angle,reachScale:reach(hostPts,false)/reach(don,true),blend:.30,donorSkinSamples:don.length,hostSkinSamples:hostPts.length};
 }
 function transformEcu(points,side){
- const b=posture[side],sign=side==="left"?1:-1;
+ const b=posture[side];
  return points.map(q=>{
-  let v=q.map((x,k)=>x*transform.scale+transform.offset[k]);
+  const v=q.map((x,k)=>x*transform.scale+transform.offset[k]);
   const arm=sub(v,b.pivot),r=Math.hypot(...arm),w=Math.min(1,r/b.blend),rot=turn(arm,b.spin,b.angle*w),grow=1+w*(b.reachScale-1);
   return b.pivot.map((x,k)=>x+rot[k]*grow);
  });
@@ -138,7 +132,7 @@ function bounds(points){
  return {min:lo,max:hi};
 }
 function aabbGap(a,b){
- return Math.hypot(...a.min.map((v,k)=>Math.max(0,b.min[k]-a.max[k],a.min[k]-b.max[k])));
+ return Math.hypot(...a.min.map((_,k)=>Math.max(0,b.min[k]-a.max[k],a.min[k]-b.max[k])));
 }
 function quantile(sorted,q){return sorted[Math.min(sorted.length-1,Math.floor((sorted.length-1)*q))];}
 function nearestSummary(source,target){
@@ -156,7 +150,7 @@ const sideMap={
  right:[["BM0115","humerus"],["BM0123","ulna"],["BM0111","fifthMetacarpal"]]
 };
 const boneVertices={};
-for(const [id,label] of anchors){
+for(const [id] of anchors){
  const p=find(host,id);boneVertices[id]=await positions(host,p,false);
 }
 const reports=[];
