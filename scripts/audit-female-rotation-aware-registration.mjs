@@ -36,11 +36,11 @@ function family(name) {
   if (/rib|costal|sternum|manubrium|xiphoid/.test(value)) return "thorax";
   if (/clavicle|scapula|acromion|coracoid|humerus/.test(value)) return "shoulder-arm";
   if (/radius|ulna/.test(value)) return "forearm";
+  if (/foot|talus|calcaneus|tarsal|metatarsal|cuneiform|navicular|cuboid|toe/.test(value)) return "foot";
   if (/hand|thumb|finger|carpal|metacarpal|phalanx|phalanges|trapezium|trapezoid|pisiform|scaphoid|lunate|triquetrum|capitate|hamate/.test(value)) return "hand";
   if (/sacrum|coccyx|ilium|ischium|pubis|hip bone/.test(value)) return "pelvis";
   if (/femur/.test(value)) return "thigh";
   if (/tibia|fibula|patella/.test(value)) return "lower-leg";
-  if (/foot|talus|calcaneus|tarsal|metatarsal|cuneiform|navicular|cuboid|toe/.test(value)) return "foot";
   if (/vertebra|spine/.test(value)) return "spine";
   if (/cranium|cranial|skull|mandible|maxilla|zygomatic|frontal|parietal|temporal|occipital|sphenoid|ethmoid|nasal|lacrimal|palatine|vomer/.test(value)) return "skull";
   if (/hyoid/.test(value)) return "hyoid";
