@@ -79,11 +79,18 @@ function vertebralRank(name) {
   return null;
 }
 function inferSpineAxis(parts) {
-  const rows = parts.map(part => ({part, rank: vertebralRank(part.name || "")}))
-    .filter(row => row.rank !== null && row.part.bounds);
+  const recognized = parts.map(part => ({part, rank: vertebralRank(part.name || "")}))
+    .filter(row => row.rank !== null);
+  const rows = recognized.filter(row => row.part.bounds);
   const byRank = new Map(rows.map(row => [row.rank, row]));
   const unique = [...byRank.values()].sort((a,b)=>a.rank-b.rank);
-  if (unique.length < 5) return {status:"insufficient-labeled-vertebrae", detected:unique.length};
+  if (unique.length < 5) return {
+    status:"insufficient-labeled-vertebrae",
+    detected:unique.length,
+    recognizedLabels:recognized.length,
+    recognizedWithoutBounds:recognized.filter(row=>!row.part.bounds).map(row=>row.part.name),
+    recognizedNames:recognized.map(row=>row.part.name),
+  };
   const points = unique.map(row => ({rank:row.rank, center:center(row.part.bounds)}));
   const rankMean = points.reduce((s,p)=>s+p.rank,0)/points.length;
   const means = AXES.map((_,axis)=>points.reduce((s,p)=>s+p.center[axis],0)/points.length);
