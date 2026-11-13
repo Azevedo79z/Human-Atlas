@@ -10,8 +10,8 @@
  */
 const HOST_REVISION = "c67dabc7189f90a17b7d3fe997d517913eb3474c";
 const DONOR_REVISION = "b0a20fa3a009ca5f6bfa07b7479312e04c862af2";
-const HOST_BASE = \`https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/\${HOST_REVISION}/public/\`;
-const DONOR_BASE = \`https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/\${DONOR_REVISION}/public/\`;
+const HOST_BASE = `https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/${HOST_REVISION}/public/`;
+const DONOR_BASE = `https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/${DONOR_REVISION}/public/`;
 const SAMPLE_LIMIT = 180;
 const SIDES = ["Left", "Right"];
 const PAIR_TYPES = [
