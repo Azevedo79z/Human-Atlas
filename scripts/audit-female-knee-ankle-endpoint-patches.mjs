@@ -97,7 +97,7 @@ async function loadPatch(atlas,base,part,neighbor,label){
  const sampledPoints=points.filter((_,i)=>i%Math.max(1,Math.ceil(points.length/POINT_LIMIT))===0).slice(0,POINT_LIMIT);
  const sampledTriangles=triangles.filter((_,i)=>i%Math.max(1,Math.ceil(triangles.length/TRIANGLE_LIMIT))===0).slice(0,TRIANGLE_LIMIT);
  if(!sampledPoints.length||!sampledTriangles.length)throw new Error(label+" empty endpoint patch for "+part.name);
- return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),topologyDescriptor:describePatchTopology(topologyTriangles,vertex),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:topologyTriangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
+ return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),spatialTilesDescriptor:describeSpatialTiles(triangles,axis),topologyDescriptor:describePatchTopology(topologyTriangles,vertex),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:topologyTriangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
 }
 function compareBilateralComponents(left,right){
  const reflectX=component=>({
@@ -219,6 +219,56 @@ function describePatchTopology(triangles,vertex){
   twoFaceManifoldEdgeCount:manifoldEdges,
   moreThanTwoFaceEdgeCount:nonManifoldEdges,
   interpretationLimit:"Boundary edges can be created by the geometric crop itself; they are not proof of holes. Components describe mesh connectivity, not anatomical structures or cartilage boundaries."
+ };
+}
+function describeSpatialTiles(triangles,cropAxis){
+ const axes=[0,1,2].filter(axis=>axis!==cropAxis);
+ const centroids=triangles.map(tri=>[0,1,2].map(axis=>(tri[0][axis]+tri[1][axis]+tri[2][axis])/3));
+ const min=axes.map(axis=>Math.min(...centroids.map(point=>point[axis])));
+ const max=axes.map(axis=>Math.max(...centroids.map(point=>point[axis])));
+ const bins=4,tiles=new Map();
+ let totalArea=0;
+ for(let i=0;i<triangles.length;i++){
+  const tri=triangles[i],centroid=centroids[i];
+  const u=sub(tri[1],tri[0]),v=sub(tri[2],tri[0]);
+  const cross=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+  const magnitude=Math.sqrt(dot(cross,cross));
+  if(!Number.isFinite(magnitude)||magnitude<1e-12)continue;
+  const area=magnitude/2;
+  totalArea+=area;
+  const indices=axes.map((axis,i)=>Math.min(bins-1,Math.max(0,Math.floor((centroid[axis]-min[i])/Math.max(max[i]-min[i],1e-12)*bins))));
+  const key=indices.join(":");
+  if(!tiles.has(key))tiles.set(key,{u:indices[0],v:indices[1],triangleCount:0,area:0,centroidSum:[0,0,0],normalSum:[0,0,0]});
+  const tile=tiles.get(key);
+  tile.triangleCount++;
+  tile.area+=area;
+  for(let axis=0;axis<3;axis++){
+   tile.centroidSum[axis]+=centroid[axis]*area;
+   tile.normalSum[axis]+=cross[axis]/magnitude*area;
+  }
+ }
+ const descriptors=[...tiles.values()].map(tile=>{
+  const normalLength=Math.sqrt(dot(tile.normalSum,tile.normalSum));
+  return {
+   tile:[tile.u,tile.v],
+   triangleCount:tile.triangleCount,
+   areaMm2:tile.area*1e6,
+   areaShare:totalArea?tile.area/totalArea:0,
+   centroidMm:tile.centroidSum.map(value=>value/tile.area*1000),
+   areaWeightedMeanNormal:normalLength?tile.normalSum.map(value=>value/normalLength):[0,0,0]
+  };
+ }).sort((a,b)=>a.tile[1]-b.tile[1]||a.tile[0]-b.tile[0]);
+ return {
+  method:"4x4 normalized spatial tiling of triangle centroids on the two axes orthogonal to the endpoint-crop axis; triangle area-weighted descriptors",
+  gridSize:[bins,bins],
+  cropAxis:["x","y","z"][cropAxis],
+  inPlaneAxes:axes.map(axis=>["x","y","z"][axis]),
+  occupiedTileCount:descriptors.length,
+  totalTileCount:bins*bins,
+  triangleCount:triangles.length,
+  totalAreaMm2:totalArea*1e6,
+  tiles:descriptors,
+  interpretationLimit:"Spatial tiles are neutral geometric bins, not anatomical regions or articular segmentation. Their boundaries depend on the crop and normalized extents; mean normals are winding-sensitive."
  };
 }
 function describePatch(points,triangles){
