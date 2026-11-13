@@ -57,6 +57,34 @@ Verified index references:
 - Fullbody listing, first entries: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/Fullcolor/fullbody/index.html
 - Fullbody listing, terminal entries visible in the fetched page: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/Fullcolor/fullbody/index.html
 
+
+## Breakthrough — NLM's directly readable PNG pathway
+
+The NLM's official "Getting the Data" page explicitly recommends the `PNG_format` files because they are lossless and directly readable. It states that original female full-color cryosections have 0.33 mm spacing in XY and 0.33 mm spacing in Z, enabling cubic-voxel 3D reconstruction; the female anatomical dataset contains more than 5,000 images. This removes the need to decode the legacy `.raw.Z` files for the first visual preflight.
+
+The NLM sample page identifies five specific female PNG files (not a five-slice contiguous series):
+- `avf1067a.png`
+- `avf1588a.png`
+- `avf1588b.png`
+- `avf1588c.png`
+- `avf2680a.png`
+
+Important: these five are selected sample images at different indices; only `avf1588a/b/c` share the same numeric index. The sample page does not establish what a/b/c mean, nor does it say these five are a contiguous stack. Do not stack them as a volume without further verification.
+
+The female thorax PNG directory is directly indexed and starts with:
+- `avf1262a.png`, `avf1262b.png`, `avf1262c.png`
+- `avf1263a.png`, `avf1263b.png`, `avf1263c.png`
+- `avf1264a.png`, `avf1264b.png`, `avf1264c.png`
+
+Each listed PNG is approximately 3.2–3.4 MB. The file index confirms availability, but not the semantic meaning of a/b/c. Use the official sample page to inspect the images and the PNG thorax directory for a later contiguous-region download after sequence semantics are established.
+
+**Revised preflight decision:** GO to inspect the official PNG sample images and a small PNG thorax subset; still NO-GO for segmentation or 3D stacking until the a/b/c mapping and anatomical slice order are confirmed.
+
+Sources:
+- NLM Getting the Data: https://www.nlm.nih.gov/research/visible/getting_data.html
+- NLM Full Color Anatomical Images (five female samples): https://www.nlm.nih.gov/research/visible/full_color_png.html
+- Female PNG thorax index: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/PNG_format/thorax/index.html
+
 ## Atlas safety boundary
 
 The existing 76 lower-limb donor-muscle structures remain unchanged. This inventory does not establish that pectoralis major is already segmented, does not authorize synthetic or male-derived female geometry, and does not authorize production integration. Any future left/right pectoralis-major segment must be independently evidenced in the female source slices and pass the project's anatomy, geometry, coordinate, attribution, and viewer acceptance gates.
