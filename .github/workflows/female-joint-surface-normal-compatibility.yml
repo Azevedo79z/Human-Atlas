@@ -1,0 +1,45 @@
+name: Female joint surface normal compatibility audit
+
+on:
+  push:
+    branches:
+      - audit/female-joint-surface-normal-compatibility
+    paths:
+      - "scripts/audit-female-joint-surface-normal-compatibility.mjs"
+      - ".github/workflows/female-joint-surface-normal-compatibility.yml"
+  pull_request:
+    branches:
+      - audit/female-joint-proximity-candidate-map
+    paths:
+      - "scripts/audit-female-joint-surface-normal-compatibility.mjs"
+      - ".github/workflows/female-joint-surface-normal-compatibility.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  joint-surface-normal-compatibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint normal compatibility audit
+        run: deno lint scripts/audit-female-joint-surface-normal-compatibility.mjs
+      - name: Type-check normal compatibility audit
+        run: deno check scripts/audit-female-joint-surface-normal-compatibility.mjs
+      - name: Compare sampled surface normals
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-joint-surface-normal-compatibility.mjs > female-joint-surface-normal-compatibility.json
+      - name: Summarize normal compatibility evidence
+        run: |
+          echo "## Female joint surface normal compatibility" >> "$GITHUB_STEP_SUMMARY"
+          echo "Sparse candidate pairs with stored vertex normals and sampled opposing triangle normals." >> "$GITHUB_STEP_SUMMARY"
+          cat female-joint-surface-normal-compatibility.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-joint-surface-normal-compatibility
+          path: female-joint-surface-normal-compatibility.json
+          if-no-files-found: error
+          retention-days: 14
