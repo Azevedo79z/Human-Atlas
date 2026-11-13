@@ -1,25 +1,23 @@
 /**
  * Read-only regional surface-registration screen for source-mapped female bones.
- *
  * Fits independent axis-aligned scale/translation candidates per anatomical
- * region from source-ID matched bounding-box centers, then checks the candidates
- * against sampled mesh vertices for each matched bone pair.
+ * family from bounding-box centers, then screens sampled mesh surfaces.
  *
  * This is not ICP, exact triangle-surface distance, collision detection, or
  * anatomical approval. No transform is applied to repository assets.
  */
 const HOST_REVISION = "c67dabc7189f90a17b7d3fe997d517913eb3474c";
 const DONOR_REVISION = "b0a20fa3a009ca5f6bfa07b7479312e04c862af2";
-const HOST_BASE = \`https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/\${HOST_REVISION}/public/\`;
-const DONOR_BASE = \`https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/\${DONOR_REVISION}/public/\`;
+const HOST_BASE = "https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/" + HOST_REVISION + "/public/";
+const DONOR_BASE = "https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/" + DONOR_REVISION + "/public/";
 const SAMPLE_LIMIT = 48;
 
 async function readManifest(url, label) {
   const response = await fetch(url);
-  if (!response.ok) throw new Error(\`\${label} manifest HTTP \${response.status}\`);
+  if (!response.ok) throw new Error(label + " manifest HTTP " + response.status);
   const value = await response.json();
   if (!Array.isArray(value.parts) || !Array.isArray(value.chunks)) {
-    throw new Error(\`\${label} manifest schema invalid\`);
+    throw new Error(label + " manifest schema invalid");
   }
   return value;
 }
@@ -84,16 +82,16 @@ function transformPoint(point, transform) {
 
 const chunkCache = new Map();
 async function readChunk(atlas, base, index, label) {
-  const key = \`\${label}:\${index}\`;
+  const key = label + ":" + index;
   if (chunkCache.has(key)) return chunkCache.get(key);
   const metadata = atlas.chunks[index];
-  if (!metadata) throw new Error(\`\${label}: missing chunk metadata \${index}\`);
-  const path = metadata.url.replace(/^\\/+/, "");
+  if (!metadata) throw new Error(label + ": missing chunk metadata " + index);
+  const path = metadata.url.replace(/^\/+/, "");
   const response = await fetch(new URL(path, base));
-  if (!response.ok) throw new Error(\`\${label}: chunk \${index} HTTP \${response.status}\`);
+  if (!response.ok) throw new Error(label + ": chunk " + index + " HTTP " + response.status);
   const buffer = await response.arrayBuffer();
   if (metadata.bytes !== undefined && buffer.byteLength !== metadata.bytes) {
-    throw new Error(\`\${label}: chunk \${index} byte-length mismatch\`);
+    throw new Error(label + ": chunk " + index + " byte-length mismatch");
   }
   chunkCache.set(key, buffer);
   return buffer;
@@ -103,7 +101,7 @@ async function sampleVertices(atlas, base, part, label) {
   const buffer = await readChunk(atlas, base, part.chunk, label);
   const requiredBytes = part.positions + part.vertexCount * 12;
   if (requiredBytes > buffer.byteLength) {
-    throw new Error(\`\${label}: vertex range exceeds chunk for \${part.name}\`);
+    throw new Error(label + ": vertex range exceeds chunk for " + part.name);
   }
   const view = new DataView(buffer);
   const count = Math.min(SAMPLE_LIMIT, part.vertexCount);
@@ -112,7 +110,7 @@ async function sampleVertices(atlas, base, part, label) {
     const vertex = count === 1 ? 0 : Math.floor(sample * (part.vertexCount - 1) / (count - 1));
     const offset = part.positions + vertex * 12;
     const point = [0, 1, 2].map(axis => view.getFloat32(offset + axis * 4, true));
-    if (!point.every(Number.isFinite)) throw new Error(\`\${label}: non-finite vertex in \${part.name}\`);
+    if (!point.every(Number.isFinite)) throw new Error(label + ": non-finite vertex in " + part.name);
     points.push(point);
   }
   return points;
@@ -156,7 +154,7 @@ const mappedHostParts = host.parts.filter(part =>
 );
 const pairs = mappedHostParts.flatMap(hostPart => {
   const sourceId = hostPart.conceptId.slice("BORROWED:".length);
-  const donorPart = donorById.get(\`BP3D_\${sourceId}\`);
+  const donorPart = donorById.get("BP3D_" + sourceId);
   if (!donorPart || donorPart.system !== "skeletal") return [];
   if (!hostPart.bounds || !donorPart.bounds) return [];
   return [{ sourceId, region: family(donorPart.name), host: hostPart, donor: donorPart }];
@@ -247,7 +245,7 @@ const report = {
   method: [
     "Pair host borrowed bones to donor skeletal parts only by explicit BORROWED:FJ source IDs.",
     "Fit independent axis-aligned scale/translation candidates per named anatomical family using bounding-box centers.",
-    "Compare sampled vertices in both directions for every matched bone pair after the candidate transform.",
+    "Compare sampled vertices in both directions for every matched bone pair after the candidate regional fit.",
     "Report residuals as a screening signal; no candidate transform is applied or approved.",
   ],
   limitations: [
