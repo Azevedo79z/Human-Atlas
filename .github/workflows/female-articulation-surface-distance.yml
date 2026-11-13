@@ -1,0 +1,45 @@
+name: Female articulation mesh surface distance audit
+
+on:
+  push:
+    branches:
+      - audit/female-articulation-surface-distance
+    paths:
+      - "scripts/audit-female-articulation-surface-distance.mjs"
+      - ".github/workflows/female-articulation-surface-distance.yml"
+  pull_request:
+    branches:
+      - audit/female-articulation-proxy-validation
+    paths:
+      - "scripts/audit-female-articulation-surface-distance.mjs"
+      - ".github/workflows/female-articulation-surface-distance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  articulation-surface-screen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint surface-distance audit
+        run: deno lint scripts/audit-female-articulation-surface-distance.mjs
+      - name: Type-check surface-distance audit
+        run: deno check scripts/audit-female-articulation-surface-distance.mjs
+      - name: Compare paired whole-bone mesh surfaces
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-articulation-surface-distance.mjs > female-articulation-surface-distance.json
+      - name: Summarize mesh surface evidence
+        run: |
+          echo "## Female articulation mesh surface distance audit" >> "$GITHUB_STEP_SUMMARY"
+          echo "Approximate sampled point-to-triangle distances in both directions, within donor and host models." >> "$GITHUB_STEP_SUMMARY"
+          cat female-articulation-surface-distance.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-articulation-surface-distance
+          path: female-articulation-surface-distance.json
+          if-no-files-found: error
+          retention-days: 14
