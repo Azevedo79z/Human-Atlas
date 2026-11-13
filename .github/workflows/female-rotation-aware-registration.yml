@@ -1,0 +1,47 @@
+name: Female rotation-aware landmark registration screen
+
+on:
+  push:
+    branches:
+      - audit/female-rotation-aware-registration
+    paths:
+      - "scripts/audit-female-rotation-aware-registration.mjs"
+      - ".github/workflows/female-rotation-aware-registration.yml"
+  pull_request:
+    branches:
+      - audit/female-regional-surface-registration
+    paths:
+      - "scripts/audit-female-rotation-aware-registration.mjs"
+      - ".github/workflows/female-rotation-aware-registration.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rotation-aware-screen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint rotation-aware screen
+        run: deno lint scripts/audit-female-rotation-aware-registration.mjs
+      - name: Type-check rotation-aware screen
+        run: deno check scripts/audit-female-rotation-aware-registration.mjs
+      - name: Run synthetic transform self-tests and anatomical landmark fit
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-rotation-aware-registration.mjs > female-rotation-aware-registration.json
+      - name: Summarize read-only rotation-aware evidence
+        run: |
+          echo "## Female rotation-aware landmark registration screen" >> "$GITHUB_STEP_SUMMARY"
+          echo "Synthetic self-tests and side-separated, source-ID-matched Horn quaternion fits." >> "$GITHUB_STEP_SUMMARY"
+          echo '###json-start' >> "$GITHUB_STEP_SUMMARY"
+          cat female-rotation-aware-registration.json >> "$GITHUB_STEP_SUMMARY"
+          echo '###json-end' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-rotation-aware-registration
+          path: female-rotation-aware-registration.json
+          if-no-files-found: error
+          retention-days: 14
