@@ -1,0 +1,43 @@
+name: Female native lower-limb endpoint audit
+
+on:
+  push:
+    branches:
+      - audit/female-native-lower-limb-endpoints
+    paths:
+      - "scripts/audit-female-native-lower-limb-endpoints.mjs"
+      - ".github/workflows/female-native-lower-limb-endpoints.yml"
+  pull_request:
+    branches:
+      - audit/female-lower-limb-source-coverage
+    paths:
+      - "scripts/audit-female-native-lower-limb-endpoints.mjs"
+      - ".github/workflows/female-native-lower-limb-endpoints.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-lower-limb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-native-lower-limb-endpoints.mjs
+      - run: deno check scripts/audit-female-native-lower-limb-endpoints.mjs
+      - name: Build endpoint evidence
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-native-lower-limb-endpoints.mjs > female-native-lower-limb-endpoints.json
+      - name: Summarize
+        run: |
+          echo "## Female native lower-limb endpoint audit" >> "$GITHUB_STEP_SUMMARY"
+          cat female-native-lower-limb-endpoints.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-native-lower-limb-endpoints
+          path: female-native-lower-limb-endpoints.json
+          if-no-files-found: error
+          retention-days: 14
