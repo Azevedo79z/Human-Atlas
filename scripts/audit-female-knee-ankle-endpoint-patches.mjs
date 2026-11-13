@@ -93,7 +93,7 @@ async function loadPatch(atlas,base,part,neighbor,label){
  const sampledPoints=points.filter((_,i)=>i%Math.max(1,Math.ceil(points.length/POINT_LIMIT))===0).slice(0,POINT_LIMIT);
  const sampledTriangles=triangles.filter((_,i)=>i%Math.max(1,Math.ceil(triangles.length/TRIANGLE_LIMIT))===0).slice(0,TRIANGLE_LIMIT);
  if(!sampledPoints.length||!sampledTriangles.length)throw new Error(label+" empty endpoint patch for "+part.name);
- return {points:sampledPoints,triangles:sampledTriangles,axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:triangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
+ return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:triangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
 }
 function directed(points,triangles){
  const values=points.map(p=>{

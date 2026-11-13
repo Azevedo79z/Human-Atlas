@@ -1,0 +1,32 @@
+name: Female joint patch visual evidence
+on:
+  push:
+    branches: [audit/female-joint-patch-visual-evidence]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, scripts/render-female-joint-patch-visual-review.mjs, .github/workflows/female-joint-patch-visual-evidence.yml]
+  pull_request:
+    branches: [audit/female-joint-patch-visual-evidence]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, scripts/render-female-joint-patch-visual-review.mjs, .github/workflows/female-joint-patch-visual-evidence.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/render-female-joint-patch-visual-review.mjs
+      - run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/render-female-joint-patch-visual-review.mjs
+      - run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-knee-ankle-endpoint-patches.json
+      - run: deno run --allow-read --allow-write scripts/render-female-joint-patch-visual-review.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-joint-patch-visual-evidence
+          path: |
+            female-knee-ankle-endpoint-patches.json
+            female-joint-patch-visual-review.html
+          if-no-files-found: error
+          retention-days: 14
