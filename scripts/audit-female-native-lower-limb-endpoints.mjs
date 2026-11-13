@@ -53,7 +53,7 @@ function compare(donorA,donorB,hostA,hostB,side,relation){
  const da=distance(donorEnds.endA,donorNeighbor),db=distance(donorEnds.endB,donorNeighbor);
  const ha=distance(hostEnds.endA,hostNeighbor),hb=distance(hostEnds.endB,hostNeighbor);
  return {
-  side,relationship:relation[0],jointRegion:relation[3],
+  side,relationship:relation[0],targetStructure:relation[1],targetIsLongBone:["femur","tibia","fibula"].includes(relation[1]),jointRegion:relation[3],
   donor:{target:donorA.name,neighbor:donorB.name,longAxis:donorEnds.axis,spanMm:donorEnds.spanMm,endADistanceMm:da*1000,endBDistanceMm:db*1000,nearerEnd:da<=db?"end-A":"end-B"},
   host:{target:hostA.part.name,neighbor:hostB.part.name,targetResolution:hostA.method,neighborResolution:hostB.method,longAxis:hostEnds.axis,spanMm:hostEnds.spanMm,endADistanceMm:ha*1000,endBDistanceMm:hb*1000,nearerEnd:ha<=hb?"end-A":"end-B"},
   sameGeometricEndSelected:(da<=db)===(ha<=hb),
@@ -78,8 +78,10 @@ const report={
  pinnedRevisions:{host:HOST_REVISION,donor:DONOR_REVISION},
  explicitHostAliases:{femur:'Femur (left/right)',tibia:'Tibia (left/right)',fibula:'Fibula (left/right)',patella:'Patella (left/right)'},
  measuredRelationships:rows.length,skipped,
- sameEndCount:rows.filter(r=>r.sameGeometricEndSelected).length,
- differentEndCount:rows.filter(r=>!r.sameGeometricEndSelected).length,
+ longBoneResults:rows.filter(r=>r.targetIsLongBone),
+ longBoneSameEndCount:rows.filter(r=>r.targetIsLongBone&&r.sameGeometricEndSelected).length,
+ longBoneDifferentEndCount:rows.filter(r=>r.targetIsLongBone&&!r.sameGeometricEndSelected).length,
+ nonLongBoneExploratory:rows.filter(r=>!r.targetIsLongBone),
  results:rows,
  limits:[
   "Host aliases are exact manifest names selected for this audit; they are not source-ID equivalence claims.",
