@@ -99,7 +99,8 @@ function describePatch(points,triangles){
  const centroid=[0,1,2].map(axis=>points.reduce((sum,p)=>sum+p[axis],0)/points.length);
  const min=[0,1,2].map(axis=>Math.min(...points.map(p=>p[axis])));
  const max=[0,1,2].map(axis=>Math.max(...points.map(p=>p[axis])));
- let area=0,normalSum=[0,0,0],normalAbsSum=[0,0,0],valid=0;
+ let area=0,valid=0;
+ const normalSum=[0,0,0],normalAbsSum=[0,0,0];
  for(const tri of triangles){
   const u=sub(tri[1],tri[0]),v=sub(tri[2],tri[0]);
   const n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
