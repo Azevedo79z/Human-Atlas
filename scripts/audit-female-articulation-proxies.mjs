@@ -21,16 +21,6 @@ function center(bounds) {
 function distance(a, b) {
   return Math.hypot(a[0]-b[0], a[1]-b[1], a[2]-b[2]);
 }
-function side(name) {
-  if (/\bleft\b/i.test(name)) return "left";
-  if (/\bright\b/i.test(name)) return "right";
-  return "midline";
-}
-function numberWord(value) {
-  const map = { first:"1", second:"2", third:"3", fourth:"4", fifth:"5", sixth:"6", seventh:"7", eighth:"8", ninth:"9", tenth:"10", eleventh:"11", twelfth:"12" };
-  return map[value] ?? value;
-}
-
 const [host, donor] = await Promise.all([
   manifest(HOST_URL, "Host female"),
   manifest(DONOR_URL, "Donor female"),
