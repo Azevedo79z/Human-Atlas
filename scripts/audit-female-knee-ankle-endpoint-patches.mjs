@@ -31,7 +31,6 @@ const norm=s=>s.trim().toLowerCase().replace(/\s+/g," ");
 const center=b=>b[0].map((v,i)=>(v+b[1][i])/2);
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
 const dot=(a,b)=>a.reduce((sum,v,i)=>sum+v*b[i],0);
-const dist=(a,b)=>Math.hypot(...sub(a,b));
 const cache=new Map();
 async function readBuffer(atlas,base,part,label){
  const key=label+":"+part.chunk;
