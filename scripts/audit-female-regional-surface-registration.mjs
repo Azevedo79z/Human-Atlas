@@ -33,7 +33,7 @@ function family(name) {
   if (/tibia|fibula|patella/.test(value)) return "leg";
   if (/sacrum|coccyx|ilium|ischium|pubis/.test(value)) return "pelvis";
   if (/foot|talus|calcaneus|tarsal|metatarsal|cuneiform|navicular|cuboid|toe/.test(value)) return "foot";
-  if (/hand|thumb|finger|carpal|metacarpal|phalanx|phalanges/.test(value)) return "hand";
+  if (/hand|thumb|finger|carpal|metacarpal|phalanx|phalanges|trapezium|trapezoid|pisiform|scaphoid|lunate|triquetrum|capitate|hamate/.test(value)) return "hand";
   if (/vertebra|spine/.test(value)) return "spine";
   if (/cranium|cranial|skull|mandible|maxilla|zygomatic|frontal|parietal|temporal|occipital|sphenoid|ethmoid|nasal|lacrimal|palatine|vomer/.test(value)) return "skull";
   if (/hyoid/.test(value)) return "hyoid";
