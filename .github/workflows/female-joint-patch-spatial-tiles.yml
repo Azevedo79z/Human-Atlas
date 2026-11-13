@@ -1,0 +1,30 @@
+name: Female joint patch spatial tile inventory
+on:
+  push:
+    branches: [audit/female-joint-patch-spatial-tiles]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
+  pull_request:
+    branches: [audit/female-joint-patch-spatial-tiles]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  spatial-tiles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - name: Build spatial tile inventory
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-joint-patch-spatial-tiles.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-joint-patch-spatial-tiles
+          path: female-joint-patch-spatial-tiles.json
+          if-no-files-found: error
+          retention-days: 14
