@@ -46,14 +46,6 @@ async function readHostManifest() {
   return data;
 }
 function normalized(value) { return value.trim().toLowerCase().replace(/\s+/g, " "); }
-function findNamedPart(parts, name) {
-  const wanted = normalized(name);
-  return parts.find(part => normalized(part.name) === wanted) ?? null;
-}
-function center(bounds) {
-  return bounds[0].map((value, axis) => (value + bounds[1][axis]) / 2);
-}
-function distance(a, b) { return Math.hypot(a[0]-b[0], a[1]-b[1], a[2]-b[2]); }
 
 const chunkCache = new Map();
 async function readChunk(atlas, base, index, label) {
