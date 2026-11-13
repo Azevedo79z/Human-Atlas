@@ -111,10 +111,12 @@ const report={
   pinnedRevisions:{host:HOST_REVISION,donor:DONOR_REVISION},
   counts:{hostBorrowedSourceMatched: mapped.length,donorBilateralPairs:donorPairs.length,hostBilateralPairs:hostPairs.length},
   donor:{
+    spineLabelInventory:donor.parts.filter(p=>p.system==="skeletal" && /vertebr|spine|sacrum|coccyx/i.test(p.name||"")).map(p=>p.name),
     lateralAxis:inferLateralAxis(donorPairs),
     vertebralSuperiorInferior:inferSpineAxis(donor.parts.filter(p=>p.system==="skeletal")),
   },
   host:{
+    spineLabelInventory:host.parts.filter(p=>p.system==="skeletal" && /vertebr|spine|sacrum|coccyx/i.test(p.name||"")).map(p=>p.name),
     lateralAxis:inferLateralAxis(hostPairs),
     vertebralSuperiorInferior:inferSpineAxis(host.parts.filter(p=>p.system==="skeletal")),
   },
