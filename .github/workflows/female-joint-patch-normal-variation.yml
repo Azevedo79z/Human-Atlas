@@ -1,0 +1,30 @@
+name: Female joint patch normal variation
+on:
+  push:
+    branches: [audit/female-joint-patch-normal-variation]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-patch-normal-variation.yml]
+  pull_request:
+    branches: [audit/female-joint-patch-normal-variation]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-patch-normal-variation.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  normal-variation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - name: Build joint patch normal variation evidence
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-joint-patch-normal-variation.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-joint-patch-normal-variation
+          path: female-joint-patch-normal-variation.json
+          if-no-files-found: error
+          retention-days: 14
