@@ -40,7 +40,7 @@ async function chunk(atlas, base, index, label) {
   if (!chunkCache.has(key)) {
     const meta = atlas.chunks[index];
     if (!meta) throw new Error(label + " missing chunk " + index);
-    const response = await fetch(new URL(meta.url.replace(/^\\/+/, ""), base));
+    const response = await fetch(new URL(meta.url.replace(/^\/+/, ""), base));
     if (!response.ok) throw new Error(label + " chunk HTTP " + response.status);
     const bytes = await response.arrayBuffer();
     if (meta.bytes !== undefined && bytes.byteLength !== meta.bytes) {
@@ -50,7 +50,7 @@ async function chunk(atlas, base, index, label) {
   }
   return chunkCache.get(key);
 }
-function normalized(value) { return value.trim().toLowerCase().replace(/\\s+/g, " "); }
+function normalized(value) { return value.trim().toLowerCase().replace(/\s+/g, " "); }
 
 async function regionalize(atlas, base, part, label) {
   const bytes = await chunk(atlas, base, part.chunk, label);
