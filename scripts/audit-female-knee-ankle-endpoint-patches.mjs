@@ -72,28 +72,82 @@ async function loadPatch(atlas,base,part,neighbor,label){
   const offset=part.positions+index*12;
   return [0,1,2].map(i=>view.getFloat32(offset+i*4,true));
  };
- const points=[],triangles=[],total=part.indexCount/3;
+ const points=[],triangles=[],topologyTriangles=[],total=part.indexCount/3;
  const pointStride=Math.max(1,Math.floor(part.vertexCount/POINT_LIMIT));
  for(let i=0;i<part.vertexCount;i+=pointStride){
   const p=vertex(i);
   if(end==="min"?p[axis]<=threshold:p[axis]>=threshold)points.push(p);
  }
- const triStride=Math.max(1,Math.floor(total/(TRIANGLE_LIMIT*4)));
- for(let t=0;t<total;t+=triStride){
-  const tri=[];
+
+ for(let t=0;t<total;t++){
+  const indices=[];
   for(let c=0;c<3;c++){
    const offset=part.indices+(t*3+c)*4;
    const idx=view.getUint32(offset,true);
    if(idx>=part.vertexCount)throw new Error(label+" invalid index in "+part.name);
-   tri.push(vertex(idx));
+   indices.push(idx);
   }
+  const tri=indices.map(vertex);
   const centroid=tri[0].map((v,i)=>(v+tri[1][i]+tri[2][i])/3);
-  if(end==="min"?centroid[axis]<=threshold:centroid[axis]>=threshold)triangles.push(tri);
+  if(end==="min"?centroid[axis]<=threshold:centroid[axis]>=threshold){
+   topologyTriangles.push(indices);
+   triangles.push(tri);
+  }
  }
  const sampledPoints=points.filter((_,i)=>i%Math.max(1,Math.ceil(points.length/POINT_LIMIT))===0).slice(0,POINT_LIMIT);
  const sampledTriangles=triangles.filter((_,i)=>i%Math.max(1,Math.ceil(triangles.length/TRIANGLE_LIMIT))===0).slice(0,TRIANGLE_LIMIT);
  if(!sampledPoints.length||!sampledTriangles.length)throw new Error(label+" empty endpoint patch for "+part.name);
- return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:triangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
+ return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),topologyDescriptor:describePatchTopology(topologyTriangles),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:topologyTriangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
+}
+function describePatchTopology(triangles){
+ const parent=triangles.map((_,index)=>index),rank=triangles.map(()=>0);
+ const find=value=>{
+  let root=value;
+  while(parent[root]!==root)root=parent[root];
+  while(parent[value]!==value){const next=parent[value];parent[value]=root;value=next;}
+  return root;
+ };
+ const join=(a,b)=>{
+  let ra=find(a),rb=find(b);
+  if(ra===rb)return;
+  if(rank[ra]<rank[rb])[ra,rb]=[rb,ra];
+  parent[rb]=ra;
+  if(rank[ra]===rank[rb])rank[ra]++;
+ };
+ const edges=new Map();
+ for(let i=0;i<triangles.length;i++){
+  const tri=triangles[i];
+  for(let side=0;side<3;side++){
+   const a=tri[side],b=tri[(side+1)%3],key=a<b?a+":"+b:b+":"+a;
+   if(!edges.has(key))edges.set(key,[]);
+   edges.get(key).push(i);
+  }
+ }
+ let boundaryEdges=0,manifoldEdges=0,nonManifoldEdges=0;
+ for(const incident of edges.values()){
+  if(incident.length===1)boundaryEdges++;
+  else if(incident.length===2){manifoldEdges++;join(incident[0],incident[1]);}
+  else{nonManifoldEdges++;for(let i=1;i<incident.length;i++)join(incident[0],incident[i]);}
+ }
+ const sizes=new Map();
+ for(let i=0;i<triangles.length;i++){
+  const root=find(i);
+  sizes.set(root,(sizes.get(root)||0)+1);
+ }
+ const components=[...sizes.values()].sort((a,b)=>b-a);
+ return {
+  method:"edge-connected components over every triangle whose centroid falls inside the AABB endpoint crop",
+  croppedTriangleCount:triangles.length,
+  uniqueUndirectedEdgeCount:edges.size,
+  connectedComponentCount:components.length,
+  largestComponentTriangleCount:components[0]||0,
+  largestComponentShare:triangles.length?(components[0]||0)/triangles.length:0,
+  componentTriangleCounts:components.slice(0,20),
+  boundaryEdgeCount:boundaryEdges,
+  twoFaceManifoldEdgeCount:manifoldEdges,
+  moreThanTwoFaceEdgeCount:nonManifoldEdges,
+  interpretationLimit:"Boundary edges can be created by the geometric crop itself; they are not proof of holes. Components describe mesh connectivity, not anatomical structures or cartilage boundaries."
+ };
 }
 function describePatch(points,triangles){
  const centroid=[0,1,2].map(axis=>points.reduce((sum,p)=>sum+p[axis],0)/points.length);
