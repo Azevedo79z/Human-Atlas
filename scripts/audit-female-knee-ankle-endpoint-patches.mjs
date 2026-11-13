@@ -93,7 +93,33 @@ async function loadPatch(atlas,base,part,neighbor,label){
  const sampledPoints=points.filter((_,i)=>i%Math.max(1,Math.ceil(points.length/POINT_LIMIT))===0).slice(0,POINT_LIMIT);
  const sampledTriangles=triangles.filter((_,i)=>i%Math.max(1,Math.ceil(triangles.length/TRIANGLE_LIMIT))===0).slice(0,TRIANGLE_LIMIT);
  if(!sampledPoints.length||!sampledTriangles.length)throw new Error(label+" empty endpoint patch for "+part.name);
- return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:triangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
+ return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:triangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
+}
+function describePatch(points,triangles){
+ const centroid=[0,1,2].map(axis=>points.reduce((sum,p)=>sum+p[axis],0)/points.length);
+ const min=[0,1,2].map(axis=>Math.min(...points.map(p=>p[axis])));
+ const max=[0,1,2].map(axis=>Math.max(...points.map(p=>p[axis])));
+ let area=0,normalSum=[0,0,0],normalAbsSum=[0,0,0],valid=0;
+ for(const tri of triangles){
+  const u=sub(tri[1],tri[0]),v=sub(tri[2],tri[0]);
+  const n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+  const magnitude=Math.sqrt(dot(n,n));
+  if(!Number.isFinite(magnitude)||magnitude<1e-12)continue;
+  area+=magnitude/2;
+  for(let axis=0;axis<3;axis++){normalSum[axis]+=n[axis]/magnitude;normalAbsSum[axis]+=Math.abs(n[axis]/magnitude);}
+  valid++;
+ }
+ return {
+  sampledSurfaceAreaMm2:area*1e6,
+  sampledTriangleCount:triangles.length,
+  validNormalCount:valid,
+  centroidMm:centroid.map(v=>v*1000),
+  boundsMm:min.map((v,i)=>[v*1000,max[i]*1000]),
+  extentMm:min.map((v,i)=>(max[i]-v)*1000),
+  meanSignedNormal:normalSum.map(v=>valid?v/valid:0),
+  meanAbsoluteNormal:normalAbsSum.map(v=>valid?v/valid:0),
+  normalOrientationNote:"Normals are derived from triangle winding; signed components are winding-sensitive. Absolute components describe orientation relative to global axes, not anatomy."
+ };
 }
 function directed(points,triangles){
  const values=points.map(p=>{
