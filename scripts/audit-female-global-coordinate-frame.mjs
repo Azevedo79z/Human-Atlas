@@ -54,12 +54,27 @@ function inferLateralAxis(pairs) {
   };
 }
 function vertebralRank(name) {
-  const match = name.match(/\b([CTL])\s*[- ]?([1-9]|1[0-2])\b/i);
-  if (!match) return null;
-  const region = match[1].toUpperCase();
-  const number = Number(match[2]);
-  if ((region === "C" && number <= 7) || (region === "T" && number <= 12) || (region === "L" && number <= 5)) {
-    return region === "C" ? number : region === "T" ? 7 + number : 19 + number;
+  const value = name.toLowerCase();
+  const ordinals = {first:1,second:2,third:3,fourth:4,fifth:5,sixth:6,seventh:7,eighth:8,ninth:9,tenth:10,eleventh:11,twelfth:12};
+  const regions = [
+    {name:"cervical", offset:0, max:7},
+    {name:"thoracic", offset:7, max:12},
+    {name:"lumbar", offset:19, max:6},
+  ];
+  for (const region of regions) {
+    const patterns = [
+      new RegExp("\\b" + region.name + " vertebra\\s+(\\d+)\\b"),
+      new RegExp("\\b(" + Object.keys(ordinals).join("|") + ") " + region.name + " vertebra\\b"),
+      new RegExp("\\b(" + Object.keys(ordinals).join("|") + ") " + region.name + " vertebra\\b"),
+    ];
+    let number = null;
+    for (const pattern of patterns) {
+      const match = value.match(pattern);
+      if (!match) continue;
+      number = /^\\d+$/.test(match[1]) ? Number(match[1]) : ordinals[match[1]];
+      break;
+    }
+    if (number !== null && number >= 1 && number <= region.max) return region.offset + number;
   }
   return null;
 }
