@@ -78,7 +78,7 @@ async function loadPatch(atlas,base,part,neighbor,label){
   const p=vertex(i);
   if(end==="min"?p[axis]<=threshold:p[axis]>=threshold)points.push(p);
  }
- const triStride=Math.max(1,Math.floor(total/(TRIANGLE_LIMIT*4)));
+
  for(let t=0;t<total;t++){
   const indices=[];
   for(let c=0;c<3;c++){
@@ -91,7 +91,7 @@ async function loadPatch(atlas,base,part,neighbor,label){
   const centroid=tri[0].map((v,i)=>(v+tri[1][i]+tri[2][i])/3);
   if(end==="min"?centroid[axis]<=threshold:centroid[axis]>=threshold){
    topologyTriangles.push(indices);
-   if((topologyTriangles.length-1)%triStride===0)triangles.push(tri);
+   triangles.push(tri);
   }
  }
  const sampledPoints=points.filter((_,i)=>i%Math.max(1,Math.ceil(points.length/POINT_LIMIT))===0).slice(0,POINT_LIMIT);
