@@ -97,9 +97,9 @@ async function loadPatch(atlas,base,part,neighbor,label){
  const sampledPoints=points.filter((_,i)=>i%Math.max(1,Math.ceil(points.length/POINT_LIMIT))===0).slice(0,POINT_LIMIT);
  const sampledTriangles=triangles.filter((_,i)=>i%Math.max(1,Math.ceil(triangles.length/TRIANGLE_LIMIT))===0).slice(0,TRIANGLE_LIMIT);
  if(!sampledPoints.length||!sampledTriangles.length)throw new Error(label+" empty endpoint patch for "+part.name);
- return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),topologyDescriptor:describePatchTopology(topologyTriangles),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:topologyTriangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
+ return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),topologyDescriptor:describePatchTopology(topologyTriangles,vertex),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:topologyTriangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
 }
-function describePatchTopology(triangles){
+function describePatchTopology(triangles,vertex){
  const parent=triangles.map((_,index)=>index),rank=triangles.map(()=>0);
  const find=value=>{
   let root=value;
@@ -129,12 +129,32 @@ function describePatchTopology(triangles){
   else if(incident.length===2){manifoldEdges++;join(incident[0],incident[1]);}
   else{nonManifoldEdges++;for(let i=1;i<incident.length;i++)join(incident[0],incident[i]);}
  }
- const sizes=new Map();
+ const stats=new Map();
  for(let i=0;i<triangles.length;i++){
   const root=find(i);
-  sizes.set(root,(sizes.get(root)||0)+1);
+  if(!stats.has(root))stats.set(root,{triangleCount:0,vertexIds:new Set(),min:[Infinity,Infinity,Infinity],max:[-Infinity,-Infinity,-Infinity],sum:[0,0,0]});
+  const item=stats.get(root);
+  item.triangleCount++;
+  for(const index of triangles[i])item.vertexIds.add(index);
  }
- const components=[...sizes.values()].sort((a,b)=>b-a);
+ for(const item of stats.values()){
+  for(const index of item.vertexIds){
+   const point=vertex(index);
+   for(let axis=0;axis<3;axis++){
+    item.min[axis]=Math.min(item.min[axis],point[axis]);
+    item.max[axis]=Math.max(item.max[axis],point[axis]);
+    item.sum[axis]+=point[axis];
+   }
+  }
+ }
+ const componentDetails=[...stats.values()].map(item=>({
+  triangleCount:item.triangleCount,
+  uniqueVertexCount:item.vertexIds.size,
+  centroidMm:item.sum.map(value=>value/item.vertexIds.size*1000),
+  boundsMm:item.min.map((value,axis)=>[value*1000,item.max[axis]*1000]),
+  extentMm:item.min.map((value,axis)=>(item.max[axis]-value)*1000)
+ })).sort((a,b)=>b.triangleCount-a.triangleCount);
+ const components=componentDetails.map(item=>item.triangleCount);
  return {
   method:"edge-connected components over every triangle whose centroid falls inside the AABB endpoint crop",
   croppedTriangleCount:triangles.length,
@@ -143,6 +163,7 @@ function describePatchTopology(triangles){
   largestComponentTriangleCount:components[0]||0,
   largestComponentShare:triangles.length?(components[0]||0)/triangles.length:0,
   componentTriangleCounts:components.slice(0,20),
+  componentSpatialDescriptors:componentDetails.slice(0,20),
   boundaryEdgeCount:boundaryEdges,
   twoFaceManifoldEdgeCount:manifoldEdges,
   moreThanTwoFaceEdgeCount:nonManifoldEdges,
