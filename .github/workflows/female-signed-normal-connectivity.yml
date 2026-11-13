@@ -1,0 +1,40 @@
+name: Female signed normal and mesh connectivity audit
+on:
+  push:
+    branches: [audit/female-signed-normal-connectivity]
+    paths:
+      - scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - scripts/audit-female-signed-normal-connectivity.mjs
+      - .github/workflows/female-signed-normal-connectivity.yml
+  pull_request:
+    branches: [audit/female-joint-spatial-tile-viewer]
+    paths:
+      - scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - scripts/audit-female-signed-normal-connectivity.mjs
+      - .github/workflows/female-signed-normal-connectivity.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  signed-normal-connectivity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint audit scripts
+        run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/audit-female-signed-normal-connectivity.mjs
+      - name: Type-check audit scripts
+        run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/audit-female-signed-normal-connectivity.mjs
+      - name: Build pinned endpoint-patch inventory
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-joint-patch-spatial-tiles.json
+      - name: Audit signed normals and mesh connectivity
+        run: deno run scripts/audit-female-signed-normal-connectivity.mjs < female-joint-patch-spatial-tiles.json > female-signed-normal-connectivity.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-signed-normal-connectivity
+          path: female-signed-normal-connectivity.json
+          if-no-files-found: error
+          retention-days: 14
