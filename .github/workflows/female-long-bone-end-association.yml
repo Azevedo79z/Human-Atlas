@@ -1,0 +1,43 @@
+name: Female long-bone endpoint association audit
+
+on:
+  push:
+    branches:
+      - audit/female-long-bone-end-association
+    paths:
+      - "scripts/audit-female-long-bone-end-association.mjs"
+      - ".github/workflows/female-long-bone-end-association.yml"
+  pull_request:
+    branches:
+      - audit/female-global-anatomical-coordinate-frame
+    paths:
+      - "scripts/audit-female-long-bone-end-association.mjs"
+      - ".github/workflows/female-long-bone-end-association.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  endpoint-association:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-long-bone-end-association.mjs
+      - run: deno check scripts/audit-female-long-bone-end-association.mjs
+      - name: Build read-only evidence
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-long-bone-end-association.mjs > female-long-bone-end-association.json
+      - name: Summarize
+        run: |
+          echo "## Female long-bone endpoint association" >> "$GITHUB_STEP_SUMMARY"
+          cat female-long-bone-end-association.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-long-bone-end-association
+          path: female-long-bone-end-association.json
+          if-no-files-found: error
+          retention-days: 14
