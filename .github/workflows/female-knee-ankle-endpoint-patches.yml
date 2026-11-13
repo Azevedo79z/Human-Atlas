@@ -1,0 +1,43 @@
+name: Female knee and ankle endpoint patch audit
+
+on:
+  push:
+    branches:
+      - audit/female-knee-ankle-endpoint-patches
+    paths:
+      - "scripts/audit-female-knee-ankle-endpoint-patches.mjs"
+      - ".github/workflows/female-knee-ankle-endpoint-patches.yml"
+  pull_request:
+    branches:
+      - audit/female-native-lower-limb-endpoints
+    paths:
+      - "scripts/audit-female-knee-ankle-endpoint-patches.mjs"
+      - ".github/workflows/female-knee-ankle-endpoint-patches.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  endpoint-patches:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - name: Build endpoint patch evidence
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-knee-ankle-endpoint-patches.json
+      - name: Summarize
+        run: |
+          echo "## Female knee and ankle endpoint patch audit" >> "$GITHUB_STEP_SUMMARY"
+          cat female-knee-ankle-endpoint-patches.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-knee-ankle-endpoint-patches
+          path: female-knee-ankle-endpoint-patches.json
+          if-no-files-found: error
+          retention-days: 14
