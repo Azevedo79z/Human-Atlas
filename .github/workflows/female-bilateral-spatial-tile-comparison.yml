@@ -7,7 +7,7 @@ on:
       - scripts/audit-female-bilateral-spatial-tile-comparison.mjs
       - .github/workflows/female-bilateral-spatial-tile-comparison.yml
   pull_request:
-    branches: [audit/female-spatial-tile-viewer]
+    branches: [audit/female-joint-spatial-tile-viewer]
     paths:
       - scripts/audit-female-knee-ankle-endpoint-patches.mjs
       - scripts/audit-female-bilateral-spatial-tile-comparison.mjs
