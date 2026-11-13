@@ -20,6 +20,19 @@ function mirrorTile(tile, inPlaneAxes, gridSize) {
   return mirrored;
 }
 
+// Guard the coordinate-order cases that caused the original bug.
+const mirrorCases = [
+  { tile: [0, 2], axes: ["x", "y"], expected: [3, 2] },
+  { tile: [0, 2], axes: ["y", "x"], expected: [0, 1] },
+  { tile: [0, 2], axes: ["y", "z"], expected: [0, 2] },
+];
+for (const test of mirrorCases) {
+  const actual = mirrorTile(test.tile, test.axes, GRID);
+  if (JSON.stringify(actual) !== JSON.stringify(test.expected)) {
+    throw new Error("Axis-aware tile mirror self-test failed: " + JSON.stringify({ test, actual }));
+  }
+}
+
 function comparePair(left, right, model, patchName) {
   const L = left[model][patchName].spatialTilesDescriptor;
   const R = right[model][patchName].spatialTilesDescriptor;
@@ -36,7 +49,6 @@ function comparePair(left, right, model, patchName) {
       const leftNormal = normalize(tile.areaWeightedMeanNormal);
       let rightNormal = normalize(match.areaWeightedMeanNormal);
       if (!leftNormal || !rightNormal) continue;
-      // Reflect the right-side normal back into the left-side coordinate frame.
       rightNormal = [-rightNormal[0], rightNormal[1], rightNormal[2]];
       const signedDot = clamp(dot(leftNormal, rightNormal));
       const angle = Math.acos(Math.abs(signedDot)) * 180 / Math.PI;
@@ -62,7 +74,7 @@ function comparePair(left, right, model, patchName) {
     group: left.group,
     model,
     patch: patchName,
-    method: "mirror the tile coordinate whose inPlaneAxes entry is x; reflect the right normal X component; compare unoriented mean-normal directions using absolute dot",
+    method: "mirror the normalized tile coordinate whose inPlaneAxes entry is x; reflect the right normal X component; compare unoriented mean-normal directions using absolute dot",
     inPlaneAxesLeft: L.inPlaneAxes,
     inPlaneAxesRight: R.inPlaneAxes,
     axesCompatible,
@@ -94,6 +106,7 @@ console.log(JSON.stringify({
   purpose: "Corrected read-only bilateral spatial-tile normal orientation audit",
   pinnedRevisions: source.pinnedRevisions ?? null,
   comparisonCount: comparisons.length,
+  mirrorSelfTests: mirrorCases.length,
   correction: "Mirror the normalized tile coordinate corresponding to physical X, whether X is the first or second in-plane axis. If X is the crop axis, do not mirror either in-plane tile coordinate.",
   comparisons,
   limits: [
