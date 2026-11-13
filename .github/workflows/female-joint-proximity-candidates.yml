@@ -1,0 +1,45 @@
+name: Female joint proximity candidate mapping
+
+on:
+  push:
+    branches:
+      - audit/female-joint-proximity-candidate-map
+    paths:
+      - "scripts/audit-female-joint-proximity-candidates.mjs"
+      - ".github/workflows/female-joint-proximity-candidates.yml"
+  pull_request:
+    branches:
+      - audit/female-articulation-surface-distance
+    paths:
+      - "scripts/audit-female-joint-proximity-candidates.mjs"
+      - ".github/workflows/female-joint-proximity-candidates.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  joint-proximity-candidates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint proximity candidate audit
+        run: deno lint scripts/audit-female-joint-proximity-candidates.mjs
+      - name: Type-check proximity candidate audit
+        run: deno check scripts/audit-female-joint-proximity-candidates.mjs
+      - name: Map sampled nearest surface candidates
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-joint-proximity-candidates.mjs > female-joint-proximity-candidates.json
+      - name: Summarize candidate evidence
+        run: |
+          echo "## Female joint proximity candidate mapping" >> "$GITHUB_STEP_SUMMARY"
+          echo "Sparse nearest point-to-triangle candidate coordinates in both directions, within each source model." >> "$GITHUB_STEP_SUMMARY"
+          cat female-joint-proximity-candidates.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-joint-proximity-candidates
+          path: female-joint-proximity-candidates.json
+          if-no-files-found: error
+          retention-days: 14
