@@ -99,6 +99,57 @@ async function loadPatch(atlas,base,part,neighbor,label){
  if(!sampledPoints.length||!sampledTriangles.length)throw new Error(label+" empty endpoint patch for "+part.name);
  return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),topologyDescriptor:describePatchTopology(topologyTriangles,vertex),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:topologyTriangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
 }
+function compareBilateralComponents(left,right){
+ const reflectX=component=>({
+  ...component,
+  mirroredCentroidMm:[-component.centroidMm[0],component.centroidMm[1],component.centroidMm[2]],
+  mirroredBoundsMm:[[-component.boundsMm[0][1],-component.boundsMm[0][0]],component.boundsMm[1],component.boundsMm[2]]
+ });
+ const mirrored=left.map(reflectX);
+ const candidates=[];
+ for(let li=0;li<mirrored.length;li++)for(let ri=0;ri<right.length;ri++){
+  const a=mirrored[li],b=right[ri];
+  const delta=sub(a.mirroredCentroidMm,b.centroidMm);
+  const centroidDistanceMm=Math.sqrt(dot(delta,delta));
+  const extentRatio=a.extentMm.map((value,axis)=>{
+   const other=b.extentMm[axis];
+   return Math.min(value,other)/Math.max(value,other,1e-9);
+  });
+  candidates.push({
+   leftComponentIndex:li+1,rightComponentIndex:ri+1,
+   leftTriangleCount:a.triangleCount,rightTriangleCount:b.triangleCount,
+   mirroredCentroidDistanceMm:centroidDistanceMm,
+   perAxisExtentSimilarity:extentRatio,
+   meanExtentSimilarity:extentRatio.reduce((sum,value)=>sum+value,0)/3,
+   mirroredCentroidMm:a.mirroredCentroidMm,rightCentroidMm:b.centroidMm,
+   mirroredBoundsMm:a.mirroredBoundsMm,rightBoundsMm:b.boundsMm
+  });
+ }
+ candidates.sort((a,b)=>a.mirroredCentroidDistanceMm-b.mirroredCentroidDistanceMm);
+ const leftTotal=left.reduce((sum,item)=>sum+item.triangleCount,0);
+ const rightTotal=right.reduce((sum,item)=>sum+item.triangleCount,0);
+ const substantial=candidates.filter(item=>
+  item.leftTriangleCount>=Math.max(5,Math.ceil(leftTotal*.05))&&
+  item.rightTriangleCount>=Math.max(5,Math.ceil(rightTotal*.05))
+ );
+ return {
+  method:"all-pairs candidate ranking after reflecting left-side X coordinates; no rigid registration or one-to-one assignment",
+  leftComponentCount:left.length,rightComponentCount:right.length,
+  minimumSubstantialComponentShare:0.05,
+  nearestCentroidCandidates:candidates.slice(0,Math.min(10,candidates.length)),
+  substantialComponentCandidates:substantial.slice(0,Math.min(10,substantial.length)),
+  interpretationLimit:"Raw source-frame mirror comparison is sensitive to donor/host pose, coordinate origins, asymmetry, and crop boundaries. Candidate proximity is not anatomical equivalence. Tiny fragments are excluded only from the substantial-component shortlist, not from the full candidate ranking."
+ };
+}
+function buildBilateralComparisons(results){
+ const comparisons=[];
+ for(const group of PAIRS.map(item=>item[0]))for(const atlas of ["donor","host"])for(const patchKey of ["patchA","patchB"]){
+  const left=results.find(item=>item.side==="Left"&&item.group===group)?.[atlas]?.[patchKey]?.topologyDescriptor?.componentSpatialDescriptors;
+  const right=results.find(item=>item.side==="Right"&&item.group===group)?.[atlas]?.[patchKey]?.topologyDescriptor?.componentSpatialDescriptors;
+  if(left?.length&&right?.length)comparisons.push({group,atlas,structure:patchKey,comparison:compareBilateralComponents(left,right)});
+ }
+ return comparisons;
+}
 function describePatchTopology(triangles,vertex){
  const parent=triangles.map((_,index)=>index),rank=triangles.map(()=>0);
  const find=value=>{
@@ -293,7 +344,7 @@ console.log(JSON.stringify({
  purpose:"Compare endpoint-region mesh proximity at female knee and ankle between donor and host",
  pinnedRevisions:{host:HOST_REVISION,donor:DONOR_REVISION},
  patchDefinition:{longestAabbAxis:true,selectedEnd:"end nearest neighboring mesh AABB center",fractionOfAxisLength:PATCH_FRACTION,pointSampleLimit:POINT_LIMIT,triangleSampleLimit:TRIANGLE_LIMIT},
- measured:results.length,skipped,results,
+ measured:results.length,skipped,results,bilateralComponentComparisons:buildBilateralComparisons(results),
  limits:[
   "AABB-derived endpoint regions are geometric crops, not anatomical articular patches.",
   "No cartilage, menisci, ligaments, joint capsule, or contact mechanics are represented.",
