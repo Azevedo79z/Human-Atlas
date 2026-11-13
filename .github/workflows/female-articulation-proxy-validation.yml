@@ -1,0 +1,45 @@
+name: Female articulation proxy validation
+
+on:
+  push:
+    branches:
+      - audit/female-articulation-proxy-validation
+    paths:
+      - "scripts/audit-female-articulation-proxies.mjs"
+      - ".github/workflows/female-articulation-proxy-validation.yml"
+  pull_request:
+    branches:
+      - audit/female-rotation-aware-registration
+    paths:
+      - "scripts/audit-female-articulation-proxies.mjs"
+      - ".github/workflows/female-articulation-proxy-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  articulation-proxy-screen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint articulation proxy audit
+        run: deno lint scripts/audit-female-articulation-proxies.mjs
+      - name: Type-check articulation proxy audit
+        run: deno check scripts/audit-female-articulation-proxies.mjs
+      - name: Compare paired articulation proxies
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-articulation-proxies.mjs > female-articulation-proxies.json
+      - name: Summarize articulation proxy evidence
+        run: |
+          echo "## Female articulation proxy validation" >> "$GITHUB_STEP_SUMMARY"
+          echo "Bounding-box center distances for explicitly paired source-ID-matched skeletal parts." >> "$GITHUB_STEP_SUMMARY"
+          cat female-articulation-proxies.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-articulation-proxies
+          path: female-articulation-proxies.json
+          if-no-files-found: error
+          retention-days: 14
