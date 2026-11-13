@@ -5,7 +5,7 @@ on:
     paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, scripts/render-female-joint-spatial-tiles.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
   pull_request:
     branches: [audit/female-joint-patch-spatial-tiles]
-    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, scripts/render-female-joint-spatial-tiles.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
   workflow_dispatch:
 permissions:
   contents: read
