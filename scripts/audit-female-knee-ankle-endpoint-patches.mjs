@@ -276,7 +276,7 @@ function describeSpatialTiles(triangles,cropAxis,sampledTriangles){
   triangleCount:triangles.length,
   totalAreaMm2:totalArea*1e6,
   tiles:descriptors,
-  inPlaneBoundsMm:axes.map((axis,i)=>[min[i]*1000,max[i]*1000]),
+  inPlaneBoundsMm:axes.map((_,i)=>[min[i]*1000,max[i]*1000]),
   sampledTriangleTiles,
   interpretationLimit:"Spatial tiles are neutral geometric bins, not anatomical regions or articular segmentation. Their boundaries depend on the crop and normalized extents; mean normals are winding-sensitive."
  };
