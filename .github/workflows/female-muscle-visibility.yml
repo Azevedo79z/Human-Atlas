@@ -1,0 +1,40 @@
+name: Female muscle visibility validation
+
+on:
+  pull_request:
+    paths:
+      - 'app/anatomy.ts'
+      - 'public/models/atlas-female.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/female-muscle-visibility.yml'
+  push:
+    branches:
+      - fix/female-leg-muscles-visible-by-default
+    paths:
+      - 'app/anatomy.ts'
+      - 'public/models/atlas-female.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/female-muscle-visibility.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.1'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: TypeScript check
+        run: npm run check
+      - name: Production build
+        run: npm run build
