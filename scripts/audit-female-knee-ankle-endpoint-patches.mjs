@@ -97,7 +97,7 @@ async function loadPatch(atlas,base,part,neighbor,label){
  const sampledPoints=points.filter((_,i)=>i%Math.max(1,Math.ceil(points.length/POINT_LIMIT))===0).slice(0,POINT_LIMIT);
  const sampledTriangles=triangles.filter((_,i)=>i%Math.max(1,Math.ceil(triangles.length/TRIANGLE_LIMIT))===0).slice(0,TRIANGLE_LIMIT);
  if(!sampledPoints.length||!sampledTriangles.length)throw new Error(label+" empty endpoint patch for "+part.name);
- return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),spatialTilesDescriptor:describeSpatialTiles(triangles,axis),topologyDescriptor:describePatchTopology(topologyTriangles,vertex),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:topologyTriangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
+ return {points:sampledPoints,triangles:sampledTriangles,visualPatch:{points:sampledPoints,triangles:sampledTriangles},surfaceDescriptor:describePatch(sampledPoints,sampledTriangles),spatialTilesDescriptor:describeSpatialTiles(triangles,axis,sampledTriangles),topologyDescriptor:describePatchTopology(topologyTriangles,vertex),axis:["x","y","z"][axis],end,spanMm:spans[axis]*1000,thresholdMm:threshold*1000,sourceCounts:{vertices:part.vertexCount,triangles:total},patchCounts:{vertices:points.length,triangles:topologyTriangles.length},sampleCounts:{vertices:sampledPoints.length,triangles:sampledTriangles.length}};
 }
 function compareBilateralComponents(left,right){
  const reflectX=component=>({
@@ -221,7 +221,7 @@ function describePatchTopology(triangles,vertex){
   interpretationLimit:"Boundary edges can be created by the geometric crop itself; they are not proof of holes. Components describe mesh connectivity, not anatomical structures or cartilage boundaries."
  };
 }
-function describeSpatialTiles(triangles,cropAxis){
+function describeSpatialTiles(triangles,cropAxis,sampledTriangles){
  const axes=[0,1,2].filter(axis=>axis!==cropAxis);
  const centroids=triangles.map(tri=>[0,1,2].map(axis=>(tri[0][axis]+tri[1][axis]+tri[2][axis])/3));
  const min=[Infinity,Infinity],max=[-Infinity,-Infinity];
@@ -261,6 +261,11 @@ function describeSpatialTiles(triangles,cropAxis){
    areaWeightedMeanNormal:normalLength?tile.normalSum.map(value=>value/normalLength):[0,0,0]
   };
  }).sort((a,b)=>a.tile[1]-b.tile[1]||a.tile[0]-b.tile[0]);
+ const sampledTriangleTiles=sampledTriangles.map(tri=>{
+  const centroid=[0,1,2].map(axis=>(tri[0][axis]+tri[1][axis]+tri[2][axis])/3);
+  const indices=axes.map((axis,i)=>Math.min(bins-1,Math.max(0,Math.floor((centroid[axis]-min[i])/Math.max(max[i]-min[i],1e-12)*bins))));
+  return indices[1]*bins+indices[0];
+ });
  return {
   method:"4x4 normalized spatial tiling of triangle centroids on the two axes orthogonal to the endpoint-crop axis; triangle area-weighted descriptors",
   gridSize:[bins,bins],
