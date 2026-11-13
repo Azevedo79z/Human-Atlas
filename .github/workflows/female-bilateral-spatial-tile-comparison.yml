@@ -1,0 +1,38 @@
+name: Female bilateral spatial tile comparison
+on:
+  push:
+    branches: [audit/female-bilateral-spatial-tile-comparison]
+    paths:
+      - scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - scripts/audit-female-bilateral-spatial-tile-comparison.mjs
+      - .github/workflows/female-bilateral-spatial-tile-comparison.yml
+  pull_request:
+    branches: [audit/female-joint-spatial-tile-viewer]
+    paths:
+      - scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - scripts/audit-female-bilateral-spatial-tile-comparison.mjs
+      - .github/workflows/female-bilateral-spatial-tile-comparison.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/audit-female-bilateral-spatial-tile-comparison.mjs
+      - run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/audit-female-bilateral-spatial-tile-comparison.mjs
+      - name: Build spatial tile inventory
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-joint-patch-spatial-tiles.json
+      - name: Compare mirrored bilateral tile distributions
+        run: deno run scripts/audit-female-bilateral-spatial-tile-comparison.mjs < female-joint-patch-spatial-tiles.json > female-bilateral-spatial-tile-comparison.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-bilateral-spatial-tile-comparison
+          path: female-bilateral-spatial-tile-comparison.json
+          if-no-files-found: error
+          retention-days: 14
