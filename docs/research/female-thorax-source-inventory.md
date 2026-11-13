@@ -32,6 +32,17 @@ Do not guess these values and do not concatenate or import the raw files until t
 4. Identify a small contiguous thoracic interval suitable for pectoralis-major review. Estimate download size before retrieval.
 5. Load the validated sample in 3D Slicer (or a controlled conversion script) and visually confirm orientation and soft-tissue detail before segmenting.
 
+
+## Additional finding — full-body image directory
+
+The NLM Female-Images Fullcolor index also exposes a separate `fullbody/` directory, in addition to `thorax/`, `abdomen/`, `pelvis/`, `thighs/`, `legs/`, and `head/`. Its listing begins with `avf1001a.raw.Z`, `avf1001b.raw.Z`, and `avf1001c.raw.Z`. This is a potentially better source path for preserving one continuous female image sequence across anatomical regions, but the index alone does not establish how its files relate to the region-specific directories or what the a/b/c suffixes mean.
+
+The sample-data index confirms a five-slice female ZIP of 16,400,864 bytes. It does not identify the anatomical levels in the index, so it remains a format/sample candidate only—not yet a thorax sample.
+
+- Fullcolor directory index: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/Fullcolor/index.html
+- Fullbody directory index: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/Fullcolor/fullbody/index.html
+- Sample-data index: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Sample-Data/index.html
+
 ## Atlas safety boundary
 
 The existing 76 lower-limb donor-muscle structures remain unchanged. This inventory does not establish that pectoralis major is already segmented, does not authorize synthetic or male-derived female geometry, and does not authorize production integration. Any future left/right pectoralis-major segment must be independently evidenced in the female source slices and pass the project's anatomy, geometry, coordinate, attribution, and viewer acceptance gates.
