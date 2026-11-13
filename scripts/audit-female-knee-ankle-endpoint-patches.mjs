@@ -224,8 +224,11 @@ function describePatchTopology(triangles,vertex){
 function describeSpatialTiles(triangles,cropAxis){
  const axes=[0,1,2].filter(axis=>axis!==cropAxis);
  const centroids=triangles.map(tri=>[0,1,2].map(axis=>(tri[0][axis]+tri[1][axis]+tri[2][axis])/3));
- const min=axes.map(axis=>Math.min(...centroids.map(point=>point[axis])));
- const max=axes.map(axis=>Math.max(...centroids.map(point=>point[axis])));
+ const min=[Infinity,Infinity],max=[-Infinity,-Infinity];
+ for(const point of centroids)for(let i=0;i<2;i++){
+  min[i]=Math.min(min[i],point[axes[i]]);
+  max[i]=Math.max(max[i],point[axes[i]]);
+ }
  const bins=4,tiles=new Map();
  let totalArea=0;
  for(let i=0;i<triangles.length;i++){
