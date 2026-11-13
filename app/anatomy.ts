@@ -54,7 +54,14 @@ export const EDITIONS:Edition[] = [
 export const edition = (sex:Sex) => EDITIONS.find(e=>e.sex===sex) ?? EDITIONS[0];
 /** Systems a reference body starts with switched off, on top of those left out of
  * DEFAULT_VISIBLE for every body. They stay listed, so a reader can switch them on. */
-export const defaultVisible = (sex:Sex):SystemId[] => {const off=edition(sex).hidden;return DEFAULT_VISIBLE.filter(id=>!off.includes(id));};
+export const defaultVisible = (sex:Sex):SystemId[] => {
+ const off=edition(sex).hidden;
+ const visible=DEFAULT_VISIBLE.filter(id=>!off.includes(id));
+ // The female lower-limb muscles are a separate, explicitly attributed layer.
+ // Show them with the female reference; the male manifest has no such system.
+ if(sex==='female')visible.push('donor-muscle');
+ return visible;
+};
 export type View = 'three-quarter'|'front'|'back'|'side';
 export interface SceneState {inspectorOpen?:boolean;explode:number;visible:SystemId[];selected:string[];isolate:boolean;view:View;rotate:boolean;reset:number}
 export const DEFAULT_VISIBLE:SystemId[] = ['cardiac','sensory','skeletal','muscular','arterial','venous','nervous','brain','respiratory','digestive','urinary','lymphatic','endocrine','reproductive','connective'];
