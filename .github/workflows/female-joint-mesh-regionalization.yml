@@ -1,0 +1,45 @@
+name: Female joint mesh regionalization inventory
+
+on:
+  push:
+    branches:
+      - audit/female-joint-mesh-regionalization
+    paths:
+      - "scripts/audit-female-joint-mesh-regionalization.mjs"
+      - ".github/workflows/female-joint-mesh-regionalization.yml"
+  pull_request:
+    branches:
+      - audit/female-joint-surface-normal-compatibility
+    paths:
+      - "scripts/audit-female-joint-mesh-regionalization.mjs"
+      - ".github/workflows/female-joint-mesh-regionalization.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mesh-regionalization:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint regionalization inventory
+        run: deno lint scripts/audit-female-joint-mesh-regionalization.mjs
+      - name: Type-check regionalization inventory
+        run: deno check scripts/audit-female-joint-mesh-regionalization.mjs
+      - name: Build geometric regionalization evidence
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-joint-mesh-regionalization.mjs > female-joint-mesh-regionalization.json
+      - name: Summarize evidence
+        run: |
+          echo "## Female joint mesh regionalization inventory" >> "$GITHUB_STEP_SUMMARY"
+          echo "Geometric bins only; no proximal/distal or articular claims." >> "$GITHUB_STEP_SUMMARY"
+          cat female-joint-mesh-regionalization.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-joint-mesh-regionalization
+          path: female-joint-mesh-regionalization.json
+          if-no-files-found: error
+          retention-days: 14
