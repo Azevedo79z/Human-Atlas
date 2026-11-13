@@ -1,8 +1,8 @@
 # Female regional surface registration screen
 
 **Status:** read-only diagnostic proposal; no transform approved  
-**Host revision:** \`c67dabc7189f90a17b7d3fe997d517913eb3474c\`  
-**Donor revision:** \`b0a20fa3a009ca5f6bfa07b7479312e04c862af2\`
+**Host revision:** `c67dabc7189f90a17b7d3fe997d517913eb3474c`  
+**Donor revision:** `b0a20fa3a009ca5f6bfa07b7479312e04c862af2`
 
 ## Purpose
 
@@ -10,9 +10,9 @@ The preceding host/donor audit established source-ID correspondence and showed t
 
 ## Method
 
-1. Pair each host \`BORROWED:FJ...\` part to donor \`BP3D_FJ...\` by exact source ID. No name-only pairing is accepted.
-2. Group matched parts into anatomical families (ribs, shoulder girdle, upper arm, forearm, pelvis, thigh, leg, foot, spine, skull, sternum, and other).
-3. Fit per-axis scale and translation from donor/host bounding-box centers within each family.
+1. Pair each host `BORROWED:FJ...` part to donor `BP3D_FJ...` by exact source ID. No name-only pairing is accepted.
+2. Group matched parts into more specific families, including ribs, shoulder girdle, upper arm, forearm, hand, foot, pelvis, thigh, leg, spine, skull, hyoid, nasal cartilage, sternum, and other.
+3. Fit per-axis scale and translation from donor/host bounding-box centers within each family. Axes with less than 20 mm of source-center spread use translation-only fallback to avoid unstable scale estimates.
 4. Sample up to 48 vertices from each donor and host bone mesh.
 5. Measure nearest sampled-vertex distances in both directions after applying the candidate family fit; report per-part and per-family residual summaries.
 6. Upload the JSON report as a CI artifact for review.
