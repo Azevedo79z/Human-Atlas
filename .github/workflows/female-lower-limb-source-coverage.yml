@@ -1,0 +1,43 @@
+name: Female lower-limb source coverage audit
+
+on:
+  push:
+    branches:
+      - audit/female-lower-limb-source-coverage
+    paths:
+      - "scripts/audit-female-lower-limb-source-coverage.mjs"
+      - ".github/workflows/female-lower-limb-source-coverage.yml"
+  pull_request:
+    branches:
+      - audit/female-long-bone-end-association
+    paths:
+      - "scripts/audit-female-lower-limb-source-coverage.mjs"
+      - ".github/workflows/female-lower-limb-source-coverage.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-lower-limb-source-coverage.mjs
+      - run: deno check scripts/audit-female-lower-limb-source-coverage.mjs
+      - name: Build source coverage evidence
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-lower-limb-source-coverage.mjs > female-lower-limb-source-coverage.json
+      - name: Summarize
+        run: |
+          echo "## Female lower-limb source coverage" >> "$GITHUB_STEP_SUMMARY"
+          cat female-lower-limb-source-coverage.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-lower-limb-source-coverage
+          path: female-lower-limb-source-coverage.json
+          if-no-files-found: error
+          retention-days: 14
