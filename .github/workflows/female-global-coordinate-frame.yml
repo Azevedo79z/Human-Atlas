@@ -1,0 +1,45 @@
+name: Female global anatomical coordinate frame audit
+
+on:
+  push:
+    branches:
+      - audit/female-global-anatomical-coordinate-frame
+    paths:
+      - "scripts/audit-female-global-coordinate-frame.mjs"
+      - ".github/workflows/female-global-coordinate-frame.yml"
+  pull_request:
+    branches:
+      - audit/female-joint-mesh-regionalization
+    paths:
+      - "scripts/audit-female-global-coordinate-frame.mjs"
+      - ".github/workflows/female-global-coordinate-frame.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  coordinate-frame:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Lint coordinate-frame audit
+        run: deno lint scripts/audit-female-global-coordinate-frame.mjs
+      - name: Type-check coordinate-frame audit
+        run: deno check scripts/audit-female-global-coordinate-frame.mjs
+      - name: Build coordinate-frame evidence
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-global-coordinate-frame.mjs > female-global-coordinate-frame.json
+      - name: Summarize evidence
+        run: |
+          echo "## Female global anatomical coordinate frame" >> "$GITHUB_STEP_SUMMARY"
+          cat female-global-coordinate-frame.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-global-coordinate-frame
+          path: female-global-coordinate-frame.json
+          if-no-files-found: error
+          retention-days: 14
