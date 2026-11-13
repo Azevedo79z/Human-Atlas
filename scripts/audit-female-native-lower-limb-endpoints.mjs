@@ -76,7 +76,7 @@ for(const side of SIDES)for(const relation of PAIRS){
 const report={
  purpose:"Check whether native host lower-limb skeletal parts preserve the same geometric endpoint-to-neighbor association as the donor",
  pinnedRevisions:{host:HOST_REVISION,donor:DONOR_REVISION},
- explicitHostAliases:HOST_ALIASES,
+ explicitHostAliases:{femur:'Femur (left/right)',tibia:'Tibia (left/right)',fibula:'Fibula (left/right)',patella:'Patella (left/right)'},
  measuredRelationships:rows.length,skipped,
  sameEndCount:rows.filter(r=>r.sameGeometricEndSelected).length,
  differentEndCount:rows.filter(r=>!r.sameGeometricEndSelected).length,
