@@ -41,4 +41,4 @@ Left and right are resolved separately. Host meshes are selected only through ex
 Read-only. The workflow downloads pinned manifests and geometry chunks, writes a JSON report, and uploads it as an artifact. It does not change source meshes, manifests, viewer code, Wix integration, production assets, or deployment.
 
 
-A clean CI run on the current branch head is required before any interpretation or integration decision.
+A clean CI run on the current branch head is required before any interpretation or integration decision. This report remains an investigation aid only.
