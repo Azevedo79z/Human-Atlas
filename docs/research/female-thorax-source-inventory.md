@@ -43,6 +43,20 @@ The sample-data index confirms a five-slice female ZIP of 16,400,864 bytes. It d
 - Fullbody directory index: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/Fullcolor/fullbody/index.html
 - Sample-data index: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Sample-Data/index.html
 
+
+## Fullbody sequence bounds and README retrieval test
+
+The official fullbody directory index starts at `avf1001a.raw.Z` and visibly reaches at least `avf2729c.raw.Z` near the end of the indexed listing. The files are grouped by numeric identifier with three suffixes (`a/b/c`) per identifier. This is a large sequence (thousands of raw files), so a whole-folder download is not an appropriate preflight.
+
+The parent Fullcolor index lists a 2,034-byte file named `README`. Both the browser page reader and direct page open rejected it as `application/octet-stream` (unsupported content type); an attempted binary download from this environment also failed. Its contents therefore remain **unread**, and no meaning is assigned to the a/b/c suffixes.
+
+**Decision:** do not download the fullbody folder, infer channel semantics, concatenate files, or build a volume yet. First obtain the README through a supported binary/file retrieval route or another authoritative NLM format specification. Then test only a tiny, explicitly documented sample.
+
+Verified index references:
+- Fullcolor parent index and README entry: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/Fullcolor/index.html
+- Fullbody listing, first entries: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/Fullcolor/fullbody/index.html
+- Fullbody listing, terminal entries visible in the fetched page: https://data.lhncbc.nlm.nih.gov/public/Visible-Human/Female-Images/Fullcolor/fullbody/index.html
+
 ## Atlas safety boundary
 
 The existing 76 lower-limb donor-muscle structures remain unchanged. This inventory does not establish that pectoralis major is already segmented, does not authorize synthetic or male-derived female geometry, and does not authorize production integration. Any future left/right pectoralis-major segment must be independently evidenced in the female source slices and pass the project's anatomy, geometry, coordinate, attribution, and viewer acceptance gates.
