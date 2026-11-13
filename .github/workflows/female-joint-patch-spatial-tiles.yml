@@ -1,11 +1,20 @@
 name: Female joint patch spatial tile inventory
 on:
   push:
-    branches: [audit/female-joint-patch-spatial-tiles]
-    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
+    branches:
+      - audit/female-joint-patch-spatial-tiles
+      - audit/female-joint-spatial-tile-viewer
+    paths:
+      - scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - scripts/render-female-joint-spatial-tiles.mjs
+      - .github/workflows/female-joint-patch-spatial-tiles.yml
   pull_request:
-    branches: [audit/female-joint-patch-spatial-tiles]
-    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
+    branches:
+      - audit/female-joint-patch-spatial-tiles
+    paths:
+      - scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - scripts/render-female-joint-spatial-tiles.mjs
+      - .github/workflows/female-joint-patch-spatial-tiles.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,11 +29,17 @@ jobs:
           deno-version: v2.x
       - run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs
       - run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - run: deno lint scripts/render-female-joint-spatial-tiles.mjs
+      - run: deno check scripts/render-female-joint-spatial-tiles.mjs
       - name: Build spatial tile inventory
         run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-joint-patch-spatial-tiles.json
+      - name: Render interactive HTML viewer
+        run: deno run scripts/render-female-joint-spatial-tiles.mjs < female-joint-patch-spatial-tiles.json > female-joint-spatial-tile-viewer.html
       - uses: actions/upload-artifact@v4
         with:
           name: female-joint-patch-spatial-tiles
-          path: female-joint-patch-spatial-tiles.json
+          path: |
+            female-joint-patch-spatial-tiles.json
+            female-joint-spatial-tile-viewer.html
           if-no-files-found: error
           retention-days: 14
