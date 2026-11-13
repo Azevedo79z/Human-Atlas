@@ -33,7 +33,7 @@ const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
 function endpoints(bounds){
  const spans=bounds[1].map((v,i)=>v-bounds[0][i]);
  const axis=spans.indexOf(Math.max(...spans));
- const make=(coordinate)=>bounds[0].map((v,i)=>i===axis?coordinate:(bounds[0][i]+bounds[1][i])/2);
+ const make=(coordinate)=>bounds[0].map((_,i)=>i===axis?coordinate:(bounds[0][i]+bounds[1][i])/2);
  const slab=spans[axis]*0.1;
  return {
   axis:["x","y","z"][axis],
@@ -44,7 +44,7 @@ function endpoints(bounds){
 }
 function normalized(s){return s.trim().toLowerCase().replace(/\s+/g," ");}
 function buildIndex(parts){return new Map(parts.filter(p=>p.system==="skeletal"&&p.bounds).map(p=>[normalized(p.name),p]));}
-function screen(atlas,index,side,definition,hostMap){
+function screen(index,side,definition,hostMap){
  const target=index.get(normalized(side+" "+definition[1]));
  const neighbor=index.get(normalized(side+" "+definition[2]));
  if(!target||!neighbor)return {side,relationship:definition[0],status:"skipped",reason:!target?"target missing":"neighbor missing"};
@@ -72,8 +72,8 @@ const donorIndex=buildIndex(donor.parts);
 const results=[];
 for(const side of SIDES)for(const relation of RELATIONSHIPS){
  results.push({
-  donor:screen(donor,donorIndex,side,relation,null),
-  host:screen(host,donorIndex,side,relation,hostMap),
+  donor:screen(donorIndex,side,relation,null),
+  host:screen(donorIndex,side,relation,hostMap),
  });
 }
 const report={
