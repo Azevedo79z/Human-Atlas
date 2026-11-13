@@ -68,7 +68,7 @@ function screen(atlas,index,side,definition,hostMap){
 }
 const [host,donor]=await Promise.all([load(HOST_URL,"host"),load(DONOR_URL,"donor")]);
 const hostMap=new Map(host.parts.filter(p=>p.system==="borrowed"&&p.conceptId?.startsWith("BORROWED:FJ")).map(p=>[p.conceptId.slice("BORROWED:".length),p]));
-const donorIndex=buildIndex(donor.parts),hostIndex=buildIndex(host.parts);
+const donorIndex=buildIndex(donor.parts);
 const results=[];
 for(const side of SIDES)for(const relation of RELATIONSHIPS){
  results.push({
