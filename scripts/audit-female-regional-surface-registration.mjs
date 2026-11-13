@@ -11,6 +11,7 @@ const DONOR_REVISION = "b0a20fa3a009ca5f6bfa07b7479312e04c862af2";
 const HOST_BASE = "https://raw.githubusercontent.com/Azevedo79z/Human-Atlas/" + HOST_REVISION + "/public/";
 const DONOR_BASE = "https://raw.githubusercontent.com/HiMahendraBeniwal/female-atlas/" + DONOR_REVISION + "/public/";
 const SAMPLE_LIMIT = 48;
+const MIN_SOURCE_SPAN_METRES = 0.02;
 
 async function readManifest(url, label) {
   const response = await fetch(url);
@@ -31,9 +32,12 @@ function family(name) {
   if (/femur/.test(value)) return "thigh";
   if (/tibia|fibula|patella/.test(value)) return "leg";
   if (/sacrum|coccyx|ilium|ischium|pubis/.test(value)) return "pelvis";
-  if (/talus|calcaneus|tarsal|metatarsal|phalange|toe/.test(value)) return "foot";
+  if (/foot|talus|calcaneus|tarsal|metatarsal|cuneiform|navicular|cuboid|toe/.test(value)) return "foot";
+  if (/hand|thumb|finger|carpal|metacarpal|phalanx|phalanges/.test(value)) return "hand";
   if (/vertebra|spine/.test(value)) return "spine";
   if (/cranium|cranial|skull|mandible|maxilla|zygomatic|frontal|parietal|temporal|occipital|sphenoid|ethmoid|nasal|lacrimal|palatine|vomer/.test(value)) return "skull";
+  if (/hyoid/.test(value)) return "hyoid";
+  if (/alar cartilage/.test(value)) return "nasal-cartilage";
   if (/sternum|manubrium|xiphoid/.test(value)) return "sternum";
   return "other";
 }
@@ -43,7 +47,9 @@ function center(bounds) {
 }
 
 function fitAxis(source, target, axis) {
-  const meanSource = source.reduce((sum, point) => sum + point[axis], 0) / source.length;
+  const values = source.map(point => point[axis]);
+  const sourceSpan = Math.max(...values) - Math.min(...values);
+  const meanSource = values.reduce((sum, value) => sum + value, 0) / values.length;
   const meanTarget = target.reduce((sum, point) => sum + point[axis], 0) / target.length;
   let numerator = 0;
   let denominator = 0;
@@ -52,7 +58,7 @@ function fitAxis(source, target, axis) {
     denominator += (source[index][axis] - meanSource) ** 2;
   }
   const candidateScale = denominator < 1e-12 ? 0 : numerator / denominator;
-  const fallback = denominator < 1e-12 || Math.abs(candidateScale) < 1e-8;
+  const fallback = sourceSpan < MIN_SOURCE_SPAN_METRES || Math.abs(candidateScale) < 1e-8;
   const scale = fallback ? 1 : candidateScale;
   const translation = meanTarget - scale * meanSource;
   const errors = source.map((point, index) =>
@@ -61,9 +67,10 @@ function fitAxis(source, target, axis) {
   return {
     scale,
     translation,
+    sourceSpanMetres: Number(sourceSpan.toFixed(6)),
     rmse: Math.sqrt(errors.reduce((sum, value) => sum + value * value, 0) / errors.length),
     maxAbsResidual: Math.max(...errors.map(Math.abs)),
-    fitMode: fallback ? "translation-only-unstable-axis" : "linear-center-fit",
+    fitMode: fallback ? "translation-only-insufficient-axis-span" : "linear-center-fit",
   };
 }
 
@@ -241,10 +248,12 @@ const report = {
   hostSourceMappedBorrowedParts: mappedHostParts.length,
   sourceIdMatchedSkeletalPairs: pairs.length,
   sampleLimitPerMesh: SAMPLE_LIMIT,
+  minimumAxisSpanForScaleFitMetres: MIN_SOURCE_SPAN_METRES,
   distanceUnit: "millimetres, assuming source manifest coordinates are metres",
   method: [
     "Pair host borrowed bones to donor skeletal parts only by explicit BORROWED:FJ source IDs.",
     "Fit independent axis-aligned scale/translation candidates per named anatomical family using bounding-box centers.",
+    "Use translation-only fallback on axes with less than 20 mm source-center spread to avoid unstable scale estimates.",
     "Compare sampled vertices in both directions for every matched bone pair after the candidate regional fit.",
     "Report residuals as a screening signal; no candidate transform is applied or approved.",
   ],
