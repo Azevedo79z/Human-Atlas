@@ -34,6 +34,9 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Verify female donor muscle manifest
+        run: |
+          node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; const manifest = JSON.parse(fs.readFileSync("public/models/atlas-female.json", "utf8")); const muscles = manifest.parts.filter(part => part.system === "donor-muscle"); assert.equal(manifest.sex, "female"); assert.equal(muscles.length, 76, "Unexpected donor-muscle part count"); const anatomy = fs.readFileSync("app/anatomy.ts", "utf8"); assert.match(anatomy, /if\\(sex===\\x27female\\x27\\)visible\\.push\\(\\x27donor-muscle\\x27\\)/, "Female default visibility is not enabled"); console.log(`Validated ${muscles.length} female donor muscle parts and default visibility.`);'
       - name: TypeScript check
         run: npm run check
       - name: Production build
