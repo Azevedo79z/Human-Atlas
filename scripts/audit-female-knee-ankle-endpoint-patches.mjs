@@ -119,7 +119,59 @@ function describePatch(points,triangles){
   extentMm:min.map((v,i)=>(max[i]-v)*1000),
   meanSignedNormal:normalSum.map(v=>valid?v/valid:0),
   meanAbsoluteNormal:normalAbsSum.map(v=>valid?v/valid:0),
-  normalOrientationNote:"Normals are derived from triangle winding; signed components are winding-sensitive. Absolute components describe orientation relative to global axes, not anatomy."
+  normalOrientationNote:"Normals are derived from triangle winding; signed components are winding-sensitive. Absolute components describe orientation relative to global axes, not anatomy.",
+  localNormalVariation:describeNormalVariation(triangles)
+ };
+}
+function describeNormalVariation(triangles){
+ const samples=[];
+ for(const tri of triangles){
+  const u=sub(tri[1],tri[0]),v=sub(tri[2],tri[0]);
+  const normal=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+  const magnitude=Math.sqrt(dot(normal,normal));
+  if(!Number.isFinite(magnitude)||magnitude<1e-12)continue;
+  samples.push({
+   normal:normal.map(value=>value/magnitude),
+   centroid:[0,1,2].map(axis=>(tri[0][axis]+tri[1][axis]+tri[2][axis])/3)
+  });
+ }
+ const variation=[];
+ let neighborPairs=0;
+ for(let i=0;i<samples.length;i++){
+  const nearest=[];
+  for(let j=0;j<samples.length;j++){
+   if(i===j)continue;
+   const delta=sub(samples[i].centroid,samples[j].centroid);
+   const distanceMm=Math.sqrt(dot(delta,delta))*1000;
+   if(distanceMm>1e-6)nearest.push({sample:samples[j],distanceMm});
+  }
+  nearest.sort((a,b)=>a.distanceMm-b.distanceMm);
+  for(const neighbor of nearest.slice(0,8)){
+   const cosine=Math.max(-1,Math.min(1,dot(samples[i].normal,neighbor.sample.normal)));
+   variation.push({
+    radiansPerMm:Math.acos(cosine)/neighbor.distanceMm,
+    angleDegrees:Math.acos(cosine)*180/Math.PI
+   });
+   neighborPairs++;
+  }
+ }
+ const summarize=key=>{
+  const values=variation.map(item=>item[key]).sort((a,b)=>a-b);
+  const q=f=>values.length?values[Math.min(values.length-1,Math.floor((values.length-1)*f))]:0;
+  return {
+   mean:values.length?values.reduce((sum,value)=>sum+value,0)/values.length:0,
+   median:q(.5),
+   p90:q(.9),
+   samples:values.length
+  };
+ };
+ return {
+  method:"mean angular change between each sampled triangle normal and up to eight nearest sampled triangle-centroid neighbors, divided by centroid distance",
+  validTriangleSamples:samples.length,
+  neighborPairs,
+  normalAngleDegrees:summarize("angleDegrees"),
+  normalVariationRadiansPerMm:summarize("radiansPerMm"),
+  interpretationLimit:"Sampling-density-dependent local normal-variation proxy; not a fitted principal curvature, anatomical surface classification, or cartilage measurement. Triangle winding inconsistencies can inflate angles."
  };
 }
 function directed(points,triangles){
