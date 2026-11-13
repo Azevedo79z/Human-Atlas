@@ -1,16 +1,18 @@
 name: Female bilateral spatial tile normal variation
 on:
   push:
-    branches: [audit/female-joint-tile-normal-variation]
+    branches: [audit/female-joint-tile-normal-variation, fix/female-bilateral-tile-axis-mirror]
     paths:
       - scripts/audit-female-knee-ankle-endpoint-patches.mjs
       - scripts/audit-female-bilateral-tile-normal-variation.mjs
+      - scripts/audit-female-bilateral-tile-normal-variation-v2.mjs
       - .github/workflows/female-bilateral-tile-normal-variation.yml
   pull_request:
     branches: [audit/female-joint-spatial-tile-viewer]
     paths:
       - scripts/audit-female-knee-ankle-endpoint-patches.mjs
       - scripts/audit-female-bilateral-tile-normal-variation.mjs
+      - scripts/audit-female-bilateral-tile-normal-variation-v2.mjs
       - .github/workflows/female-bilateral-tile-normal-variation.yml
   workflow_dispatch:
 permissions:
@@ -24,15 +26,17 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/audit-female-bilateral-tile-normal-variation.mjs
-      - run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/audit-female-bilateral-tile-normal-variation.mjs
+      - name: Lint audit scripts
+        run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/audit-female-bilateral-tile-normal-variation.mjs scripts/audit-female-bilateral-tile-normal-variation-v2.mjs
+      - name: Type-check audit scripts
+        run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs scripts/audit-female-bilateral-tile-normal-variation.mjs scripts/audit-female-bilateral-tile-normal-variation-v2.mjs
       - name: Build spatial tile inventory
         run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-joint-patch-spatial-tiles.json
-      - name: Compare mirrored tile normal orientations
-        run: deno run scripts/audit-female-bilateral-tile-normal-variation.mjs < female-joint-patch-spatial-tiles.json > female-bilateral-tile-normal-variation.json
+      - name: Compare mirrored tile normal orientations with axis-aware mapping
+        run: deno run scripts/audit-female-bilateral-tile-normal-variation-v2.mjs < female-joint-patch-spatial-tiles.json > female-bilateral-tile-normal-variation-v2.json
       - uses: actions/upload-artifact@v4
         with:
-          name: female-bilateral-tile-normal-variation
-          path: female-bilateral-tile-normal-variation.json
+          name: female-bilateral-tile-normal-variation-v2
+          path: female-bilateral-tile-normal-variation-v2.json
           if-no-files-found: error
           retention-days: 14
