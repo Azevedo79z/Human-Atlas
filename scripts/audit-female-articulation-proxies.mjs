@@ -80,13 +80,9 @@ for (const sideName of ["left", "right"]) {
   for (const carpal of ["capitate", "hamate", "trapezium", "trapezoid"]) {
     addPair("wrist", sideName, name("radius"), name(carpal), "radius-" + carpal + " proxy");
   }
-  for (const n of ["first","second","third","fourth","fifth"]) {
-    const digit = numberWord(n);
-    addPair("wrist-hand", sideName, name(n + " metacarpal bone"), name("proximal phalanx of " + sideName + " " + n + " finger"), "metacarpal-proximal phalanx proxy");
-    // Metacarpal naming is ordinal; thumb is the first metacarpal and named separately in the donor.
-    if (n !== "first") {
-      addPair("wrist-hand", sideName, name(n + " metacarpal bone"), name("proximal phalanx of " + sideName + " " + ["","index","middle","ring","little"][Number(digit)] + " finger"), "metacarpal-proximal phalanx proxy");
-    }
+  addPair("wrist-hand", sideName, name("first metacarpal bone"), "Proximal phalanx of " + sideName + " thumb", "first metacarpal-thumb proximal phalanx proxy");
+  for (const [ordinal, digitName] of [["second","index finger"],["third","middle finger"],["fourth","ring finger"],["fifth","little finger"]]) {
+    addPair("wrist-hand", sideName, name(ordinal + " metacarpal bone"), "Proximal phalanx of " + sideName + " " + digitName, "metacarpal-proximal phalanx proxy");
   }
   for (const digitName of ["index finger","middle finger","ring finger","little finger","thumb"]) {
     const proximal = "Proximal phalanx of " + sideName + " " + digitName;
@@ -97,9 +93,10 @@ for (const sideName of ["left", "right"]) {
     else addPair("finger-joints", sideName, proximal, distal, "thumb proximal-distal phalanx proxy");
   }
   addPair("ankle-foot", sideName, name("talus"), name("calcaneus"), "talus-calcaneus proxy");
-  addPair("ankle-foot", sideName, name("talus"), name("navicular bone of " + sideName + " foot"), "talus-navicular proxy");
+  const navicular = "Navicular bone of " + sideName + " foot";
+  addPair("ankle-foot", sideName, name("talus"), navicular, "talus-navicular proxy");
   addPair("ankle-foot", sideName, name("calcaneus"), name("cuboid bone"), "calcaneus-cuboid proxy");
-  addPair("ankle-foot", sideName, name("navicular bone of " + sideName + " foot"), name("medial cuneiform bone"), "navicular-medial cuneiform proxy");
+  addPair("ankle-foot", sideName, navicular, name("medial cuneiform bone"), "navicular-medial cuneiform proxy");
   addPair("ankle-foot", sideName, name("navicular bone of " + sideName + " foot"), name("intermediate cuneiform bone"), "navicular-intermediate cuneiform proxy");
   addPair("ankle-foot", sideName, name("navicular bone of " + sideName + " foot"), name("lateral cuneiform bone"), "navicular-lateral cuneiform proxy");
   for (const [ordinal, toe] of [["first","big toe"],["second","second toe"],["third","third toe"],["fourth","fourth toe"],["fifth","little toe"]]) {
