@@ -1,11 +1,20 @@
 name: Female joint patch spatial tile inventory
 on:
   push:
-    branches: [audit/female-joint-patch-spatial-tiles, audit/female-joint-spatial-tile-viewer]
-    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, scripts/render-female-joint-spatial-tiles.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
+    branches:
+      - audit/female-joint-patch-spatial-tiles
+      - audit/female-joint-spatial-tile-viewer
+    paths:
+      - scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - scripts/render-female-joint-spatial-tiles.mjs
+      - .github/workflows/female-joint-patch-spatial-tiles.yml
   pull_request:
-    branches: [audit/female-joint-patch-spatial-tiles]
-    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, scripts/render-female-joint-spatial-tiles.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
+    branches:
+      - audit/female-joint-patch-spatial-tiles
+    paths:
+      - scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - scripts/render-female-joint-spatial-tiles.mjs
+      - .github/workflows/female-joint-patch-spatial-tiles.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -29,6 +38,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: female-joint-patch-spatial-tiles
-          path: |\n            female-joint-patch-spatial-tiles.json\n            female-joint-spatial-tile-viewer.html
+          path: |
+            female-joint-patch-spatial-tiles.json
+            female-joint-spatial-tile-viewer.html
           if-no-files-found: error
           retention-days: 14
