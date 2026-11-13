@@ -1,0 +1,30 @@
+name: Female joint component spatial inventory
+on:
+  push:
+    branches: [audit/female-joint-component-spatial-inventory]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-component-spatial-inventory.yml]
+  pull_request:
+    branches: [audit/female-joint-component-spatial-inventory]
+    paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, .github/workflows/female-joint-component-spatial-inventory.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  component-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno lint scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - run: deno check scripts/audit-female-knee-ankle-endpoint-patches.mjs
+      - name: Build component spatial inventory
+        run: deno run --allow-net=raw.githubusercontent.com scripts/audit-female-knee-ankle-endpoint-patches.mjs > female-joint-component-spatial-inventory.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: female-joint-component-spatial-inventory
+          path: female-joint-component-spatial-inventory.json
+          if-no-files-found: error
+          retention-days: 14
