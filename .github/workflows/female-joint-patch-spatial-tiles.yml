@@ -1,7 +1,7 @@
 name: Female joint patch spatial tile inventory
 on:
   push:
-    branches: [audit/female-joint-patch-spatial-tiles]
+    branches: [audit/female-joint-patch-spatial-tiles, audit/female-joint-spatial-tile-viewer]
     paths: [scripts/audit-female-knee-ankle-endpoint-patches.mjs, scripts/render-female-joint-spatial-tiles.mjs, .github/workflows/female-joint-patch-spatial-tiles.yml]
   pull_request:
     branches: [audit/female-joint-patch-spatial-tiles]
