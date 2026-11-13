@@ -126,11 +126,19 @@ function compareBilateralComponents(left,right){
   });
  }
  candidates.sort((a,b)=>a.mirroredCentroidDistanceMm-b.mirroredCentroidDistanceMm);
+ const leftTotal=left.reduce((sum,item)=>sum+item.triangleCount,0);
+ const rightTotal=right.reduce((sum,item)=>sum+item.triangleCount,0);
+ const substantial=candidates.filter(item=>
+  item.leftTriangleCount>=Math.max(5,Math.ceil(leftTotal*.05))&&
+  item.rightTriangleCount>=Math.max(5,Math.ceil(rightTotal*.05))
+ );
  return {
   method:"all-pairs candidate ranking after reflecting left-side X coordinates; no rigid registration or one-to-one assignment",
   leftComponentCount:left.length,rightComponentCount:right.length,
+  minimumSubstantialComponentShare:0.05,
   nearestCentroidCandidates:candidates.slice(0,Math.min(10,candidates.length)),
-  interpretationLimit:"Raw source-frame mirror comparison is sensitive to donor/host pose, coordinate origins, asymmetry, and crop boundaries. Candidate proximity is not anatomical equivalence."
+  substantialComponentCandidates:substantial.slice(0,Math.min(10,substantial.length)),
+  interpretationLimit:"Raw source-frame mirror comparison is sensitive to donor/host pose, coordinate origins, asymmetry, and crop boundaries. Candidate proximity is not anatomical equivalence. Tiny fragments are excluded only from the substantial-component shortlist, not from the full candidate ranking."
  };
 }
 function buildBilateralComparisons(results){
